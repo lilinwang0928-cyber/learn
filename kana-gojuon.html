@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>五十音・寫聽讀</title>
+<style>
+:root{
+  --washi:#FBF9F3;
+  --paper:#FFFFFF;
+  --sumi:#221F1B;
+  --ai:#2C4770;         /* 藍 藍染 */
+  --ai-soft:#EAEFF6;
+  --shu:#BE3A2B;        /* 朱 */
+  --shu-soft:#FAF0EE;
+  --rose:#A97C8B;
+  --moegi:#5E8B54;      /* 萌黃 正解 */
+  --moegi-soft:#EBF2E7;
+  --rule:#DAD4C4;
+  --pale:#F2EEE2;
+  --muted:#77715F;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--washi);
+  color:var(--sumi);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  font-size:16px;line-height:1.7;
+}
+.mincho{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif TC","Songti TC",serif}
+.kana{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif}
+
+/* ---------- header ---------- */
+header{
+  padding:30px 20px 20px;
+  background:
+    radial-gradient(circle at 88% -30%, var(--shu-soft) 0%, transparent 55%),
+    linear-gradient(180deg,#FFFFFF 0%,var(--washi) 100%);
+  border-bottom:1px solid var(--rule);
+}
+.hd-eyebrow{font-size:.68rem;letter-spacing:.34em;color:var(--shu);margin:0 0 6px;font-weight:600}
+h1{margin:0;font-size:1.65rem;font-weight:600;letter-spacing:.3em}
+h1 .dot{color:var(--shu);font-size:.62em;vertical-align:.2em;margin:0 .08em}
+header p.sub{margin:9px 0 0;font-size:.8rem;color:var(--muted);letter-spacing:.1em}
+
+/* ---------- tabs ---------- */
+nav{
+  position:sticky;top:0;z-index:40;display:flex;overflow-x:auto;
+  background:rgba(251,249,243,.97);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--rule);scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none}
+nav button{
+  flex:1 0 auto;appearance:none;border:0;background:none;
+  padding:12px 15px 11px;font-size:.88rem;font-family:inherit;color:var(--muted);
+  border-bottom:2.5px solid transparent;cursor:pointer;letter-spacing:.12em;
+}
+nav button small{display:block;font-size:.58rem;letter-spacing:.14em;color:var(--rose);margin-top:1px}
+nav button[aria-selected="true"]{color:var(--ai);border-bottom-color:var(--shu);font-weight:600}
+nav button:focus-visible{outline:2px solid var(--ai);outline-offset:-3px}
+
+main{padding:20px 16px 56px;max-width:760px;margin:0 auto}
+section[hidden]{display:none}
+
+h2{
+  display:flex;align-items:baseline;gap:10px;
+  font-size:1.04rem;font-weight:600;letter-spacing:.2em;margin:34px 0 6px;
+}
+h2::before{content:"";width:14px;height:14px;background:var(--ai);flex:0 0 auto;
+  clip-path:polygon(0 0,100% 0,100% 100%);opacity:.85;transform:translateY(1px)}
+h2 em{font-style:normal;font-size:.66rem;letter-spacing:.2em;color:var(--rose);font-weight:400}
+h2:first-child{margin-top:2px}
+.note{font-size:.83rem;color:var(--muted);margin:0 0 14px;line-height:1.8}
+.note b{color:var(--ai);font-weight:600}
+.count{font-size:.68rem;color:var(--muted);letter-spacing:.1em;margin-left:auto}
+
+/* ---------- 原稿用紙 cell ---------- */
+.grid{display:grid;gap:5px;margin-bottom:6px}
+.g6{grid-template-columns:repeat(6,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g5{grid-template-columns:repeat(5,1fr)}
+.cell{
+  position:relative;aspect-ratio:1;border:1px solid var(--rule);background:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:2px;padding:0;font-family:inherit;
+  transition:background .15s,border-color .15s,box-shadow .15s;
+}
+.cell::before,.cell::after{content:"";position:absolute;background:var(--pale);pointer-events:none}
+.cell::before{left:50%;top:7%;bottom:7%;width:1px;transform:translateX(-.5px)}
+.cell::after{top:50%;left:7%;right:7%;height:1px;transform:translateY(-.5px)}
+.cell.empty{background:transparent;border-color:transparent;cursor:default}
+.cell.empty::before,.cell.empty::after{display:none}
+.cell:not(.empty):hover{border-color:var(--ai)}
+.cell.on{background:var(--ai-soft);border-color:var(--ai);box-shadow:0 0 0 1px var(--ai)}
+.cell .ch{position:relative;font-size:1.62rem;line-height:1;color:var(--sumi)}
+.cell .rom{position:absolute;right:3px;bottom:2px;font-size:.58rem;color:var(--shu);line-height:1;font-weight:600}
+.cell .sc{position:absolute;left:3px;top:3px;font-size:.54rem;color:var(--rose);line-height:1}
+.rowlab{display:flex;align-items:center;justify-content:center;font-size:.66rem;color:var(--ai);letter-spacing:.06em}
+.small .cell .ch{font-size:1.22rem}
+
+/* ---------- pills ---------- */
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.pill{
+  appearance:none;border:1px solid var(--rule);background:var(--paper);color:var(--muted);
+  padding:6px 15px;border-radius:999px;font-size:.8rem;font-family:inherit;cursor:pointer;letter-spacing:.08em;
+}
+.pill[aria-pressed="true"]{background:var(--ai);border-color:var(--ai);color:#fff}
+.pill:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+
+/* ---------- readout ---------- */
+.readout{
+  display:flex;align-items:center;gap:16px;
+  border:1px solid var(--rule);border-left:4px solid var(--shu);
+  background:var(--paper);padding:13px 16px;margin:0 0 18px;min-height:82px;border-radius:2px;
+}
+.readout .big{font-size:2.5rem;line-height:1;min-width:2ch;text-align:center}
+.readout .pair{font-size:.95rem;color:var(--muted);margin-top:3px}
+.readout .meta{font-size:.78rem;color:var(--muted);line-height:1.7}
+.readout .meta strong{color:var(--shu);font-size:1.1rem;letter-spacing:.1em}
+.readout .tip{color:var(--shu);font-size:.74rem}
+.saybtn{
+  appearance:none;border:1px solid var(--ai);background:var(--paper);color:var(--ai);
+  width:46px;height:46px;border-radius:50%;font-size:1.05rem;cursor:pointer;margin-left:auto;flex:0 0 auto;
+}
+.saybtn:active{background:var(--ai);color:#fff}
+
+/* ---------- buttons ---------- */
+.btn{
+  appearance:none;border:1px solid var(--ai);background:var(--ai);color:#fff;
+  padding:10px 18px;font-size:.85rem;font-family:inherit;cursor:pointer;border-radius:2px;letter-spacing:.1em;
+}
+.btn.ghost{background:var(--paper);color:var(--ai)}
+.btn.warn{border-color:var(--shu);background:var(--paper);color:var(--shu)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible{outline:2px solid var(--shu);outline-offset:2px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+
+/* ---------- tracing ---------- */
+.tr-head{
+  display:flex;align-items:baseline;justify-content:center;gap:14px;margin:2px 0 12px;
+}
+.tr-head .tr-kana{font-size:2rem;line-height:1}
+.tr-head .tr-rom{font-size:1.5rem;color:var(--shu);font-weight:700;letter-spacing:.12em}
+.tr-head .tr-strokes{font-size:.74rem;color:var(--muted);letter-spacing:.08em}
+.pad{
+  position:relative;width:100%;max-width:320px;aspect-ratio:1;margin:0 auto;
+  border:1.5px solid var(--ai);background:var(--paper);touch-action:none;border-radius:2px;
+  box-shadow:4px 4px 0 var(--pale);
+}
+.pad .guide{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:15rem;line-height:1;color:#E9E5D7;user-select:none;pointer-events:none;
+  transition:opacity .2s;
+}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%}
+.pad .cross{position:absolute;inset:0;pointer-events:none}
+.pad .cross i{position:absolute;background:var(--pale)}
+.pad .cross i:nth-child(1){left:50%;top:0;bottom:0;width:1px}
+.pad .cross i:nth-child(2){top:50%;left:0;right:0;height:1px}
+.padnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0 4px}
+.padnav .idx{font-size:.8rem;color:var(--muted);min-width:74px;text-align:center;letter-spacing:.06em}
+.jump{
+  display:flex;gap:5px;overflow-x:auto;padding:4px 2px 8px;margin:8px -2px 12px;scrollbar-width:thin;
+}
+.jump button{
+  flex:0 0 auto;appearance:none;border:1px solid var(--rule);background:var(--paper);
+  width:40px;height:40px;border-radius:2px;font-size:1.02rem;font-family:inherit;cursor:pointer;color:var(--sumi);
+  position:relative;
+}
+.jump button .jr{position:absolute;right:2px;bottom:0;font-size:.48rem;color:var(--shu)}
+.jump button[aria-current="true"]{background:var(--ai);border-color:var(--ai);color:#fff}
+.jump button[aria-current="true"] .jr{color:#F3C9C0}
+
+/* ---------- quiz ---------- */
+.qcard{border:1px solid var(--rule);background:var(--paper);padding:24px 18px 20px;text-align:center;border-radius:2px}
+.qprompt{font-size:3.1rem;line-height:1;margin:4px 0 20px}
+.qprompt.rom{font-size:2.1rem;letter-spacing:.12em;color:var(--shu);font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.opt{
+  appearance:none;border:1px solid var(--rule);background:var(--washi);color:var(--sumi);
+  padding:15px 6px;font-size:1.35rem;font-family:inherit;cursor:pointer;border-radius:2px;
+}
+.opt.rom{font-size:1.02rem;letter-spacing:.1em;font-weight:600;color:var(--ai)}
+.opt:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+.opt.right{background:var(--moegi-soft);border-color:var(--moegi);color:#33502C}
+.opt.wrong{background:var(--shu-soft);border-color:var(--shu);color:var(--shu)}
+.score{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--muted);margin:12px 2px 0}
+.bar{height:5px;background:var(--pale);border-radius:99px;overflow:hidden;margin:10px 0 0}
+.bar i{display:block;height:100%;background:var(--moegi);width:0;transition:width .3s}
+
+/* ---------- vocab ---------- */
+.vlist{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.vrow{
+  display:flex;align-items:center;gap:12px;padding:13px 6px;
+  border:0;border-bottom:1px solid var(--rule);background:none;
+  width:100%;text-align:left;font-family:inherit;cursor:pointer;color:inherit;
+}
+.vrow:hover{background:#FFFDF5}
+.vrow .zh{font-size:.76rem;color:var(--muted);min-width:5.4em;letter-spacing:.04em}
+.vrow .jp{flex:1;font-size:1.22rem;line-height:1.5}
+.vrow .jp ruby rt{font-size:.44em;color:var(--shu);letter-spacing:0}
+.vrow .jp mark{background:none;color:var(--shu);font-weight:600}
+.vrow .spk{font-size:.82rem;color:var(--ai);opacity:.5}
+
+/* ---------- rule cards ---------- */
+.card{
+  border:1px solid var(--rule);background:var(--paper);
+  padding:16px 16px 15px;margin:0 0 14px;border-radius:2px;
+  border-top:3px solid var(--ai);
+}
+.card.aka{border-top-color:var(--shu)}
+.card h3{margin:0 0 8px;font-size:.92rem;letter-spacing:.16em;color:var(--ai);font-weight:600}
+.card p{margin:0 0 6px;font-size:.85rem;line-height:1.85}
+.card p:last-child{margin-bottom:0}
+.card .lbl{
+  display:inline-block;min-width:3.6em;text-align:center;
+  background:var(--pale);color:var(--muted);font-size:.7rem;padding:2px 8px;
+  border-radius:2px;margin-right:8px;letter-spacing:.1em;
+}
+.eg{
+  display:inline-flex;align-items:center;gap:10px;margin-top:9px;
+  font-size:1.32rem;background:var(--washi);border:1px solid var(--rule);
+  padding:7px 16px;border-radius:2px;cursor:pointer;font-family:inherit;
+}
+.eg:hover{border-color:var(--ai)}
+.eg .arw{font-size:.78rem;color:var(--muted)}
+.eg .r{font-size:.72rem;color:var(--shu);font-weight:600}
+.tag{
+  display:inline-block;background:var(--shu-soft);color:#8C4438;font-size:.7rem;
+  padding:2px 9px;border-radius:2px;margin:0 5px 5px 0;letter-spacing:.06em;
+}
+
+
+/* ---------- song ---------- */
+.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border:1px solid var(--rule);border-radius:2px;margin:0 0 8px;box-shadow:4px 4px 0 var(--pale)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vfallback{font-size:.76rem;color:var(--muted);text-align:center;margin:0 0 16px}
+.vfallback a{color:var(--ai);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.srow{display:flex;align-items:center;gap:8px;margin:0 0 7px}
+.srow .play{
+  appearance:none;flex:0 0 auto;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--ai);background:var(--paper);color:var(--ai);font-size:.85rem;cursor:pointer;
+}
+.srow .play[aria-pressed="true"]{background:var(--shu);border-color:var(--shu);color:#fff}
+.srow .kk{display:flex;gap:5px;flex:1;overflow-x:auto;scrollbar-width:none}
+.srow .kk::-webkit-scrollbar{display:none}
+.srow .kk button{
+  appearance:none;flex:1 0 auto;min-width:44px;height:48px;border:1px solid var(--rule);
+  background:var(--paper);border-radius:2px;cursor:pointer;font-family:inherit;position:relative;
+  font-size:1.25rem;color:var(--sumi);
+}
+.srow .kk button .kr{position:absolute;right:3px;bottom:1px;font-size:.52rem;color:var(--shu);font-weight:600}
+.srow .kk button.hot{background:var(--shu-soft);border-color:var(--shu);color:var(--shu)}
+
+
+.pairs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.pairbox{border:1px solid var(--rule);background:var(--paper);border-radius:2px;padding:10px 8px 8px;text-align:center}
+.pairbox .pp{display:flex;justify-content:center;gap:6px;margin-bottom:6px}
+.pairbox .pp button{
+  appearance:none;border:1px solid var(--rule);background:var(--washi);border-radius:2px;
+  width:52px;height:56px;font-size:1.7rem;font-family:inherit;cursor:pointer;position:relative;color:var(--sumi);
+}
+.pairbox .pp button .pr{position:absolute;right:3px;bottom:1px;font-size:.5rem;color:var(--shu);font-weight:600}
+.pairbox .hint{font-size:.68rem;color:var(--muted);line-height:1.6}
+
+/* ---------- kanji tiles ---------- */
+.ktiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px}
+.ktile{
+  appearance:none;border:1px solid var(--rule);border-radius:6px;cursor:pointer;
+  padding:14px 4px 10px;text-align:center;font-family:inherit;position:relative;
+  box-shadow:0 2px 0 rgba(0,0,0,.06);
+}
+.ktile .kn{position:absolute;left:7px;top:5px;font-size:.56rem;color:rgba(0,0,0,.38)}
+.ktile .kj{display:block;font-size:1.7rem;line-height:1.2;color:var(--sumi)}
+.ktile .ky{display:block;font-size:.62rem;color:rgba(0,0,0,.5);margin-top:3px;letter-spacing:.02em}
+.ktile.on{outline:2px solid var(--ai);outline-offset:1px}
+.k1{background:#BFE8DC}.k2{background:#B9E7B4}.k3{background:#D9EE9E}.k4{background:#F1EC8E}.k5{background:#F5D391}
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:90;background:rgba(30,28,24,.62);display:flex;align-items:center;justify-content:center;padding:22px}
+.modal[hidden]{display:none!important}
+.mcard{
+  position:relative;background:#fff;border:2px solid #9CCFB8;border-radius:12px;
+  width:min(430px,100%);padding:34px 46px 18px;
+  display:flex;flex-direction:column;
+}
+.mclose{
+  position:absolute;right:-12px;top:-12px;width:40px;height:40px;border-radius:50%;
+  border:0;background:var(--sumi);color:#fff;font-size:1rem;cursor:pointer;
+}
+.mstage{position:relative;aspect-ratio:1;max-height:250px;display:flex;align-items:center;justify-content:center;margin:0 auto;width:100%}
+.mstage .mv,.mstage .mh{position:absolute;background:none;border:0}
+.mstage .mv{left:50%;top:0;bottom:0;border-left:2px dashed #CFCABB}
+.mstage .mh{top:50%;left:0;right:0;border-top:2px dashed #CFCABB}
+.mstage .mch{position:relative;font-size:9.5rem;line-height:1;color:var(--sumi)}
+.mstage .mch.two{font-size:6rem}
+.mnav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  border:0;background:none;color:var(--ai);font-size:3rem;line-height:1;cursor:pointer;padding:6px;
+}
+.mnav.prev{left:4px}.mnav.next{right:4px}
+.mfoot{display:flex;align-items:center;gap:10px;margin-top:6px;min-height:52px}
+.mrom{font-size:1.5rem;color:var(--moegi);font-weight:700;letter-spacing:.08em}
+.mtip{flex:1;font-size:.72rem;color:var(--shu);line-height:1.5}
+.msay{
+  appearance:none;border:0;background:#E8896B;color:#fff;width:52px;height:52px;border-radius:50%;
+  font-size:1.3rem;cursor:pointer;flex:0 0 auto;
+}
+.foot{margin-top:38px;font-size:.7rem;color:var(--muted);text-align:center;letter-spacing:.12em;line-height:2.1}
+.foot a{color:var(--ai);text-decoration:underline;text-underline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:400px){
+  .cell .ch{font-size:1.38rem}
+  .small .cell .ch{font-size:1.02rem}
+  main{padding:16px 12px 48px}
+  .readout .big{font-size:2.1rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="hd-eyebrow">GOJŪON — 寫・聽・讀</p>
+  <h1 class="mincho">五<span class="dot">・</span>十<span class="dot">・</span>音</h1>
+  <p class="sub">清音 46 ・ 濁音 20 ・ 半濁音 5 ・ 拗音 33 ・ 外來語 31　｜　成人自學</p>
+</header>
+
+<nav role="tablist" aria-label="模組">
+  <button role="tab" data-go="t-chart" aria-selected="true">音圖<small>CHART</small></button>
+  <button role="tab" data-go="t-trace" aria-selected="false">描寫<small>TRACE</small></button>
+  <button role="tab" data-go="t-quiz" aria-selected="false">聽寫<small>QUIZ</small></button>
+  <button role="tab" data-go="t-word" aria-selected="false">單字<small>WORDS</small></button>
+  <button role="tab" data-go="t-kanji" aria-selected="false">漢字<small>KANJI</small></button>
+  <button role="tab" data-go="t-song" aria-selected="false">唱歌<small>SONG</small></button>
+  <button role="tab" data-go="t-rule" aria-selected="false">規則<small>RULES</small></button>
+ <a href="index.html" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 15px 11px;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:2.5px solid transparent;letter-spacing:.12em">⌂ 總覽<small style="font-size:.58rem;letter-spacing:.14em;color:var(--rose);margin-top:1px">SERIES</small></a>
+</nav>
+
+<main>
+
+<!-- ============ 音圖 ============ -->
+<section id="t-chart" role="tabpanel">
+  <div class="readout">
+    <div>
+      <div class="big kana" id="ro-ch">あ</div>
+      <div class="pair kana" id="ro-pair">ア</div>
+    </div>
+    <div class="meta">
+      <strong id="ro-rom">a</strong><br>
+      <span id="ro-info">あ行・あ段　筆畫 3</span><br>
+      <span id="ro-tip" class="tip" style="display:none"></span>
+    </div>
+    <button class="saybtn" id="ro-say" aria-label="播放發音">🔊</button>
+  </div>
+
+  <div class="pills">
+    <button class="pill" data-set="hira" aria-pressed="true">平假名 ひらがな</button>
+    <button class="pill" data-set="kata" aria-pressed="false">片假名 カタカナ</button>
+  </div>
+  <p class="note">格內<b style="color:var(--shu)">紅字</b>＝羅馬拼音，<b style="color:var(--rose)">粉字</b>＝筆畫數。點格子發音，同步顯示平片對照；し・ち・つ・ふ・ら行・ん・を 等特殊音會附<b>發音提示</b>。</p>
+
+  <h2>清音 <em>SEION</em><span class="count">46</span></h2>
+  <div class="grid g6" id="c-sei"></div>
+
+  <h2>濁音 <em>DAKUON</em><span class="count">20</span></h2>
+  <div class="grid g6" id="c-daku"></div>
+
+  <h2>半濁音 <em>HANDAKUON</em><span class="count">5</span></h2>
+  <div class="grid g6" id="c-han"></div>
+
+  <h2>拗音 <em>YŌON</em><span class="count">33</span></h2>
+  <div class="grid g4 small" id="c-yo"></div>
+
+  <h2>外來語拗音 <em>GAIRAIGO</em><span class="count">31</span></h2>
+  <p class="note">拼外來語用，多寫片假名。前面的音不限イ段，後面除ヤ行外也接ア・イ・ウ・エ・オ。</p>
+  <div class="grid g5 small" id="c-gai"></div>
+</section>
+
+<!-- ============ 描寫 ============ -->
+<section id="t-trace" role="tabpanel" hidden>
+  <p class="note">灰字是範本，用手指或觸控筆描寫。十字格幫你抓<b>重心</b>——先照著描，熟了就按「淡出範本」脫稿寫。</p>
+
+  <div class="pills" id="tr-pills">
+    <button class="pill" data-tset="hira" aria-pressed="true">平假名</button>
+    <button class="pill" data-tset="kata" aria-pressed="false">片假名</button>
+    <button class="pill" data-tset="daku" aria-pressed="false">濁・半濁音</button>
+    <button class="pill" data-tset="yo" aria-pressed="false">拗音</button>
+  </div>
+
+  <div class="jump" id="tr-jump" aria-label="快速跳字"></div>
+
+  <div class="tr-head">
+    <span class="tr-kana kana" id="tr-ch">あ</span>
+    <span class="tr-rom" id="tr-rom">a</span>
+    <span class="tr-strokes" id="tr-st">筆畫 3</span>
+  </div>
+
+  <div class="pad" id="pad">
+    <div class="cross"><i></i><i></i></div>
+    <div class="guide kana" id="pad-guide">あ</div>
+    <canvas id="pad-cv"></canvas>
+  </div>
+
+  <div class="padnav">
+    <button class="btn ghost" id="tr-prev">← 上一個</button>
+    <span class="idx" id="tr-idx">1 / 46</span>
+    <button class="btn ghost" id="tr-next">下一個 →</button>
+  </div>
+
+  <div class="btnrow" style="justify-content:center">
+    <button class="btn warn" id="tr-clear">清除筆跡</button>
+    <button class="btn ghost" id="tr-say">聽發音</button>
+    <button class="btn ghost" id="tr-fade">淡出範本</button>
+  </div>
+</section>
+
+<!-- ============ 聽寫 ============ -->
+<section id="t-quiz" role="tabpanel" hidden>
+  <div class="pills" id="q-mode">
+    <button class="pill" data-qm="listen" aria-pressed="true">聽音選字</button>
+    <button class="pill" data-qm="read" aria-pressed="false">看字選音</button>
+    <button class="pill" data-qm="rev" aria-pressed="false">看音選字</button>
+  </div>
+  <div class="pills" id="q-scope">
+    <button class="pill" data-qs="sei" aria-pressed="true">清音</button>
+    <button class="pill" data-qs="daku" aria-pressed="false">濁・半濁</button>
+    <button class="pill" data-qs="yo" aria-pressed="false">拗音</button>
+    <button class="pill" data-qs="all" aria-pressed="false">全部</button>
+  </div>
+
+  <div class="qcard">
+    <div class="qprompt kana" id="q-prompt">—</div>
+    <button class="btn ghost" id="q-replay" style="margin-bottom:16px">🔊 再播一次</button>
+    <div class="opts" id="q-opts"></div>
+    <div class="bar" aria-hidden="true"><i id="q-bar"></i></div>
+  </div>
+  <div class="score">
+    <span id="q-tally">答對 0 ／ 作答 0</span>
+    <button class="pill" id="q-reset">歸零</button>
+  </div>
+  <p class="note" style="margin-top:14px">答錯會標出正解並重播發音。「聽音選字」需瀏覽器支援日文語音；若無聲音，改用另兩種模式。成績自動保存。</p>
+</section>
+
+<!-- ============ 單字 ============ -->
+<section id="t-word" role="tabpanel" hidden>
+  <p class="note">點任一列播放整個單字的發音。漢字上方<b style="color:var(--shu)">紅色小字</b>＝假名讀音；片假名單字中的<b style="color:var(--shu)">紅字</b>＝該課重點音。</p>
+  <div class="pills" id="w-pills"></div>
+  <div class="vlist" id="w-list"></div>
+</section>
+
+<!-- ============ 漢字 ============ -->
+<section id="t-kanji" role="tabpanel" hidden>
+  <p class="note">日語有三種文字：平假名、片假名、<b>漢字</b>。假名是表音文字，一字一音節；漢字是表意文字。這 48 個是 NHK 入門課精選的高頻漢字——多數妳一看就懂，重點是<b>學它的日語讀音</b>。點磚播放發音。</p>
+  <div class="readout" id="k-read">
+    <div class="big mincho" id="k-ch">心</div>
+    <div class="meta">
+      <strong class="kana" id="k-yomi">こころ</strong> <span id="k-rom" style="color:var(--shu)">kokoro</span><br>
+      <span id="k-mean">心</span>
+    </div>
+    <button class="saybtn" id="k-say" aria-label="播放發音">🔊</button>
+  </div>
+  <div class="ktiles" id="k-tiles"></div>
+</section>
+
+<!-- ============ 唱歌 ============ -->
+<section id="t-song" role="tabpanel" hidden>
+  <p class="note">先看影片跟著唱兩三遍，把<b>旋律掛在嘴上</b>；再用下方「跟唱表」逐行點播、脫離影片自己唱。旋律記住了，順序就忘不掉。</p>
+
+  <div class="video">
+    <iframe id="song-frame" src="https://www.youtube.com/embed/K4__dF1GMY0" title="五十音之歌"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <p class="vfallback">影片沒有顯示或無法播放？<a href="https://youtu.be/K4__dF1GMY0" target="_blank" rel="noopener">點此在 YouTube 開啟 ↗</a></p>
+
+  <h2>跟唱表 <em>SING ALONG</em></h2>
+  <p class="note">點每一行左側 <b>▶</b> 聽整行連續發音（跟唱練習用），點單字聽單音。唱到哪一行，行內字會依序<b>亮起</b>。</p>
+  <div class="pills">
+    <button class="pill" data-sset="hira" aria-pressed="true">平假名</button>
+    <button class="pill" data-sset="kata" aria-pressed="false">片假名</button>
+  </div>
+  <div id="song-rows"></div>
+
+  <div class="btnrow" style="justify-content:center">
+    <button class="btn" id="song-all">▶ 從頭唱到尾</button>
+    <button class="btn warn" id="song-stop">停止</button>
+  </div>
+  <p class="note" style="text-align:center">連播使用瀏覽器日文語音，速度放慢，適合逐字跟讀；旋律請以影片為準。</p>
+</section>
+
+<!-- ============ 規則 ============ -->
+<section id="t-rule" role="tabpanel" hidden>
+  <p class="note">五個發音規則，全部整理自習字帖的「說明」欄。例字都可以點擊發音。</p>
+
+  <h2>濁音・半濁音 <em>DAKUON</em></h2>
+  <div class="card">
+    <h3>濁音「゛」</h3>
+    <p><span class="lbl">發音</span>氣音 → 無氣音。か行 K→G、さ行 S→Z、た行 T→D、は行 H→B。</p>
+    <p><span class="lbl">書寫</span>清音右上角多兩點「゛」。</p>
+    <button class="eg kana" data-say="ば">は <span class="arw">＋゛→</span> ば <span class="r">ba</span></button>
+  </div>
+  <div class="card aka">
+    <h3>半濁音「゜」</h3>
+    <p><span class="lbl">發音</span>氣音 → 氣音。只有は行 H→P。</p>
+    <p><span class="lbl">書寫</span>清音右上角多一個圈「゜」。</p>
+    <button class="eg kana" data-say="ぱ">は <span class="arw">＋゜→</span> ぱ <span class="r">pa</span></button>
+  </div>
+
+  <h2>拗音 <em>YŌON</em></h2>
+  <div class="card">
+    <h3>清音拗音</h3>
+    <p>由 <b>い段音</b> 和 <b>や行音</b> 合起來的音；や・ゆ・よ 書寫時<b>縮小</b>。</p>
+    <button class="eg kana" data-say="きゃ">き ＋ や <span class="arw">→</span> きゃ <span class="r">kya</span></button>
+  </div>
+  <div class="card">
+    <h3>濁・半濁拗音</h3>
+    <p>由 <b>い段音（濁音、半濁音）</b> 和 <b>や行音（清音）</b> 合起來。</p>
+    <button class="eg kana" data-say="ぎゃ">ぎ ＋ や <span class="arw">→</span> ぎゃ <span class="r">gya</span></button>
+  </div>
+  <div class="card">
+    <h3>外來語特殊拗音</h3>
+    <p>為了拼外來語，多用<b>片假名</b>。前面的音除イ段外其他段也會出現；後面除ヤ行外，母音ア・イ・ウ・エ・オ也一起拼。</p>
+    <button class="eg kana" data-say="ファ">フ ＋ ァ <span class="arw">→</span> ファ <span class="r">fa</span></button>
+  </div>
+
+  <h2>長音 <em>CHŌON</em></h2>
+  <div class="card">
+    <h3>平假名的長音</h3>
+    <p><span class="lbl">表記</span>相同母音連續兩個寫在一起。</p>
+    <p><span class="lbl">發音</span>把前面的音拉長成兩個音的長度。</p>
+    <p style="margin-top:8px">
+      <span class="tag">a＋a　おかあさん</span><span class="tag">i＋i　おにいさん</span><span class="tag">u＋u　くうき</span>
+      <span class="tag">e＋e　おねえさん</span><span class="tag">e＋i　えいが</span><span class="tag">o＋o　おおさか</span><span class="tag">o＋u　おとうさん</span>
+    </p>
+    <button class="eg kana" data-say="おかあさん">おかあさん <span class="r">okāsan</span></button>
+  </div>
+  <div class="card aka">
+    <h3>片假名的長音</h3>
+    <p><span class="lbl">表記</span>加一個「ー」。</p>
+    <p><span class="lbl">發音</span>同樣拉長成兩個音的長度。</p>
+    <button class="eg kana" data-say="コーヒー">コーヒー <span class="r">kōhī</span></button>
+  </div>
+
+  <h2>促音 <em>SOKUON</em></h2>
+  <div class="card">
+    <h3>っ／ッ</h3>
+    <p><span class="lbl">表記</span>把「つ」或「ツ」縮小一半，寫在前一個音的<b>右下角</b>。</p>
+    <p><span class="lbl">發音</span>日文裡的休止符：念完前一個音急促停止，再念下一個音——感覺像唸到一半被噎到。</p>
+    <button class="eg kana" data-say="がっこう">がっこう <span class="r">gakkō</span></button>
+    <button class="eg kana" data-say="サッカー">サッカー <span class="r">sakkā</span></button>
+  </div>
+
+
+  <h2>發音要點 <em>PRONUNCIATION</em></h2>
+  <div class="card aka">
+    <h3>四個不規則音</h3>
+    <p>さ行、た行、は行各有幾個音不照子音規律走，是初學最常唸錯的：</p>
+    <p style="margin-top:6px">
+      <button class="eg kana" data-say="し">し <span class="r">shi</span><span class="arw">不是 si</span></button>
+      <button class="eg kana" data-say="ち">ち <span class="r">chi</span><span class="arw">不是 ti</span></button>
+      <button class="eg kana" data-say="つ">つ <span class="r">tsu</span><span class="arw">不是 tu</span></button>
+      <button class="eg kana" data-say="ふ">ふ <span class="r">fu</span><span class="arw">雙唇吹氣</span></button>
+    </p>
+  </div>
+  <div class="card">
+    <h3>ら行・ん・を</h3>
+    <p><span class="lbl">ら行</span>彈舌音——舌尖輕彈上齒齦一下，介於 l 與 r 之間，不是英語捲舌 r。</p>
+    <p><span class="lbl">ん</span>獨立佔<b>一拍</b>；實際音色隨後面的音變化（n／m／ng），先照 n 唸即可。</p>
+    <p><span class="lbl">を</span>發音與 お 完全相同（o），現代日語只作受詞助詞。</p>
+    <button class="eg kana" data-say="ほんをよむ">本を読む <span class="r">hon o yomu</span></button>
+  </div>
+  <div class="card">
+    <h3>助詞的特殊讀音</h3>
+    <p>三個假名<b>作助詞時</b>改讀音，寫法不變：</p>
+    <p><span class="lbl">は→wa</span><button class="eg kana" data-say="わたしはせんせいです" style="margin-top:2px">わたし<b style="color:var(--shu)">は</b>先生です <span class="r">watashi wa</span></button></p>
+    <p><span class="lbl">へ→e</span><button class="eg kana" data-say="とうきょうへいく" style="margin-top:2px">東京<b style="color:var(--shu)">へ</b>行く <span class="r">tōkyō e</span></button></p>
+    <p><span class="lbl">を→o</span><button class="eg kana" data-say="みずをのむ" style="margin-top:2px">水<b style="color:var(--shu)">を</b>飲む <span class="r">mizu o</span></button></p>
+  </div>
+
+  <h2>易混字辨析 <em>LOOK-ALIKES</em></h2>
+  <p class="note">形近字並排點著比。辨認關鍵在<b>末筆方向</b>與<b>兩點位置</b>。</p>
+  <div class="pairs" id="pairs"></div>
+
+  <p class="foot">依習字帖章節整理　音圖 → 描寫 → 聽寫 → 單字<br>
+    課程來源：<a href="https://www3.nhk.or.jp/nhkworld/lesson/zt/" target="_blank" rel="noopener">NHK WORLD-JAPAN 簡明日語 ↗</a><br>五十音・寫聽讀</p>
+</section>
+
+
+<div class="modal" id="modal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true">
+    <button class="mclose" id="m-close" aria-label="關閉">✕</button>
+    <button class="mnav prev" id="m-prev" aria-label="上一個">‹</button>
+    <div class="mstage">
+      <i class="mv"></i><i class="mh"></i>
+      <span class="mch kana" id="m-ch">あ</span>
+    </div>
+    <button class="mnav next" id="m-next" aria-label="下一個">›</button>
+    <div class="mfoot">
+      <span class="mrom" id="m-rom">a</span>
+      <span class="mtip" id="m-tip"></span>
+      <button class="msay" id="m-say" aria-label="播放發音">🔊</button>
+    </div>
+  </div>
+</div>
+<footer style="text-align:center;font-size:.72rem;color:var(--muted);padding:20px 16px 30px;border-top:1px solid var(--rule)">五十音・寫聽讀 · 唱歌學日文系列 基礎篇 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+</main>
+
+<script>
+"use strict";
+
+/* ========== 資料 ========== */
+var SEI = [
+ ["あ","ア","a",3,2],["い","イ","i",2,2],["う","ウ","u",2,3],["え","エ","e",2,3],["お","オ","o",3,3],
+ ["か","カ","ka",3,2],["き","キ","ki",4,3],["く","ク","ku",1,2],["け","ケ","ke",3,3],["こ","コ","ko",2,2],
+ ["さ","サ","sa",3,3],["し","シ","shi",1,3],["す","ス","su",2,2],["せ","セ","se",3,2],["そ","ソ","so",1,2],
+ ["た","タ","ta",4,3],["ち","チ","chi",2,3],["つ","ツ","tsu",1,3],["て","テ","te",1,3],["と","ト","to",2,2],
+ ["な","ナ","na",4,2],["に","ニ","ni",3,2],["ぬ","ヌ","nu",2,2],["ね","ネ","ne",2,4],["の","ノ","no",1,1],
+ ["は","ハ","ha",3,2],["ひ","ヒ","hi",1,2],["ふ","フ","fu",4,1],["へ","ヘ","he",1,1],["ほ","ホ","ho",4,4],
+ ["ま","マ","ma",3,2],["み","ミ","mi",2,3],["む","ム","mu",3,2],["め","メ","me",2,2],["も","モ","mo",3,3],
+ ["や","ヤ","ya",3,2],null,["ゆ","ユ","yu",2,2],null,["よ","ヨ","yo",2,3],
+ ["ら","ラ","ra",2,2],["り","リ","ri",2,2],["る","ル","ru",1,2],["れ","レ","re",2,1],["ろ","ロ","ro",1,3],
+ ["わ","ワ","wa",2,2],null,null,null,["を","ヲ","wo",3,3],
+ ["ん","ン","n",1,2],null,null,null,null
+];
+var SEI_ROWLAB = ["あ","か","さ","た","な","は","ま","や","ら","わ","鼻音"];
+var DAN = ["あ段","い段","う段","え段","お段"];
+
+var DAKU = [
+ ["が","ガ","ga"],["ぎ","ギ","gi"],["ぐ","グ","gu"],["げ","ゲ","ge"],["ご","ゴ","go"],
+ ["ざ","ザ","za"],["じ","ジ","ji"],["ず","ズ","zu"],["ぜ","ゼ","ze"],["ぞ","ゾ","zo"],
+ ["だ","ダ","da"],["ぢ","ヂ","ji"],["づ","ヅ","zu"],["で","デ","de"],["ど","ド","do"],
+ ["ば","バ","ba"],["び","ビ","bi"],["ぶ","ブ","bu"],["べ","ベ","be"],["ぼ","ボ","bo"]
+];
+var DAKU_ROWLAB = ["が","ざ","だ","ば"];
+var HAN = [["ぱ","パ","pa"],["ぴ","ピ","pi"],["ぷ","プ","pu"],["ぺ","ペ","pe"],["ぽ","ポ","po"]];
+
+var YO = [
+ ["きゃ","キャ","kya"],["きゅ","キュ","kyu"],["きょ","キョ","kyo"],
+ ["しゃ","シャ","sha"],["しゅ","シュ","shu"],["しょ","ショ","sho"],
+ ["ちゃ","チャ","cha"],["ちゅ","チュ","chu"],["ちょ","チョ","cho"],
+ ["にゃ","ニャ","nya"],["にゅ","ニュ","nyu"],["にょ","ニョ","nyo"],
+ ["ひゃ","ヒャ","hya"],["ひゅ","ヒュ","hyu"],["ひょ","ヒョ","hyo"],
+ ["みゃ","ミャ","mya"],["みゅ","ミュ","myu"],["みょ","ミョ","myo"],
+ ["りゃ","リャ","rya"],["りゅ","リュ","ryu"],["りょ","リョ","ryo"],
+ ["ぎゃ","ギャ","gya"],["ぎゅ","ギュ","gyu"],["ぎょ","ギョ","gyo"],
+ ["じゃ","ジャ","ja"],["じゅ","ジュ","ju"],["じょ","ジョ","jo"],
+ ["びゃ","ビャ","bya"],["びゅ","ビュ","byu"],["びょ","ビョ","byo"],
+ ["ぴゃ","ピャ","pya"],["ぴゅ","ピュ","pyu"],["ぴょ","ピョ","pyo"]
+];
+
+var GAI = [
+ ["イェ","ye"],["ウィ","wi"],["ウェ","we"],["ウォ","wo"],["クァ","kwa"],
+ ["クィ","kwi"],["クェ","kwe"],["クォ","kwo"],["シェ","she"],["チェ","che"],
+ ["ツァ","tsa"],["ツィ","tsi"],["ツェ","tse"],["ツォ","tso"],["テュ","tyu"],
+ ["ティ","ti"],["ファ","fa"],["フィ","fi"],["フェ","fe"],["フォ","fo"],
+ ["フュ","fyu"],["ヴァ","va"],["ヴィ","vi"],["ヴ","vu"],["ヴェ","ve"],
+ ["ヴォ","vo"],["ヴュ","vyu"],["グァ","gwa"],["ジェ","je"],["ディ","di"],
+ ["デュ","dyu"]
+];
+
+var WORDS = {
+ "濁音・半濁音":[
+  ["日本人","<ruby>日本人<rt>にほんじん</rt></ruby>","にほんじん"],
+  ["下一個","<ruby>次<rt>つぎ</rt></ruby>","つぎ"],
+  ["戀人","<ruby>恋人<rt>こいびと</rt></ruby>","こいびと"],
+  ["電話","<ruby>電話<rt>でんわ</rt></ruby>","でんわ"],
+  ["報紙","<ruby>新聞<rt>しんぶん</rt></ruby>","しんぶん"],
+  ["眼鏡","<ruby>眼鏡<rt>めがね</rt></ruby>","めがね"],
+  ["戒指","<ruby>指輪<rt>ゆびわ</rt></ruby>","ゆびわ"],
+  ["天丼","<ruby>天丼<rt>てんどん</rt></ruby>","てんどん"],
+  ["蘿蔔","<ruby>大根<rt>だいこん</rt></ruby>","だいこん"],
+  ["垃圾桶","ごみ<ruby>箱<rt>ばこ</rt></ruby>","ごみばこ"],
+  ["失望","<ruby>残念<rt>ざんねん</rt></ruby>","ざんねん"],
+  ["鉛筆","<ruby>鉛筆<rt>えんぴつ</rt></ruby>","えんぴつ"],
+  ["包包","<ruby>鞄<rt>かばん</rt></ruby>","かばん"],
+  ["爸爸","<mark>パパ</mark>","パパ"],
+  ["乒乓","<mark>ピ</mark>ン<mark>ポ</mark>ン","ピンポン"]
+ ],
+ "外來語拗音":[
+  ["餐叉","<mark>フォ</mark>ーク","フォーク"],
+  ["咖啡因","カ<mark>フェ</mark>イン","カフェイン"],
+  ["沐浴露","ボ<mark>ディ</mark>ーソープ","ボディーソープ"],
+  ["按摩椅","マッサージ<mark>チェ</mark>アー","マッサージチェアー"],
+  ["礦泉水","ミネラル<mark>ウォ</mark>ーター","ミネラルウォーター"],
+  ["珍珠奶茶","タピオカミルク<mark>ティ</mark>ー","タピオカミルクティー"],
+  ["蔥油餅","<mark>ツォ</mark>ンユーピン","ツォンユーピン"],
+  ["速食","<mark>ファ</mark>ーストフード","ファーストフード"],
+  ["波浪","<mark>ウェ</mark>ーブ","ウェーブ"],
+  ["莫札特","モー<mark>ツァ</mark>ルト","モーツァルト"],
+  ["未來","<mark>フュ</mark>ーチャー","フューチャー"]
+ ],
+ "長音":[
+  ["母親","お<ruby>母<rt>かあ</rt></ruby>さん","おかあさん"],
+  ["祖母","おばあさん","おばあさん"],
+  ["兄長","お<ruby>兄<rt>にい</rt></ruby>さん","おにいさん"],
+  ["香菇","<ruby>椎茸<rt>しいたけ</rt></ruby>","しいたけ"],
+  ["空氣","<ruby>空気<rt>くうき</rt></ruby>","くうき"],
+  ["信封","<ruby>封筒<rt>ふうとう</rt></ruby>","ふうとう"],
+  ["姊姊","お<ruby>姉<rt>ねえ</rt></ruby>さん","おねえさん"],
+  ["電影","<ruby>映画<rt>えいが</rt></ruby>","えいが"],
+  ["成績","<ruby>成績<rt>せいせき</rt></ruby>","せいせき"],
+  ["大阪","<ruby>大阪<rt>おおさか</rt></ruby>","おおさか"],
+  ["火焰","<ruby>炎<rt>ほのお</rt></ruby>","ほのお"],
+  ["父親","お<ruby>父<rt>とう</rt></ruby>さん","おとうさん"],
+  ["寶石","<ruby>宝石<rt>ほうせき</rt></ruby>","ほうせき"],
+  ["紐約","ニュ<mark>ー</mark>ヨ<mark>ー</mark>ク","ニューヨーク"],
+  ["咖啡","コ<mark>ー</mark>ヒ<mark>ー</mark>","コーヒー"],
+  ["超級市場","ス<mark>ー</mark>パ<mark>ー</mark>","スーパー"],
+  ["百貨公司","デパ<mark>ー</mark>ト","デパート"],
+  ["炒飯","チャ<mark>ー</mark>ハン","チャーハン"]
+ ],
+ "促音":[
+  ["學校","<ruby>学校<rt>がっこう</rt></ruby>","がっこう"],
+  ["缺席","<ruby>欠席<rt>けっせき</rt></ruby>","けっせき"],
+  ["失敗","<ruby>失敗<rt>しっぱい</rt></ruby>","しっぱい"],
+  ["出差","<ruby>出張<rt>しゅっちょう</rt></ruby>","しゅっちょう"],
+  ["北海道","<ruby>北海道<rt>ほっかいどう</rt></ruby>","ほっかいどう"],
+  ["咖啡廳","<ruby>喫茶店<rt>きっさてん</rt></ruby>","きっさてん"],
+  ["足球","サ<mark>ッ</mark>カー","サッカー"],
+  ["蘋果","ア<mark>ッ</mark>プル","アップル"],
+  ["衛生紙","トイレ<mark>ッ</mark>トペーパー","トイレットペーパー"],
+  ["鬱金香","チューリ<mark>ッ</mark>プ","チューリップ"]
+ ]
+};
+
+
+/* 發音要點（特殊讀音假名） */
+var TIPS={
+ "し":"讀 shi 不是 si——舌面貼近上顎","ち":"讀 chi 不是 ti","つ":"讀 tsu——先 t 再擦出 s",
+ "ふ":"讀 fu——雙唇吹氣，不咬下唇","ん":"鼻音，隨後音變化 n/m/ng，佔一拍",
+ "を":"發音同 お(o)，現代日語只作助詞用","ら":"彈舌音，介於 l 與 r 之間，舌尖輕彈上齒齦",
+ "り":"彈舌音","る":"彈舌音","れ":"彈舌音","ろ":"彈舌音",
+ "シ":"讀 shi；注意與 ツ 區分——シ 兩點偏左、末筆由下往上","ツ":"讀 tsu；兩點在上、末筆由上往下",
+ "ソ":"與 ン 區分——ソ 末筆由上往下","ン":"末筆由下往上",
+ "は":"作助詞時讀 wa（例：わたしは）","へ":"作助詞時讀 e（例：東京へ）"
+};
+/* ========== 小工具 ========== */
+function $(s){return document.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+var store={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+/* ---- 語音（含 Chrome GC 防護） ---- */
+var _utt=null,_watch=null,_voice=null;
+function pickVoice(){
+  if(!("speechSynthesis" in window))return null;
+  var vs=speechSynthesis.getVoices()||[];
+  for(var i=0;i<vs.length;i++){if(/^ja/i.test(vs[i].lang))return vs[i];}
+  return null;
+}
+if("speechSynthesis" in window){
+  speechSynthesis.onvoiceschanged=function(){_voice=pickVoice()};
+  _voice=pickVoice();
+}
+function say(text){
+  if(!("speechSynthesis" in window)||!text)return;
+  try{
+    speechSynthesis.cancel();
+    if(_watch){clearInterval(_watch);_watch=null}
+    _utt=new SpeechSynthesisUtterance(text);
+    _utt.lang="ja-JP";_utt.rate=.82;
+    if(!_voice)_voice=pickVoice();
+    if(_voice)_utt.voice=_voice;
+    _utt.onend=function(){if(_watch){clearInterval(_watch);_watch=null}};
+    speechSynthesis.speak(_utt);
+    _watch=setInterval(function(){
+      if(!speechSynthesis.speaking){clearInterval(_watch);_watch=null;return}
+      speechSynthesis.pause();speechSynthesis.resume();
+    },9000);
+  }catch(e){}
+}
+
+var MODNAV=[],modIdx=0;
+/* ========== 分頁 ========== */
+$$("nav button").forEach(function(b){
+  b.addEventListener("click",function(){
+    $$("nav button").forEach(function(x){x.setAttribute("aria-selected","false")});
+    b.setAttribute("aria-selected","true");
+    $$("main > section").forEach(function(s){s.hidden=true});
+    var t=document.getElementById(b.dataset.go);
+    if(t)t.hidden=false;
+    window.scrollTo(0,0);
+    if(typeof stopSong==="function"&&b.dataset.go!=="t-song")stopSong();
+    if(b.dataset.go==="t-trace")sizePad();
+  });
+});
+
+/* ========== 音圖 ========== */
+var chartSet="hira";
+
+function makeCell(h,k,rom,sc,info){
+  var b=document.createElement("button");
+  b.className="cell";b.type="button";
+  var ch=chartSet==="hira"?h:k;
+  var other=chartSet==="hira"?k:h;
+  b.innerHTML='<span class="ch kana">'+ch+'</span><span class="rom">'+rom+'</span>'+
+              (sc?'<span class="sc">'+sc+'</span>':'');
+  var navIdx=MODNAV.length;
+  MODNAV.push([ch,rom]);
+  b.addEventListener("click",function(){
+    $$(".cell.on").forEach(function(x){x.classList.remove("on")});
+    b.classList.add("on");
+    $("#ro-ch").textContent=ch;
+    $("#ro-pair").textContent=other===ch?"":other;
+    $("#ro-rom").textContent=rom;
+    $("#ro-info").textContent=info||"";
+    var tip=TIPS[ch]||TIPS[h]||"";
+    $("#ro-tip").textContent=tip;
+    $("#ro-tip").style.display=tip?"":"none";
+    $("#ro-say").onclick=function(){say(ch)};
+    openModal(navIdx);
+  });
+  return b;
+}
+function emptyCell(){var d=document.createElement("div");d.className="cell empty";return d}
+function labCell(t){var d=document.createElement("div");d.className="rowlab";d.textContent=t;return d}
+
+function buildChart(){
+  MODNAV=[];
+  var g=$("#c-sei");g.innerHTML="";
+  for(var r=0;r<11;r++){
+    g.appendChild(labCell(SEI_ROWLAB[r]+(r<10?"行":"")));
+    for(var c=0;c<5;c++){
+      var it=SEI[r*5+c];
+      if(!it){g.appendChild(emptyCell());continue}
+      var st=chartSet==="hira"?it[3]:it[4];
+      g.appendChild(makeCell(it[0],it[1],it[2],st,SEI_ROWLAB[r]+(r<10?"行":"")+"・"+DAN[c]+"　筆畫 "+st));
+    }
+  }
+  g=$("#c-daku");g.innerHTML="";
+  for(var r2=0;r2<4;r2++){
+    g.appendChild(labCell(DAKU_ROWLAB[r2]+"行"));
+    for(var c2=0;c2<5;c2++){
+      var d=DAKU[r2*5+c2];
+      g.appendChild(makeCell(d[0],d[1],d[2],0,DAKU_ROWLAB[r2]+"行・"+DAN[c2]+"　清音＋゛"));
+    }
+  }
+  g=$("#c-han");g.innerHTML="";
+  g.appendChild(labCell("ぱ行"));
+  HAN.forEach(function(h,i){
+    g.appendChild(makeCell(h[0],h[1],h[2],0,"ぱ行・"+DAN[i]+"　清音＋゜"));
+  });
+  g=$("#c-yo");g.innerHTML="";
+  YO.forEach(function(y,i){
+    if(i%3===0)g.appendChild(labCell(chartSet==="hira"?y[0].charAt(0):y[1].charAt(0)));
+    g.appendChild(makeCell(y[0],y[1],y[2],0,"拗音　い段＋や行"));
+  });
+  g=$("#c-gai");g.innerHTML="";
+  GAI.forEach(function(x){
+    g.appendChild(makeCell(x[0],x[0],x[1],0,"外來語拗音"));
+  });
+}
+$$(".pills [data-set]").forEach(function(p){
+  p.addEventListener("click",function(){
+    $$(".pills [data-set]").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    p.setAttribute("aria-pressed","true");
+    chartSet=p.dataset.set;
+    buildChart();
+  });
+});
+buildChart();
+
+/* ========== 描寫 ========== */
+var traceSet="hira",traceList=[],traceIdx=0,faded=false;
+
+function buildTraceList(){
+  traceList=[];
+  if(traceSet==="hira"||traceSet==="kata"){
+    var k=traceSet==="hira"?0:1;
+    SEI.forEach(function(it){ if(it)traceList.push([it[k],it[2],k===0?it[3]:it[4]]) });
+  }else if(traceSet==="daku"){
+    DAKU.concat(HAN).forEach(function(d){traceList.push([d[0],d[2],0])});
+    DAKU.concat(HAN).forEach(function(d){traceList.push([d[1],d[2],0])});
+  }else{
+    YO.forEach(function(y){traceList.push([y[0],y[2],0])});
+    YO.forEach(function(y){traceList.push([y[1],y[2],0])});
+  }
+  traceIdx=0;buildJump();renderTrace();
+}
+function buildJump(){
+  var j=$("#tr-jump");j.innerHTML="";
+  traceList.forEach(function(it,i){
+    var b=document.createElement("button");
+    b.type="button";
+    b.innerHTML='<span class="kana">'+it[0]+'</span><span class="jr">'+it[1]+'</span>';
+    b.addEventListener("click",function(){traceIdx=i;renderTrace()});
+    j.appendChild(b);
+  });
+}
+function renderTrace(){
+  var it=traceList[traceIdx];if(!it)return;
+  $("#pad-guide").textContent=it[0];
+  $("#pad-guide").style.opacity=faded?".22":"1";
+  $("#pad-guide").style.fontSize=(it[0].length>1?"9rem":"15rem");
+  $("#tr-idx").textContent=(traceIdx+1)+" / "+traceList.length;
+  $("#tr-ch").textContent=it[0];
+  $("#tr-rom").textContent=it[1];
+  $("#tr-st").textContent=it[2]?("筆畫 "+it[2]):"";
+  var j=$("#tr-jump");
+  Array.prototype.forEach.call(j.children,function(c,i){
+    c.setAttribute("aria-current",i===traceIdx?"true":"false");
+  });
+  var cur=j.children[traceIdx];
+  if(cur)cur.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});
+  clearPad();
+}
+$$("#tr-pills .pill").forEach(function(p){
+  p.addEventListener("click",function(){
+    $$("#tr-pills .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    p.setAttribute("aria-pressed","true");
+    traceSet=p.dataset.tset;buildTraceList();
+  });
+});
+$("#tr-prev").addEventListener("click",function(){traceIdx=(traceIdx-1+traceList.length)%traceList.length;renderTrace()});
+$("#tr-next").addEventListener("click",function(){traceIdx=(traceIdx+1)%traceList.length;renderTrace()});
+$("#tr-say").addEventListener("click",function(){say(traceList[traceIdx][0])});
+$("#tr-fade").addEventListener("click",function(){
+  faded=!faded;
+  $("#pad-guide").style.opacity=faded?".22":"1";
+  this.textContent=faded?"顯示範本":"淡出範本";
+});
+
+/* --- canvas --- */
+var cv=$("#pad-cv"),ctx=cv.getContext("2d"),drawing=false;
+function sizePad(){
+  var r=cv.getBoundingClientRect();
+  if(!r.width)return;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.lineWidth=9;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#221F1B";
+}
+function clearPad(){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.restore()}
+function pos(e){
+  var r=cv.getBoundingClientRect();
+  var t=e.touches?e.touches[0]:e;
+  return {x:t.clientX-r.left,y:t.clientY-r.top};
+}
+function start(e){e.preventDefault();drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
+function move(e){if(!drawing)return;e.preventDefault();var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke()}
+function end(){drawing=false}
+cv.addEventListener("pointerdown",start);
+cv.addEventListener("pointermove",move);
+window.addEventListener("pointerup",end);
+cv.addEventListener("touchstart",start,{passive:false});
+cv.addEventListener("touchmove",move,{passive:false});
+window.addEventListener("touchend",end);
+$("#tr-clear").addEventListener("click",clearPad);
+window.addEventListener("resize",sizePad);
+buildTraceList();
+setTimeout(sizePad,60);
+
+/* ========== 聽寫 ========== */
+var qMode="listen",qScope="sei",qPool=[],qCur=null,qLock=false;
+var qStat=store.get("kana_q",{ok:0,n:0});
+
+function buildPool(){
+  qPool=[];
+  var addPair=function(a){a.forEach(function(x){qPool.push([x[0],x[2]]);qPool.push([x[1],x[2]])})};
+  if(qScope==="sei"||qScope==="all"){SEI.forEach(function(it){if(it){qPool.push([it[0],it[2]]);qPool.push([it[1],it[2]])}})}
+  if(qScope==="daku"||qScope==="all"){addPair(DAKU);addPair(HAN)}
+  if(qScope==="yo"||qScope==="all"){addPair(YO)}
+  nextQ();
+}
+function sample(n,not){
+  var out=[],guard=0;
+  while(out.length<n&&guard<400){
+    guard++;
+    var c=qPool[Math.floor(Math.random()*qPool.length)];
+    if(c[1]===not)continue;
+    if(out.some(function(o){return o[1]===c[1]}))continue;
+    out.push(c);
+  }
+  return out;
+}
+function nextQ(){
+  qLock=false;
+  qCur=qPool[Math.floor(Math.random()*qPool.length)];
+  if(!qCur)return;
+  var wrong=sample(3,qCur[1]);
+  var opts=wrong.concat([qCur]).sort(function(){return Math.random()-.5});
+  var box=$("#q-opts");box.innerHTML="";
+  var prompt=$("#q-prompt");
+  $("#q-replay").style.display=qMode==="listen"?"":"none";
+
+  if(qMode==="listen"){prompt.textContent="🔊";prompt.className="qprompt";say(qCur[0]);}
+  else if(qMode==="read"){prompt.textContent=qCur[0];prompt.className="qprompt kana";}
+  else{prompt.textContent=qCur[1];prompt.className="qprompt rom";}
+
+  opts.forEach(function(o){
+    var b=document.createElement("button");
+    b.type="button";
+    if(qMode==="read"){b.className="opt rom";b.textContent=o[1];}
+    else{b.className="opt kana";b.textContent=o[0];}
+    b.addEventListener("click",function(){answer(b,o)});
+    box.appendChild(b);
+  });
+}
+function answer(btn,o){
+  if(qLock)return;qLock=true;
+  var right = qMode==="read" ? (o[1]===qCur[1]) : (o[0]===qCur[0]);
+  qStat.n++;
+  if(right){qStat.ok++;btn.classList.add("right")}
+  else{
+    btn.classList.add("wrong");
+    Array.prototype.forEach.call($("#q-opts").children,function(c){
+      if((qMode==="read"&&c.textContent===qCur[1])||(qMode!=="read"&&c.textContent===qCur[0]))c.classList.add("right");
+    });
+  }
+  say(qCur[0]);
+  store.set("kana_q",qStat);tally();
+  /* 打卡：與系列總覽相容的逗號字串格式 */
+  try{
+    var _t=new Date().toISOString().slice(0,10);
+    var _d=(localStorage.getItem("kana_days")||"").split(",").filter(Boolean);
+    if(_d.indexOf(_t)<0){_d.push(_t);localStorage.setItem("kana_days",_d.join(","));}
+  }catch(e){}
+  setTimeout(nextQ,right?700:1500);
+}
+function tally(){
+  $("#q-tally").textContent="答對 "+qStat.ok+" ／ 作答 "+qStat.n+
+    (qStat.n?("　正確率 "+Math.round(100*qStat.ok/qStat.n)+"%"):"");
+  $("#q-bar").style.width=(qStat.n?Math.round(100*qStat.ok/qStat.n):0)+"%";
+}
+$$("#q-mode .pill").forEach(function(p){p.addEventListener("click",function(){
+  $$("#q-mode .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+  p.setAttribute("aria-pressed","true");qMode=p.dataset.qm;nextQ();
+})});
+$$("#q-scope .pill").forEach(function(p){p.addEventListener("click",function(){
+  $$("#q-scope .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+  p.setAttribute("aria-pressed","true");qScope=p.dataset.qs;buildPool();
+})});
+$("#q-replay").addEventListener("click",function(){if(qCur)say(qCur[0])});
+$("#q-reset").addEventListener("click",function(){qStat={ok:0,n:0};store.set("kana_q",qStat);tally()});
+buildPool();tally();
+
+/* ========== 單字 ========== */
+var wCat=Object.keys(WORDS)[0];
+function buildWords(){
+  var pw=$("#w-pills");pw.innerHTML="";
+  Object.keys(WORDS).forEach(function(k){
+    var b=document.createElement("button");
+    b.className="pill";b.type="button";
+    b.textContent=k+"（"+WORDS[k].length+"）";
+    b.setAttribute("aria-pressed",k===wCat?"true":"false");
+    b.addEventListener("click",function(){wCat=k;buildWords()});
+    pw.appendChild(b);
+  });
+  var l=$("#w-list");l.innerHTML="";
+  WORDS[wCat].forEach(function(w){
+    var b=document.createElement("button");
+    b.className="vrow";b.type="button";
+    b.innerHTML='<span class="zh">'+w[0]+'</span><span class="jp kana">'+w[1]+'</span><span class="spk">▶ 播放</span>';
+    b.addEventListener("click",function(){say(w[2])});
+    l.appendChild(b);
+  });
+}
+buildWords();
+
+
+/* ========== 唱歌 ========== */
+var songSet="hira",songTimer=null,songQueue=[];
+var SONG_ROWS=(function(){
+  var rows=[];
+  for(var r=0;r<11;r++){
+    var row=[];
+    for(var c=0;c<5;c++){var it=SEI[r*5+c];if(it)row.push(it);}
+    rows.push(row);
+  }
+  return rows;
+})();
+function stopSong(){
+  songQueue=[];
+  if(songTimer){clearTimeout(songTimer);songTimer=null}
+  if("speechSynthesis" in window)try{speechSynthesis.cancel()}catch(e){}
+  $$("#song-rows .kk button.hot").forEach(function(b){b.classList.remove("hot")});
+  $$("#song-rows .play[aria-pressed=true]").forEach(function(b){b.setAttribute("aria-pressed","false")});
+}
+function playQueue(){
+  if(!songQueue.length){stopSong();return}
+  var item=songQueue.shift(); // [btnEl, text]
+  $$("#song-rows .kk button.hot").forEach(function(b){b.classList.remove("hot")});
+  if(item[0])item[0].classList.add("hot");
+  say(item[1]);
+  songTimer=setTimeout(playQueue, item[1].length>1?1150:900);
+}
+function buildSong(){
+  var host=$("#song-rows");host.innerHTML="";
+  SONG_ROWS.forEach(function(row,ri){
+    var d=document.createElement("div");d.className="srow";
+    var p=document.createElement("button");
+    p.className="play";p.type="button";p.textContent="▶";p.setAttribute("aria-pressed","false");
+    p.setAttribute("aria-label","播放第"+(ri+1)+"行");
+    var kk=document.createElement("div");kk.className="kk";
+    var btns=[];
+    row.forEach(function(it){
+      var ch=songSet==="hira"?it[0]:it[1];
+      var b=document.createElement("button");
+      b.type="button";b.className="kana";
+      b.innerHTML=ch+'<span class="kr">'+it[2]+'</span>';
+      b.addEventListener("click",function(){stopSong();say(ch)});
+      kk.appendChild(b);btns.push([b,ch]);
+    });
+    p.addEventListener("click",function(){
+      stopSong();
+      p.setAttribute("aria-pressed","true");
+      songQueue=btns.slice();
+      playQueue();
+    });
+    d.appendChild(p);d.appendChild(kk);host.appendChild(d);
+  });
+}
+$$(".pills [data-sset]").forEach(function(p){
+  p.addEventListener("click",function(){
+    $$(".pills [data-sset]").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    p.setAttribute("aria-pressed","true");
+    songSet=p.dataset.sset;stopSong();buildSong();
+  });
+});
+$("#song-all").addEventListener("click",function(){
+  stopSong();
+  songQueue=[];
+  $$("#song-rows .srow").forEach(function(row){
+    Array.prototype.forEach.call(row.querySelectorAll(".kk button"),function(b){
+      songQueue.push([b, b.childNodes[0].nodeValue]);
+    });
+  });
+  playQueue();
+});
+$("#song-stop").addEventListener("click",stopSong);
+buildSong();
+
+
+
+/* ========== 漢字（NHK 入門 48 字） ========== */
+var KANJI=[
+ ["心","こころ","kokoro","心"],["愛","あい","ai","愛"],["人","ひと","hito","人"],["金","かね","kane","錢、金"],
+ ["夢","ゆめ","yume","夢"],["桜","さくら","sakura","櫻花"],["私","わたし","watashi","我"],["本","ほん","hon","書"],
+ ["食","しょく","shoku","食"],["円","えん","en","日圓"],
+ ["門","もん","mon","門"],["筋肉","きんにく","kinniku","肌肉"],["写真","しゃしん","shashin","照片"],
+ ["夜","よる","yoru","夜晚"],["車","くるま","kuruma","車"],["温泉","おんせん","onsen","溫泉"],
+ ["蕎麦","そば","soba","蕎麥麵"],["山","やま","yama","山"],["盆栽","ぼんさい","bonsai","盆栽"],["丼","どんぶり","donburi","蓋飯"],
+ ["時計","とけい","tokei","時鐘"],["雪","ゆき","yuki","雪"],["猫","ねこ","neko","貓"],["卵","たまご","tamago","蛋"],
+ ["足","あし","ashi","腳"],["海","うみ","umi","海"],["麺","めん","men","麵"],["寺","てら","tera","寺"],
+ ["書","しょ","sho","書法、書寫"],["神社","じんじゃ","jinja","神社"],
+ ["忍者","にんじゃ","ninja","忍者"],["動物","どうぶつ","dōbutsu","動物"],["魚","さかな","sakana","魚"],
+ ["漫画","まんが","manga","漫畫"],["電車","でんしゃ","densha","電車"],["湯","ゆ","yu","熱水"],
+ ["歌","うた","uta","歌"],["船","ふね","fune","船"],["城","しろ","shiro","城"],["防災","ぼうさい","bōsai","防災"],
+ ["刺身","さしみ","sashimi","生魚片"],["花","はな","hana","花"],["冬","ふゆ","fuyu","冬"],
+ ["天気","てんき","tenki","天氣"],["侍","さむらい","samurai","武士"],["滝","たき","taki","瀑布"],
+ ["玉","たま","tama","玉、球"],["卒業","そつぎょう","sotsugyō","畢業"]
+];
+(function(){
+  var host=$("#k-tiles");if(!host)return;
+  KANJI.forEach(function(k,i){
+    var b=document.createElement("button");
+    b.type="button";
+    b.className="ktile k"+(Math.floor(i/10)+1);
+    b.innerHTML='<span class="kn">#'+(i+1)+'</span><span class="kj mincho">'+k[0]+'</span><span class="ky kana">'+k[1]+'</span>';
+    b.addEventListener("click",function(){
+      $$(".ktile.on").forEach(function(x){x.classList.remove("on")});
+      b.classList.add("on");
+      $("#k-ch").textContent=k[0];
+      $("#k-yomi").textContent=k[1];
+      $("#k-rom").textContent=k[2];
+      $("#k-mean").textContent=k[3];
+      $("#k-say").onclick=function(){say(k[1])};
+      say(k[1]);
+    });
+    host.appendChild(b);
+  });
+})();
+
+/* ========== 假名放大卡（NHK 式 modal） ========== */
+function openModal(i){
+  modIdx=i;renderModal();
+  $("#modal").hidden=false;
+  document.body.style.overflow="hidden";
+}
+function closeModal(){
+  $("#modal").hidden=true;
+  document.body.style.overflow="";
+}
+function renderModal(){
+  var m=MODNAV[modIdx];if(!m)return;
+  var el=$("#m-ch");
+  el.textContent=m[0];
+  el.className="mch kana"+(m[0].length>1?" two":"");
+  $("#m-rom").textContent=m[1];
+  $("#m-tip").textContent=TIPS[m[0]]||"";
+  $("#m-say").onclick=function(){say(m[0])};
+  say(m[0]);
+}
+$("#m-close").addEventListener("click",closeModal);
+$("#modal").addEventListener("click",function(e){if(e.target===this)closeModal()});
+$("#m-prev").addEventListener("click",function(){modIdx=(modIdx-1+MODNAV.length)%MODNAV.length;renderModal()});
+$("#m-next").addEventListener("click",function(){modIdx=(modIdx+1)%MODNAV.length;renderModal()});
+closeModal();
+document.addEventListener("keydown",function(e){
+  if($("#modal").hidden)return;
+  if(e.key==="Escape")closeModal();
+  if(e.key==="ArrowLeft")$("#m-prev").click();
+  if(e.key==="ArrowRight")$("#m-next").click();
+});
+
+/* ========== 易混字 ========== */
+var PAIRS=[
+ [["あ","a"],["お","o"],"あ 有交叉的橫豎；お 右上多一點"],
+ [["ね","ne"],["れ","re"],"ね 尾端打結繞圈；れ 尾端向右甩出"],
+ [["ぬ","nu"],["め","me"],"ぬ 尾端有結；め 沒有結"],
+ [["る","ru"],["ろ","ro"],"る 尾端捲一個圈；ろ 直接收尾"],
+ [["き","ki"],["さ","sa"],"き 兩橫；さ 一橫"],
+ [["は","ha"],["ほ","ho"],"ほ 右邊多一橫"],
+ [["わ","wa"],["れ","re"],"わ 右半圓潤收圓；れ 向右甩出"],
+ [["シ","shi"],["ツ","tsu"],"シ 兩點偏左直排、末筆由下往上；ツ 兩點在上、末筆由上往下"],
+ [["ソ","so"],["ン","n"],"ソ 末筆由上往下；ン 末筆由下往上"],
+ [["ク","ku"],["ワ","wa"],"ク 開口；ワ 封口"],
+ [["ウ","u"],["ワ","wa"],"ウ 頂上多一點"],
+ [["コ","ko"],["ユ","yu"],"ユ 底橫向左突出"]
+];
+(function(){
+  var host=$("#pairs");if(!host)return;
+  PAIRS.forEach(function(p){
+    var d=document.createElement("div");d.className="pairbox";
+    var pp=document.createElement("div");pp.className="pp";
+    [p[0],p[1]].forEach(function(x){
+      var b=document.createElement("button");
+      b.type="button";b.className="kana";
+      b.innerHTML=x[0]+'<span class="pr">'+x[1]+'</span>';
+      b.addEventListener("click",function(){say(x[0])});
+      pp.appendChild(b);
+    });
+    var h=document.createElement("div");h.className="hint";h.textContent=p[2];
+    d.appendChild(pp);d.appendChild(h);host.appendChild(d);
+  });
+})();
+
+/* ========== 規則例字發音 ========== */
+$$(".eg[data-say]").forEach(function(b){
+  b.addEventListener("click",function(){say(b.dataset.say)});
+});
+</script>
+</body>
+</html>

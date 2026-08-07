@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>曜日の歌 互動學習單</title>
+<style>
+:root{
+  --bg:#2a2740;         /* 薄暮 plum-slate */
+  --bg2:#37324f;
+  --paper:#f4f0e6;
+  --gold:#e6c15a;
+  --line:rgba(244,240,230,.16);
+  /* 七曜色 */
+  --c-nichi:#e8b04a;    /* 日・太陽 */
+  --c-getsu:#9fb8d8;    /* 月 */
+  --c-ka:#d95a4a;       /* 火 */
+  --c-sui:#4aa3d9;      /* 水 */
+  --c-moku:#5fae72;     /* 木 */
+  --c-kin:#d9b64a;      /* 金 */
+  --c-do:#b98b5a;       /* 土 */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1px 1px at 18% 22%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.4px 1.4px at 55% 78%, rgba(255,255,255,.35), transparent),
+    linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+  background-attachment:fixed;color:var(--paper);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px 80px}
+
+header{text-align:center;padding:24px 0 6px}
+header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--gold);font-weight:700}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:clamp(1.9rem,7vw,3rem);margin:.2em 0 .1em;font-weight:600;letter-spacing:.12em;color:var(--paper)}
+header h1 span{display:inline-block;opacity:0;animation:spin .5s ease forwards}
+@keyframes spin{from{opacity:0;transform:rotate(-90deg) scale(.6)}to{opacity:1;transform:none}}
+header .sub{font-size:.92rem;opacity:.72}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
+nav button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
+  background:transparent;color:var(--paper);border:1px solid var(--line);transition:.18s}
+nav button:hover{border-color:var(--gold);color:var(--gold)}
+nav button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:700}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px}
+h2{font-size:1.12rem;margin:0 0 .5em;color:var(--gold)}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--c-sui)}
+p{margin:.5em 0}
+.note{opacity:.66;font-size:.85rem}
+
+.btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
+  background:var(--gold);color:var(--bg);border:none;font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:transparent;color:var(--paper);border:1px solid var(--line);font-weight:400}
+.btn.blue{background:var(--c-sui);color:#fff}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:default}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.3)}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:rgba(255,255,255,.05)}
+.videoCard:hover{border-color:var(--gold)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--gold);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
+.videoCard .vtxt b{display:block}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+
+/* ── 七曜輪（招牌）── */
+.wheelWrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:center}
+.wheelBox{flex:1 1 300px;max-width:360px}
+.wedge{cursor:pointer;transition:.15s}
+.wedge:hover{filter:brightness(1.12)}
+.wedge.active{filter:brightness(1.25) drop-shadow(0 0 8px rgba(255,255,255,.4))}
+.wedgeK{font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:24px;fill:#fff;
+  pointer-events:none;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.hubText{text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.readout{flex:1 1 240px;min-height:180px;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:12px;padding:18px}
+.readout .k{font-size:2.6rem;font-weight:700;margin:.05em 0}
+.readout .big{font-size:1.7rem;letter-spacing:.06em;color:var(--gold);font-weight:700}
+.readout .rom{font-size:.85rem;opacity:.6}
+.readout .row{margin-top:10px;font-size:.92rem}
+.readout .row b{color:var(--c-sui)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.vcard{border:1px solid var(--line);border-radius:12px;padding:14px 10px;background:rgba(255,255,255,.05);
+  cursor:pointer;text-align:center;font:inherit;color:inherit}
+.vcard:hover{border-color:var(--gold)}
+.vcard .k{font-size:1.7rem;font-weight:700}
+.vcard .w{font-size:1.05rem;color:var(--gold);font-weight:700}
+.vcard .r{font-size:.74rem;opacity:.6}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:rgba(230,193,90,.14);color:var(--gold);white-space:nowrap}
+td.jp{font-size:1.05rem}
+.kbig{font-size:1.3rem;font-weight:700}
+
+textarea,input[type=text]{width:100%;background:rgba(0,0,0,.25);color:var(--paper);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:120px;resize:vertical}
+input[type=range]{width:170px;vertical-align:middle}
+
+.beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.06);
+  font-size:1rem;transition:.12s}
+.chip.on{background:var(--gold);color:var(--bg);border-color:var(--gold);transform:scale(1.1)}
+
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-child{border-top:none}
+.q .stem{font-weight:700;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--gold)}
+.opt.right{background:rgba(95,174,114,.25);border-color:var(--c-moku)}
+.opt.wrong{background:rgba(217,90,74,.25);border-color:var(--c-ka)}
+.score{font-size:1.05rem;color:var(--gold);font-weight:800}
+
+.reclist li{margin:6px 0}
+audio{max-width:100%;vertical-align:middle}
+footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">唱歌學日文 · 第四集</div>
+  <h1 class="jp" id="title"></h1>
+  <div class="sub">曜日の歌 ─ 星期唸法互動學習單</div>
+</header>
+
+<nav id="nav">
+  <button data-target="t1" aria-selected="true">① 影片導覽</button>
+  <button data-target="t2">② 七曜輪</button>
+  <button data-target="t3">③ 漢字對照</button>
+  <button data-target="t4">④ 節拍跟唱</button>
+  <button data-target="t5">⑤ 跟讀錄音</button>
+  <button data-target="t6">⑥ 小測驗</button>
+<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
+</nav>
+
+<!-- ① -->
+<section id="t1">
+  <div class="card">
+    <h2>這七個字，你早就認得了</h2>
+    <p><span class="jp">日・月・火・水・木・金・土</span>——這正是中文的<b>五行</b>加上日月。台灣學生完全不用背意思，這集的重點只有一個：<b>把漢字換成日文的唸法</b>。難的是 <span class="jp">日</span> 要唸 <span class="jp">にち</span>（不是 ひ）、<span class="jp">月</span> 要唸 <span class="jp">げつ</span>（不是 つき）。全部字尾都接 <span class="jp">ようび</span>。</p>
+    <div id="videoZone">
+      <div class="embed">
+        <iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/UkT_8vdMnFs"
+                title="曜日の歌" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+      </div>
+      <p class="note" style="margin-top:6px">影片無法播放？<a href="https://youtu.be/UkT_8vdMnFs" target="_blank" rel="noopener" style="color:var(--gold)">在 YouTube 開啟</a></p>
+    </div>
+    <h3>建議流程</h3>
+    <table>
+      <tr><th>階段</th><th>做什麼</th><th>時間</th></tr>
+      <tr><td>1 唱</td><td>跟影片把七個 ようび 唱順</td><td>4 分</td></tr>
+      <tr><td>2 轉</td><td>第 ② 頁點七曜輪，把唸法對到漢字</td><td>4 分</td></tr>
+      <tr><td>3 記</td><td>第 ③ 頁用五行／行星當記憶鉤</td><td>4 分</td></tr>
+      <tr><td>4 用</td><td>互問「今天星期幾？」「你哪天上課？」</td><td>5 分</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>課堂筆記</h2>
+    <p class="note">只存在這台裝置。</p>
+    <textarea id="notes" placeholder="例：げつ 和 がつ（幾月的月）要分清楚，下週用月曆對照……"></textarea>
+    <button class="btn" id="saveNote">儲存</button>
+    <span id="noteMsg" class="note"></span>
+  </div>
+</section>
+
+<!-- ② -->
+<section id="t2" hidden>
+  <div class="card">
+    <h2>點七曜輪，聽唸法</h2>
+    <p class="note">點輪上任一個漢字，會唸出星期並顯示它對應的行星與五行。</p>
+    <div class="wheelWrap">
+      <div class="wheelBox">
+        <svg id="wheel" viewBox="0 0 300 300" width="100%" aria-label="七曜輪"></svg>
+      </div>
+      <div class="readout" id="readout">
+        <div class="k jp" style="color:var(--gold)">？</div>
+        <div class="big jp">點輪盤</div>
+        <div class="rom"></div>
+        <div class="row"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ -->
+<section id="t3" hidden>
+  <div class="card">
+    <h2>七張卡：漢字 → 唸法</h2>
+    <p class="note">點卡片發音。</p>
+    <div class="grid" id="vgrid"></div>
+  </div>
+  <div class="card">
+    <h2>用五行與行星記住唸法</h2>
+    <table>
+      <tr><th>星期</th><th>漢字</th><th>唸法</th><th>行星／來源</th><th>唸法陷阱</th></tr>
+      <tr><td>日</td><td class="kbig">日</td><td class="jp">にちようび</td><td>太陽</td><td>日唸 にち，不是 ひ</td></tr>
+      <tr><td>一</td><td class="kbig">月</td><td class="jp">げつようび</td><td>月亮</td><td>月唸 げつ，不是 つき／がつ</td></tr>
+      <tr><td>二</td><td class="kbig">火</td><td class="jp">かようび</td><td>火星</td><td>—</td></tr>
+      <tr><td>三</td><td class="kbig">水</td><td class="jp">すいようび</td><td>水星</td><td>—</td></tr>
+      <tr><td>四</td><td class="kbig">木</td><td class="jp">もくようび</td><td>木星</td><td>木唸 もく，不是 き</td></tr>
+      <tr><td>五</td><td class="kbig">金</td><td class="jp">きんようび</td><td>金星</td><td>—</td></tr>
+      <tr><td>六</td><td class="kbig">土</td><td class="jp">どようび</td><td>土星</td><td>土唸 ど，不是 つち</td></tr>
+    </table>
+    <p class="note">記憶鏈：漢字（已會）→ 行星（火星＝火曜）→ 日文音讀。中間那一環是台灣學生最省力的橋。</p>
+  </div>
+</section>
+
+<!-- ④ -->
+<section id="t4" hidden>
+  <div class="card">
+    <h2>七曜節拍跟唱</h2>
+    <p class="note">先「打拍」抓節奏，再「逐字朗讀」把音疊上去。順序照歌：日→月→火→水→木→金→土。</p>
+    <div>
+      <label class="note">速度</label>
+      <input type="range" id="tempo" min="500" max="1300" step="20" value="850">
+      <span class="note" id="tempoLab">中速</span>
+    </div>
+    <button class="btn" id="playBeat">▶ 打拍</button>
+    <button class="btn blue" id="playSay">▶ 逐字朗讀</button>
+    <button class="btn ghost" id="stopSeq">■ 停止</button>
+    <div class="beatBar" id="seqBar"></div>
+  </div>
+  <div class="card">
+    <h2>兩個最容易混的月</h2>
+    <p><span class="jp">月曜日（げつようび）</span>的「月」唸 <b class="jp">げつ</b>；但「幾月」的月（<span class="jp">一月 いちがつ</span>）唸 <b class="jp">がつ</b>。同一個字、兩種音讀，用途一分：<b>星期用 げつ、月份用 がつ</b>。</p>
+    <button class="btn ghost" data-say="げつようび">聽 月曜日</button>
+    <button class="btn ghost" data-say="いちがつ">對照 一月</button>
+  </div>
+</section>
+
+<!-- ⑤ -->
+<section id="t5" hidden>
+  <div class="card">
+    <h2>模仿 → 錄音 → 對照</h2>
+    <div style="margin:10px 0">
+      <label class="note">要練的內容（可改寫，例如自己上課的那天）</label>
+      <input type="text" id="drillText" class="jp" value="にちようび げつようび かようび">
+      <button class="btn" id="sayDrill">聽範讀</button>
+      <button class="btn ghost" id="slowDrill">慢速範讀</button>
+      <button class="btn ghost" id="stopAll">停止</button>
+    </div>
+    <div>
+      <button class="btn blue" id="recStart">● 開始錄音</button>
+      <button class="btn ghost" id="recStop" disabled>■ 停止</button>
+      <span id="recMsg" class="note"></span>
+    </div>
+    <ul class="reclist" id="recList"></ul>
+  </div>
+  <div class="card">
+    <h2>自我檢核</h2>
+    <table>
+      <tr><th>檢核點</th><th>做到了嗎</th></tr>
+      <tr><td>七個星期都能不看字唸出</td><td>□</td></tr>
+      <tr><td>日＝にち、月＝げつ，沒有唸成訓讀</td><td>□</td></tr>
+      <tr><td>星期的月 げつ 沒和月份的 がつ 搞混</td><td>□</td></tr>
+      <tr><td>能回答「今天星期幾」</td><td>□</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ -->
+<section id="t6" hidden>
+  <div class="card">
+    <h2>小測驗</h2>
+    <div id="quiz"></div>
+    <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
+    <p class="note" id="checkin"></p>
+  </div>
+</section>
+
+<footer>唱歌學日文 #4 曜日の歌 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var mem={};
+var LS={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+};
+
+/* 標題逐字 */
+(function(){
+  var t="曜日の歌", el=document.getElementById("title");
+  for(var i=0;i<t.length;i++){
+    var s=document.createElement("span");
+    s.textContent=t[i]; s.style.animationDelay=(i*0.1)+"s";
+    el.appendChild(s);
+  }
+})();
+
+/* ── 資料（依歌序：日月火水木金土）── */
+var DAYS=[
+ {kanji:"日", w:"にちようび", r:"nichiyōbi", cn:"星期日", planet:"太陽", elem:"—",   color:"var(--c-nichi)", say:"にちようび"},
+ {kanji:"月", w:"げつようび", r:"getsuyōbi", cn:"星期一", planet:"月",   elem:"—",   color:"var(--c-getsu)", say:"げつようび"},
+ {kanji:"火", w:"かようび",   r:"kayōbi",    cn:"星期二", planet:"火星", elem:"火", color:"var(--c-ka)",    say:"かようび"},
+ {kanji:"水", w:"すいようび", r:"suiyōbi",   cn:"星期三", planet:"水星", elem:"水", color:"var(--c-sui)",   say:"すいようび"},
+ {kanji:"木", w:"もくようび", r:"mokuyōbi",  cn:"星期四", planet:"木星", elem:"木", color:"var(--c-moku)",  say:"もくようび"},
+ {kanji:"金", w:"きんようび", r:"kinyōbi",   cn:"星期五", planet:"金星", elem:"金", color:"var(--c-kin)",   say:"きんようび"},
+ {kanji:"土", w:"どようび",   r:"doyōbi",    cn:"星期六", planet:"土星", elem:"土", color:"var(--c-do)",    say:"どようび"}
+];
+
+/* 分頁 */
+var nav=document.getElementById("nav");
+nav.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-target]"); if(!b) return;
+  var btns=nav.querySelectorAll("button");
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-selected", btns[i]===b?"true":"false");
+  var secs=document.querySelectorAll("section");
+  for(var j=0;j<secs.length;j++) secs[j].hidden=(secs[j].id!==b.dataset.target);
+  stopSeq();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* TTS */
+var watchdog=null;
+function stopSpeak(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(watchdog){clearInterval(watchdog);watchdog=null;}
+}
+function speak(text,rate,onend){
+  if(!("speechSynthesis" in window)||!text){ if(onend) onend(); return; }
+  stopSpeak();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=rate||0.9;
+  var vs=speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang&&vs[i].lang.indexOf("ja")===0){u.voice=vs[i];break;} }
+  u.onend=function(){ if(watchdog){clearInterval(watchdog);watchdog=null;} if(onend) onend(); };
+  u.onerror=function(){ if(onend) onend(); };
+  speechSynthesis.speak(u);
+  watchdog=setInterval(function(){
+    if(!speechSynthesis.speaking){clearInterval(watchdog);watchdog=null;return;}
+    speechSynthesis.pause(); speechSynthesis.resume();
+  },9000);
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-say]"); if(b) speak(b.getAttribute("data-say"));
+});
+
+/* 影片降級 */
+(function(){
+  var zone=document.getElementById("videoZone"), fr=document.getElementById("ytFrame");
+  if(!zone||!fr) return;
+  var ok=false;
+  fr.addEventListener("load",function(){ok=true;});
+  setTimeout(function(){
+    if(ok) return;
+    zone.innerHTML='<a class="videoCard" href="https://youtu.be/UkT_8vdMnFs" target="_blank" rel="noopener">'+
+      '<span class="play">▶</span><span class="vtxt"><b>播放〈曜日の歌〉</b>'+
+      '<i>此環境不支援內嵌，點擊在 YouTube 開啟</i></span></a>';
+  },4000);
+})();
+
+/* 筆記 */
+var nt=document.getElementById("notes");
+nt.value=LS.get("ep4_notes")||"";
+document.getElementById("saveNote").onclick=function(){
+  LS.set("ep4_notes",nt.value);
+  var m=document.getElementById("noteMsg"); m.textContent="已儲存 ✓";
+  setTimeout(function(){m.textContent="";},2000);
+};
+
+/* ── ② 七曜輪 ── */
+var CX=150, CY=150, RO=132, RI=52, N=DAYS.length;
+function pol(r,deg){ var a=(deg-90)*Math.PI/180; return {x:CX+r*Math.cos(a), y:CY+r*Math.sin(a)}; }
+function wedgePath(a0,a1){
+  var p1=pol(RO,a0), p2=pol(RO,a1), p3=pol(RI,a1), p4=pol(RI,a0);
+  var large=(a1-a0)>180?1:0;
+  return "M"+p1.x+" "+p1.y+
+         " A"+RO+" "+RO+" 0 "+large+" 1 "+p2.x+" "+p2.y+
+         " L"+p3.x+" "+p3.y+
+         " A"+RI+" "+RI+" 0 "+large+" 0 "+p4.x+" "+p4.y+" Z";
+}
+var svg=document.getElementById("wheel");
+var SVGNS="http://www.w3.org/2000/svg";
+var step=360/N;
+DAYS.forEach(function(d,i){
+  var a0=i*step, a1=(i+1)*step, mid=(a0+a1)/2;
+  var g=document.createElementNS(SVGNS,"g");
+  g.setAttribute("class","wedge"); g.dataset.idx=i;
+  var path=document.createElementNS(SVGNS,"path");
+  path.setAttribute("d",wedgePath(a0,a1));
+  path.setAttribute("fill",d.color);
+  path.setAttribute("stroke","rgba(42,39,64,.55)");
+  path.setAttribute("stroke-width","2");
+  g.appendChild(path);
+  var tp=pol((RO+RI)/2, mid);
+  var tx=document.createElementNS(SVGNS,"text");
+  tx.setAttribute("class","wedgeK"); tx.setAttribute("x",tp.x); tx.setAttribute("y",tp.y);
+  tx.textContent=d.kanji;
+  g.appendChild(tx);
+  svg.appendChild(g);
+});
+/* 中心圓 */
+var hub=document.createElementNS(SVGNS,"circle");
+hub.setAttribute("cx",CX); hub.setAttribute("cy",CY); hub.setAttribute("r",RI-4);
+hub.setAttribute("fill","rgba(42,39,64,.9)"); hub.setAttribute("stroke","var(--gold)"); hub.setAttribute("stroke-width","1.5");
+svg.appendChild(hub);
+var hubT=document.createElementNS(SVGNS,"text");
+hubT.setAttribute("class","hubText jp"); hubT.setAttribute("x",CX); hubT.setAttribute("y",CY);
+hubT.setAttribute("fill","var(--gold)"); hubT.setAttribute("font-size","20"); hubT.setAttribute("font-weight","700");
+hubT.textContent="七曜";
+svg.appendChild(hubT);
+
+var ro=document.getElementById("readout");
+svg.addEventListener("click",function(e){
+  var g=e.target.closest(".wedge"); if(!g) return;
+  svg.querySelectorAll(".wedge").forEach(function(x){x.classList.remove("active");});
+  g.classList.add("active");
+  var d=DAYS[+g.dataset.idx];
+  hubT.textContent=d.kanji;
+  ro.querySelector(".k").textContent=d.kanji;
+  ro.querySelector(".k").style.color=d.color;
+  ro.querySelector(".big").textContent=d.w;
+  ro.querySelector(".rom").textContent=d.r+"　"+d.cn;
+  ro.querySelector(".row").innerHTML="行星：<b>"+d.planet+"</b>　五行："+(d.elem);
+  speak(d.say,0.9);
+});
+
+/* ── ③ 卡片 ── */
+var vg=document.getElementById("vgrid");
+DAYS.forEach(function(d){
+  var c=document.createElement("button");
+  c.className="vcard";
+  c.innerHTML='<span class="k jp" style="color:'+d.color+'">'+d.kanji+'</span>'+
+              '<span class="w jp">'+d.w+'</span><span class="r">'+d.r+'</span>';
+  c.onclick=function(){ speak(d.say); };
+  vg.appendChild(c);
+});
+
+/* ── ④ 節拍 ── */
+var seqBar=document.getElementById("seqBar");
+DAYS.forEach(function(d,i){
+  var s=document.createElement("span");
+  s.className="chip jp"; s.dataset.idx=i;
+  s.style.borderColor=d.color; s.textContent=d.kanji;
+  seqBar.appendChild(s);
+});
+var tempo=document.getElementById("tempo"), tLab=document.getElementById("tempoLab");
+function tempoLabel(){
+  var v=+tempo.value;
+  tLab.textContent=v>1080?"很慢":v>880?"慢速":v>680?"中速":"原速";
+}
+tempo.addEventListener("input",tempoLabel); tempoLabel();
+
+var seqTimer=null, ac=null;
+function tick(){
+  try{
+    if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(), g=ac.createGain();
+    o.type="sine"; o.frequency.value=840;
+    g.gain.setValueAtTime(0.001,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25,ac.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.13);
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime+0.15);
+  }catch(e){}
+}
+function clearChips(){ seqBar.querySelectorAll(".chip").forEach(function(c){c.classList.remove("on");}); }
+function stopSeq(){
+  if(seqTimer){clearTimeout(seqTimer);seqTimer=null;}
+  stopSpeak(); clearChips();
+}
+document.getElementById("stopSeq").onclick=stopSeq;
+
+function runSeq(withVoice){
+  stopSeq();
+  var idx=0;
+  function stepFn(){
+    if(idx>=DAYS.length){ clearChips(); return; }
+    clearChips();
+    var chip=seqBar.querySelector(".chip[data-idx='"+idx+"']");
+    if(chip) chip.classList.add("on");
+    var d=DAYS[idx]; idx++;
+    if(withVoice){
+      speak(d.say,0.92,function(){ seqTimer=setTimeout(stepFn,150); });
+    }else{
+      tick(); seqTimer=setTimeout(stepFn,+tempo.value);
+    }
+  }
+  stepFn();
+}
+document.getElementById("playBeat").onclick=function(){ runSeq(false); };
+document.getElementById("playSay").onclick=function(){ runSeq(true); };
+
+/* ⑤ 錄音 */
+document.getElementById("sayDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.85); };
+document.getElementById("slowDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.55); };
+document.getElementById("stopAll").onclick=stopSpeak;
+
+var mr=null, chunks=[], recN=0;
+var bStart=document.getElementById("recStart"), bStop=document.getElementById("recStop"),
+    rMsg=document.getElementById("recMsg"), rList=document.getElementById("recList");
+bStart.onclick=function(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){ rMsg.textContent="這個瀏覽器不支援錄音"; return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    chunks=[]; mr=new MediaRecorder(stream);
+    mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+      var url=URL.createObjectURL(blob); recN++;
+      var li=document.createElement("li");
+      li.innerHTML='第 '+recN+' 次　<audio controls src="'+url+'"></audio> '+
+                   '<a class="btn ghost" download="youbi-'+recN+'.webm" href="'+url+'">下載</a>';
+      rList.appendChild(li);
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    mr.start(); bStart.disabled=true; bStop.disabled=false; rMsg.textContent="錄音中…";
+  }).catch(function(){ rMsg.textContent="沒有取得麥克風權限"; });
+};
+bStop.onclick=function(){
+  if(mr&&mr.state!=="inactive") mr.stop();
+  bStart.disabled=false; bStop.disabled=true; rMsg.textContent="已完成，可回放比對";
+};
+
+/* ⑥ 測驗 */
+var QS=[
+ {q:"星期日 怎麼唸？", o:["ひようび","にちようび","じつようび","つきようび"], a:1},
+ {q:"月曜日 的「月」唸作？", o:["つき","がつ","げつ","つく"], a:2},
+ {q:"火曜日 是星期幾？", o:["星期一","星期二","星期三","星期五"], a:1},
+ {q:"星期四 的正確唸法是？", o:["きようび","もくようび","きんようび","すいようび"], a:1},
+ {q:"どようび 是星期幾？", o:["星期四","星期五","星期六","星期日"], a:2},
+ {q:"「土」在土曜日裡唸作？", o:["つち","ど","と","どう"], a:1},
+ {q:"火水木金土 對應的是中文的什麼？", o:["七情","五行","六氣","八卦"], a:1},
+ {q:"星期用的月是 げつ；那「幾月」的月唸作？", o:["げつ","がつ","つき","げっ"], a:1}
+];
+var quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score"), doneA=[], got=0;
+function buildQuiz(){
+  quiz.innerHTML=""; doneA=[]; got=0; scoreEl.textContent="0 / "+QS.length;
+  QS.forEach(function(item,qi){
+    var d=document.createElement("div"); d.className="q";
+    d.innerHTML='<div class="stem">'+(qi+1)+'. '+item.q+'</div>';
+    item.o.forEach(function(opt,oi){
+      var b=document.createElement("button"); b.className="opt jp"; b.textContent=opt;
+      b.onclick=function(){
+        if(doneA[qi]) return;
+        doneA[qi]=true;
+        var all=d.querySelectorAll(".opt");
+        all[item.a].classList.add("right");
+        if(oi!==item.a) b.classList.add("wrong"); else got++;
+        scoreEl.textContent=got+" / "+QS.length;
+        if(doneA.filter(Boolean).length===QS.length) checkin();
+      };
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+function checkin(){
+  var today=new Date().toISOString().slice(0,10);
+  var days=(LS.get("ep4_days")||"").split(",").filter(Boolean);
+  if(days.indexOf(today)<0){ days.push(today); LS.set("ep4_days",days.join(",")); }
+  document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
+}
+document.getElementById("resetQ").onclick=buildQuiz;
+buildQuiz();
+var d0=(LS.get("ep4_days")||"").split(",").filter(Boolean);
+if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>きらきら星 互動學習單</title>
+<style>
+:root{
+  --ink:#0d1330;        /* 夜空 */
+  --ink2:#161f47;       /* 夜空淺 */
+  --gold:#e8c46a;       /* 星光 */
+  --gold-d:#b8933f;
+  --cream:#f3efe4;      /* 紙 */
+  --sakura:#d98aa0;     /* 櫻 */
+  --teal:#7cc0b4;       /* 青竹 */
+  --line:rgba(243,239,228,.18);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 76% 9%, rgba(255,255,255,.55), transparent),
+    radial-gradient(1.5px 1.5px at 41% 62%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 88% 74%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 25% 88%, rgba(255,255,255,.45), transparent),
+    linear-gradient(180deg,var(--ink) 0%, var(--ink2) 60%, #0b1029 100%);
+  background-attachment:fixed;
+  color:var(--cream);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.75;
+  -webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
+.wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px}
+
+/* ── 標頭 ── */
+header{text-align:center;padding:28px 0 10px}
+header .eyebrow{font-size:.78rem;letter-spacing:.42em;color:var(--gold);opacity:.85}
+header h1{
+  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:clamp(2rem,7vw,3.2rem);margin:.25em 0 .1em;font-weight:600;letter-spacing:.06em;
+}
+header h1 span{display:inline-block;opacity:0;animation:pop .5s ease forwards}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
+header .sub{font-size:.95rem;opacity:.75}
+
+/* ── 導覽 ── */
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 26px}
+nav button{
+  font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
+  background:transparent;color:var(--cream);border:1px solid var(--line);transition:.18s;
+}
+nav button:hover{border-color:var(--gold);color:var(--gold)}
+nav button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
+nav button:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{
+  background:rgba(255,255,255,.045);border:1px solid var(--line);
+  border-radius:14px;padding:18px 18px 20px;margin:0 0 18px;
+}
+h2{font-size:1.15rem;margin:0 0 .5em;color:var(--gold);letter-spacing:.05em}
+h3{font-size:1rem;margin:1.2em 0 .4em;color:var(--teal)}
+p{margin:.5em 0}
+small,.note{opacity:.7;font-size:.85rem}
+
+.btn{
+  font:inherit;font-size:.88rem;padding:7px 14px;border-radius:8px;cursor:pointer;
+  background:var(--gold);color:var(--ink);border:none;font-weight:700;margin:4px 6px 4px 0;
+}
+.btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line);font-weight:400}
+.btn:active{transform:translateY(1px)}
+
+/* ── 拍星（招牌元素）── */
+.moraRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.moraWord{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:12px 14px;border:1px solid var(--line);border-radius:12px;width:100%;
+  background:rgba(13,19,48,.5);cursor:pointer;text-align:left;color:inherit;font:inherit;
+}
+.moraWord:hover{border-color:var(--gold)}
+.moraWord .lab{min-width:160px}
+.moraWord .lab b{font-size:1.4rem;letter-spacing:.08em}
+.moraWord .lab i{display:block;font-style:normal;font-size:.8rem;opacity:.7}
+.stars{display:flex;gap:8px}
+.star{width:22px;height:22px;opacity:.28;transition:.15s}
+.star.on{opacity:1;filter:drop-shadow(0 0 6px var(--gold));transform:scale(1.25)}
+.beatnum{font-size:.8rem;opacity:.6;margin-left:auto}
+
+/* ── 單字卡 ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.vcard{
+  border:1px solid var(--line);border-radius:12px;padding:14px;background:rgba(255,255,255,.04);
+  cursor:pointer;min-height:120px;display:flex;flex-direction:column;justify-content:center;
+  text-align:center;color:inherit;font:inherit;transition:.2s;
+}
+.vcard:hover{border-color:var(--sakura)}
+.vcard .w{font-size:1.35rem;letter-spacing:.06em}
+.vcard .r{font-size:.78rem;opacity:.65;margin-top:2px}
+.vcard .m{margin-top:8px;font-size:.9rem;color:var(--teal);display:none}
+.vcard.open .m{display:block}
+
+/* ── 表 ── */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:rgba(232,196,106,.12);color:var(--gold);font-weight:600;white-space:nowrap}
+
+textarea,input[type=text]{
+  width:100%;background:rgba(0,0,0,.25);color:var(--cream);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem;
+}
+textarea{min-height:150px;resize:vertical}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.3)}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{
+  display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0;
+  background:linear-gradient(120deg,rgba(232,196,106,.12),rgba(255,255,255,.03));
+  transition:.18s;
+}
+.videoCard:hover{border-color:var(--gold);transform:translateY(-2px)}
+.videoCard .play{
+  flex:none;width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;padding-left:4px;
+}
+.videoCard .vtxt b{display:block;font-size:1.05rem}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+
+/* ── 測驗 ── */
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-child{border-top:none}
+.q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--gold)}
+.opt.right{background:rgba(124,192,180,.22);border-color:var(--teal)}
+.opt.wrong{background:rgba(217,138,160,.2);border-color:var(--sakura)}
+.score{font-size:1.05rem;color:var(--gold);font-weight:700}
+
+.rec{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reclist li{margin:6px 0}
+audio{max-width:100%;vertical-align:middle}
+
+footer{text-align:center;font-size:.78rem;opacity:.5;padding:30px 0 10px;border-top:1px solid var(--line);margin-top:30px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">日本語 × 語感 × 拍</div>
+  <h1 class="jp" id="title"></h1>
+  <div class="sub">Kira Kira Boshi ─ 日文版〈小星星〉互動學習單</div>
+</header>
+
+<nav id="nav">
+  <button data-target="t1" aria-selected="true">① 星空導覽</button>
+  <button data-target="t2">② 假名與拍</button>
+  <button data-target="t3">③ 單字星圖</button>
+  <button data-target="t4">④ 文法四顆星</button>
+  <button data-target="t5">⑤ 跟讀錄音</button>
+  <button data-target="t6">⑥ 小測驗</button>
+<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
+</nav>
+
+<!-- ① -->
+<section id="t1">
+  <div class="card">
+    <h2>先聽，再看，最後才讀</h2>
+    <p>〈きらきら星〉的旋律來自法國童謠，全世界共用同一條曲子；日文版把英文的 <b>Twinkle</b> 換成擬態語 <b class="jp">きらきら</b>。同一段旋律、不同語言的節奏切法，正是聽出「日語是拍的語言」最好的入口。</p>
+    <div id="videoZone">
+      <div class="embed">
+        <iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/qGOzgi5CnPo"
+                title="きらきら星" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+      </div>
+      <p class="note" style="margin-top:6px">
+        影片無法播放？<a href="https://youtu.be/qGOzgi5CnPo" target="_blank" rel="noopener" style="color:var(--gold)">在 YouTube 開啟</a>
+      </p>
+    </div>
+    <p class="note">建議流程：整首聽 2 次 → 只聽不看字，用手打拍 → 再進入第 ② 頁拆拍。</p>
+  </div>
+
+  <div class="card">
+    <h2>歌詞抄寫區</h2>
+    <p class="note">歌詞版權屬原作者，本學習單不內建歌詞全文。請由影片或課本抄錄，抄寫本身就是第一次記憶。內容只存在你這台裝置。</p>
+    <textarea id="lyrics" placeholder="在這裡抄下歌詞（假名／羅馬拼音／中譯，一行一句）……"></textarea>
+    <button class="btn" id="saveLyr">儲存</button>
+    <button class="btn ghost" id="readLyr">整段朗讀</button>
+    <button class="btn ghost" id="stopAll">停止朗讀</button>
+    <span id="lyrMsg" class="note"></span>
+  </div>
+</section>
+
+<!-- ② -->
+<section id="t2" hidden>
+  <div class="card">
+    <h2>一個假名 = 一拍</h2>
+    <p>中文用「字」、英文用「音節」，日語用的是 <b>拍（モーラ）</b>。每個假名不論長短都佔一拍，小さい「っ」、長音「ー」、撥音「ん」也各自算一拍。點下面任何一個詞，星星會依拍數逐顆亮起——亮幾顆，就唸幾拍。</p>
+    <div id="moraBox"></div>
+    <p class="note">試試看：唸 <b class="jp">まばたき</b> 時不要唸成中文的兩個字「眨眼」，四顆星、四個等長的拍。</p>
+  </div>
+  <div class="card">
+    <h2>拍的三個陷阱</h2>
+    <table>
+      <tr><th>類型</th><th>例</th><th>拍數</th><th>台灣學習者常犯</th></tr>
+      <tr><td>長音</td><td class="jp">おそら</td><td>3</td><td>把「お」吃掉，變成 そら（2 拍）</td></tr>
+      <tr><td>撥音 ん</td><td class="jp">みんな</td><td>3</td><td>唸成 mi-na（2 拍），ん 沒站住</td></tr>
+      <tr><td>疊語</td><td class="jp">きらきら</td><td>4</td><td>後半加快，四拍不等長</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ③ -->
+<section id="t3" hidden>
+  <div class="card">
+    <h2>七顆字彙星</h2>
+    <p class="note">點卡片看中文，點喇叭聽發音。</p>
+    <div class="grid" id="vgrid"></div>
+  </div>
+</section>
+
+<!-- ④ -->
+<section id="t4" hidden>
+  <div class="card">
+    <h2>四個藏在童謠裡的句型</h2>
+
+    <h3>1. 〜の　（的）</h3>
+    <p><b class="jp">お空の星</b>＝天空<b>的</b>星星。日語的「の」和中文「的」語序一致，是最好搬的一塊磚。<br>
+    練習：<span class="jp">わたし＿本</span>／<span class="jp">日本＿歌</span></p>
+
+    <h3>2. 句尾的 〜よ　（呼喚／告知）</h3>
+    <p>接在名詞或句子後面，帶著「我在對你說話喔」的語氣。童謠裡用來<b>呼喚星星</b>，近似中文的「星星啊」。和 <b class="jp">ね</b>（尋求同意）不同：<span class="jp">よ</span>是我告訴你，<span class="jp">ね</span>是你也這麼想吧。</p>
+
+    <h3>3. 〜ては　（反覆地、一再地）</h3>
+    <p><b class="jp">まばたきしては</b>＝一眨一眨地。<b class="jp">〜ては</b>表示同一動作反覆出現，後面通常接另一個持續的動作。這是全首最難的一格，帶學生用手勢做「反覆」的動作最快。</p>
+
+    <h3>4. 〜ている → 〜てる　（正在／持續）</h3>
+    <p><b class="jp">見ている</b> 在口語與歌唱中常縮成 <b class="jp">見てる</b>，少一拍、更順口。教學提醒：<b>先教完整形，再教縮約形</b>，否則學生寫作文時會把口語形帶進去。</p>
+    <button class="btn" data-say="お空の星">聽 お空の星</button>
+    <button class="btn" data-say="見ている">聽 見ている</button>
+    <button class="btn" data-say="見てる">聽 見てる</button>
+  </div>
+</section>
+
+<!-- ⑤ -->
+<section id="t5" hidden>
+  <div class="card">
+    <h2>模仿 → 錄音 → 對照</h2>
+    <p class="note">先按「聽範讀」，再按「開始錄音」跟著唸，錄完立刻回放比對。錄音只留在這個分頁，重整就會消失，可自行下載。</p>
+    <div style="margin:10px 0">
+      <label class="note">要練的句子（可自行改寫）</label>
+      <input type="text" id="drillText" class="jp" value="きらきら">
+      <button class="btn" id="sayDrill">聽範讀</button>
+      <button class="btn ghost" id="slowDrill">慢速範讀</button>
+    </div>
+    <div class="rec">
+      <button class="btn" id="recStart">● 開始錄音</button>
+      <button class="btn ghost" id="recStop" disabled>■ 停止</button>
+      <span id="recMsg" class="note"></span>
+    </div>
+    <ul class="reclist" id="recList"></ul>
+  </div>
+  <div class="card">
+    <h2>自我檢核</h2>
+    <table>
+      <tr><th>檢核點</th><th>做到了嗎</th></tr>
+      <tr><td>每一拍長度相同，沒有前快後慢</td><td>□</td></tr>
+      <tr><td>ん 有站住一整拍</td><td>□</td></tr>
+      <tr><td>長音沒有被吃掉</td><td>□</td></tr>
+      <tr><td>句尾 よ 有把氣送出去，不含在嘴裡</td><td>□</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ -->
+<section id="t6" hidden>
+  <div class="card">
+    <h2>小測驗</h2>
+    <div id="quiz"></div>
+    <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
+    <p class="note" id="checkin"></p>
+  </div>
+</section>
+
+<footer>きらきら星 互動學習單 · build 2026-07-22dc · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ── 安全的 localStorage ── */
+var mem={};
+var LS={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+};
+
+/* ── 標題逐字亮起 ── */
+(function(){
+  var t="きらきら星", el=document.getElementById("title");
+  for(var i=0;i<t.length;i++){
+    var s=document.createElement("span");
+    s.textContent=t[i]; s.style.animationDelay=(i*0.12)+"s";
+    el.appendChild(s);
+  }
+})();
+
+/* ── 分頁 ── */
+var nav=document.getElementById("nav");
+nav.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-target]"); if(!b) return;
+  var btns=nav.querySelectorAll("button");
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-selected", btns[i]===b?"true":"false");
+  var secs=document.querySelectorAll("section");
+  for(var j=0;j<secs.length;j++) secs[j].hidden = (secs[j].id!==b.dataset.target);
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* ── TTS（含 Chrome 斷句看門狗）── */
+var curUtt=null, watchdog=null;
+function stopSpeak(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(watchdog){clearInterval(watchdog);watchdog=null;}
+  curUtt=null;
+}
+function speak(text,rate){
+  if(!("speechSynthesis" in window)||!text) return;
+  stopSpeak();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=rate||0.9;
+  var vs=speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang && vs[i].lang.indexOf("ja")===0){u.voice=vs[i];break;} }
+  curUtt=u;
+  u.onend=function(){ if(watchdog){clearInterval(watchdog);watchdog=null;} curUtt=null; };
+  speechSynthesis.speak(u);
+  watchdog=setInterval(function(){
+    if(!speechSynthesis.speaking){clearInterval(watchdog);watchdog=null;return;}
+    speechSynthesis.pause(); speechSynthesis.resume();
+  },9000);
+}
+if("speechSynthesis" in window){ speechSynthesis.onvoiceschanged=function(){}; }
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-say]"); if(b) speak(b.getAttribute("data-say"));
+});
+
+/* ── 影片：內嵌優先，載不出來才換成跳轉卡 ── */
+(function(){
+  var zone=document.getElementById("videoZone"), fr=document.getElementById("ytFrame");
+  if(!zone||!fr) return;
+  var ok=false;
+  fr.addEventListener("load",function(){ ok=true; });
+  setTimeout(function(){
+    if(ok) return;
+    zone.innerHTML='<a class="videoCard" href="https://youtu.be/qGOzgi5CnPo" target="_blank" rel="noopener">'+
+      '<span class="play">▶</span><span class="vtxt"><b>播放〈きらきら星〉</b>'+
+      '<i>此環境不支援內嵌，點擊在 YouTube 開啟</i></span></a>';
+  },4000);
+})();
+
+/* ── ① 歌詞區 ── */
+var lyr=document.getElementById("lyrics");
+lyr.value = LS.get("kk_lyrics")||"";
+document.getElementById("saveLyr").onclick=function(){
+  LS.set("kk_lyrics",lyr.value);
+  document.getElementById("lyrMsg").textContent="已儲存 ✓";
+  setTimeout(function(){document.getElementById("lyrMsg").textContent="";},2000);
+};
+document.getElementById("readLyr").onclick=function(){ speak(lyr.value,0.85); };
+document.getElementById("stopAll").onclick=stopSpeak;
+
+/* ── ② 拍星 ── */
+var WORDS=[
+  {w:"きらきら", r:"kirakira", m:4, cn:"閃閃發亮（擬態語）"},
+  {w:"ひかる",   r:"hikaru",   m:3, cn:"發光"},
+  {w:"おそら",   r:"osora",    m:3, cn:"天空（お為美化語）"},
+  {w:"ほし",     r:"hoshi",    m:2, cn:"星星"},
+  {w:"まばたき", r:"mabataki", m:4, cn:"眨眼"},
+  {w:"みんな",   r:"minna",    m:3, cn:"大家"},
+  {w:"みてる",   r:"miteru",   m:3, cn:"正看著（見ている的縮約）"}
+];
+var STAR='<svg class="star" viewBox="0 0 24 24" fill="#e8c46a"><path d="M12 2l2.7 6.9L22 9.6l-5.3 4.8L18.3 22 12 18.2 5.7 22l1.6-7.6L2 9.6l7.3-.7z"/></svg>';
+var box=document.getElementById("moraBox");
+WORDS.forEach(function(o){
+  var b=document.createElement("button");
+  b.className="moraWord";
+  b.innerHTML='<span class="lab"><b class="jp">'+o.w+'</b><i>'+o.r+'</i></span>'+
+              '<span class="stars">'+Array(o.m+1).join(STAR)+'</span>'+
+              '<span class="beatnum">'+o.m+' 拍</span>';
+  b.onclick=function(){
+    var st=b.querySelectorAll(".star");
+    for(var i=0;i<st.length;i++) st[i].classList.remove("on");
+    speak(o.w,0.75);
+    for(var k=0;k<st.length;k++){
+      (function(n){ setTimeout(function(){ st[n].classList.add("on"); },320*n); })(k);
+    }
+    setTimeout(function(){
+      for(var i=0;i<st.length;i++) st[i].classList.remove("on");
+    },320*st.length+900);
+  };
+  box.appendChild(b);
+});
+
+/* ── ③ 單字卡 ── */
+var vg=document.getElementById("vgrid");
+WORDS.forEach(function(o){
+  var c=document.createElement("button");
+  c.className="vcard";
+  c.innerHTML='<span class="w jp">'+o.w+'</span><span class="r">'+o.r+'</span><span class="m">'+o.cn+'</span>';
+  c.onclick=function(){ c.classList.toggle("open"); speak(o.w); };
+  vg.appendChild(c);
+});
+
+/* ── ⑤ 錄音 ── */
+document.getElementById("sayDrill").onclick=function(){ speak(document.getElementById("drillText").value); };
+document.getElementById("slowDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.55); };
+
+var mr=null, chunks=[], n=0;
+var bStart=document.getElementById("recStart"), bStop=document.getElementById("recStop"),
+    rMsg=document.getElementById("recMsg"), rList=document.getElementById("recList");
+bStart.onclick=function(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){ rMsg.textContent="這個瀏覽器不支援錄音"; return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    chunks=[]; mr=new MediaRecorder(stream);
+    mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+      var url=URL.createObjectURL(blob); n++;
+      var li=document.createElement("li");
+      li.innerHTML='第 '+n+' 次　<audio controls src="'+url+'"></audio> '+
+                   '<a class="btn ghost" download="kirakira-'+n+'.webm" href="'+url+'">下載</a>';
+      rList.appendChild(li);
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    mr.start(); bStart.disabled=true; bStop.disabled=false; rMsg.textContent="錄音中…";
+  }).catch(function(){ rMsg.textContent="沒有取得麥克風權限"; });
+};
+bStop.onclick=function(){
+  if(mr&&mr.state!=="inactive") mr.stop();
+  bStart.disabled=false; bStop.disabled=true; rMsg.textContent="已完成，可回放比對";
+};
+
+/* ── ⑥ 測驗 ── */
+var QS=[
+ {q:"日語節奏的基本單位是？", o:["音節","拍（モーラ）","聲調","字"], a:1},
+ {q:"「みんな」共有幾拍？", o:["2","3","4","5"], a:1},
+ {q:"「きらきら」屬於哪一類詞？", o:["動詞","擬態語","助詞","形容詞"], a:1},
+ {q:"「お空の星」中的「の」相當於中文的？", o:["嗎","的","了","呢"], a:1},
+ {q:"句尾「よ」的語氣最接近？", o:["徵求同意","向對方告知／呼喚","表示疑問","表示否定"], a:1},
+ {q:"「〜ては」表示的意思是？", o:["一次就結束","反覆進行","尚未開始","已經完成"], a:1},
+ {q:"「見てる」是哪個形式的縮約？", o:["見ます","見ている","見た","見たい"], a:1},
+ {q:"「まばたき」的中文意思是？", o:["發光","天空","眨眼","大家"], a:2}
+];
+var quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score"), done=[], got=0;
+function buildQuiz(){
+  quiz.innerHTML=""; done=[]; got=0; scoreEl.textContent="0 / "+QS.length;
+  QS.forEach(function(item,qi){
+    var d=document.createElement("div"); d.className="q";
+    var h='<div class="stem">'+(qi+1)+'. '+item.q+'</div>';
+    d.innerHTML=h;
+    item.o.forEach(function(opt,oi){
+      var b=document.createElement("button"); b.className="opt"; b.textContent=opt;
+      b.onclick=function(){
+        if(done[qi]) return;
+        done[qi]=true;
+        var all=d.querySelectorAll(".opt");
+        all[item.a].classList.add("right");
+        if(oi!==item.a) b.classList.add("wrong"); else got++;
+        scoreEl.textContent=got+" / "+QS.length;
+        if(done.filter(Boolean).length===QS.length) checkin();
+      };
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+function checkin(){
+  var today=new Date().toISOString().slice(0,10);
+  var days=(LS.get("kk_days")||"").split(",").filter(Boolean);
+  if(days.indexOf(today)<0){ days.push(today); LS.set("kk_days",days.join(",")); }
+  document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
+}
+document.getElementById("resetQ").onclick=buildQuiz;
+buildQuiz();
+var d0=(LS.get("kk_days")||"").split(",").filter(Boolean);
+if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+</body>
+</html>

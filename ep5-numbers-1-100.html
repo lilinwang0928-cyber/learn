@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>いち・に・さん 数字の歌 互動學習單</title>
+<style>
+:root{
+  --paper:#f2f8f6;
+  --paper2:#e3f0ec;
+  --teal:#1f9d8f;       /* 主色 青緑 */
+  --teal-d:#167a6f;
+  --coral:#e76f51;      /* 強調 珊瑚 */
+  --coral-d:#c9553a;
+  --amber:#e9b949;
+  --ink:#26332f;
+  --line:rgba(38,51,47,.15);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    repeating-linear-gradient(90deg, rgba(31,157,143,.05) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(0deg, rgba(31,157,143,.05) 0 1px, transparent 1px 40px),
+    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
+  background-attachment:fixed;color:var(--ink);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px 80px}
+
+header{text-align:center;padding:24px 0 6px}
+header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--teal-d);font-weight:700}
+header h1{font-family:"Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  font-size:clamp(1.8rem,6.5vw,3rem);margin:.2em 0 .1em;font-weight:800;letter-spacing:.04em;color:var(--teal-d)}
+header h1 span{display:inline-block;opacity:0;animation:count .4s ease forwards}
+@keyframes count{from{opacity:0;transform:translateY(12px) scale(.7)}to{opacity:1;transform:none}}
+header .sub{font-size:.92rem;opacity:.72}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
+nav button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
+  background:#fff;color:var(--ink);border:1px solid var(--line);transition:.18s}
+nav button:hover{border-color:var(--teal);color:var(--teal-d)}
+nav button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+button:focus-visible,a:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px;
+  box-shadow:0 2px 0 rgba(38,51,47,.05)}
+h2{font-size:1.12rem;margin:0 0 .5em;color:var(--teal-d)}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--coral-d)}
+p{margin:.5em 0}
+.note{opacity:.66;font-size:.85rem}
+
+.btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
+  background:var(--teal);color:#fff;border:none;font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.coral{background:var(--coral)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:default}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#dcebe7}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:#fff}
+.videoCard:hover{border-color:var(--teal)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
+.videoCard .vtxt b{display:block}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+
+/* ── 數字組合器（招牌）── */
+.builder{background:linear-gradient(160deg,#effaf8,#e0f1ed);border:1px solid var(--line);border-radius:14px;padding:16px}
+.display{text-align:center;padding:14px 10px 16px}
+.display .num{font-size:2.6rem;font-weight:800;color:var(--coral-d);line-height:1}
+.display .kana{font-size:2rem;color:var(--teal-d);font-weight:800;letter-spacing:.06em;margin-top:.15em;min-height:1.2em}
+.display .rom{font-size:.9rem;opacity:.6}
+.display .parts{font-size:.85rem;opacity:.72;margin-top:6px;min-height:1.2em}
+.digRow{margin:10px 0}
+.digRow .lab{font-size:.8rem;opacity:.6;margin-bottom:4px}
+.digs{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.dig{font:inherit;font-weight:700;font-size:1rem;padding:9px 0;border-radius:8px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);cursor:pointer;transition:.12s}
+.dig:hover{border-color:var(--teal)}
+.dig.on{background:var(--teal);color:#fff;border-color:var(--teal);transform:scale(1.06)}
+.dig.on.tens{background:var(--coral);border-color:var(--coral)}
+.builderBtns{text-align:center;margin-top:8px}
+
+/* 1-100 grid */
+.numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.ncell{aspect-ratio:1/1;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:var(--ink);
+  font-family:inherit;padding:0;transition:.1s}
+.ncell:hover{border-color:var(--teal);transform:translateY(-1px)}
+.ncell.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.ncell.h100{grid-column:span 10;aspect-ratio:auto;padding:10px;background:var(--amber);color:#4a3a10;font-weight:800}
+.gridOut{margin-top:12px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;min-height:70px}
+.gridOut .kana{font-size:1.6rem;font-weight:800;color:var(--teal-d)}
+.gridOut .rom{font-size:.85rem;opacity:.6}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:rgba(31,157,143,.12);color:var(--teal-d);white-space:nowrap}
+td.jp{font-size:1.05rem}
+
+textarea,input[type=text]{width:100%;background:#fff;color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:120px;resize:vertical}
+input[type=range]{width:170px;vertical-align:middle}
+
+.beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:1rem;
+  font-weight:700;transition:.12s}
+.chip.on{background:var(--coral);color:#fff;border-color:var(--coral);transform:scale(1.12)}
+
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-child{border-top:none}
+.q .stem{font-weight:700;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt:hover{border-color:var(--teal)}
+.opt.right{background:rgba(31,157,143,.2);border-color:var(--teal)}
+.opt.wrong{background:rgba(231,111,81,.22);border-color:var(--coral)}
+.score{font-size:1.05rem;color:var(--teal-d);font-weight:800}
+
+.reclist li{margin:6px 0}
+audio{max-width:100%;vertical-align:middle}
+footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">唱歌學日文 · 第五集</div>
+  <h1 class="jp" id="title"></h1>
+  <div class="sub">数字の歌 1〜100 ─ 數數互動學習單</div>
+</header>
+
+<nav id="nav">
+  <button data-target="t1" aria-selected="true">① 影片導覽</button>
+  <button data-target="t2">② 數字組合器</button>
+  <button data-target="t3">③ 1–100 全表</button>
+  <button data-target="t4">④ 節拍跟唱</button>
+  <button data-target="t5">⑤ 跟讀錄音</button>
+  <button data-target="t6">⑥ 小測驗</button>
+<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
+</nav>
+
+<!-- ① -->
+<section id="t1">
+  <div class="card">
+    <h2>不是背 100 個，是背 10 個＋一條規則</h2>
+    <p>日語數字最省力的地方在於它是<b>拼出來的</b>：學會 1～10 這十個積木，再加「幾十＋幾」的規則，20 就是 <span class="jp">にじゅう</span>、21 就是 <span class="jp">にじゅういち</span>、99 就是 <span class="jp">きゅうじゅうきゅう</span>。歌先幫你把 1～10 唱到滾瓜爛熟，剩下的用組的。</p>
+    <div id="videoZone">
+      <div class="embed">
+        <iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/eLAEsXhR2Zw"
+                title="数字の歌 1-100" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+      </div>
+      <p class="note" style="margin-top:6px">影片無法播放？<a href="https://youtu.be/eLAEsXhR2Zw" target="_blank" rel="noopener" style="color:var(--teal-d)">在 YouTube 開啟</a></p>
+    </div>
+    <h3>建議流程</h3>
+    <table>
+      <tr><th>階段</th><th>做什麼</th><th>時間</th></tr>
+      <tr><td>1 唱</td><td>跟影片把 1～10 唱到不用想</td><td>4 分</td></tr>
+      <tr><td>2 拼</td><td>第 ② 頁玩組合器，體會「十位＋個位」</td><td>5 分</td></tr>
+      <tr><td>3 抽</td><td>第 ③ 頁點全表隨機抽數字互唸</td><td>4 分</td></tr>
+      <tr><td>4 用</td><td>報電話號碼、年齡、價格</td><td>5 分</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>課堂筆記</h2>
+    <p class="note">只存在這台裝置。</p>
+    <textarea id="notes" placeholder="例：4・7・9 唱歌用 よん・なな・きゅう，但打電話 0 唸 ゼロ／れい，下次補充……"></textarea>
+    <button class="btn" id="saveNote">儲存</button>
+    <span id="noteMsg" class="note"></span>
+  </div>
+</section>
+
+<!-- ② -->
+<section id="t2" hidden>
+  <div class="card">
+    <h2>選十位、選個位，數字自己拼出來</h2>
+    <div class="builder">
+      <div class="display">
+        <div class="num" id="dNum">1</div>
+        <div class="kana jp" id="dKana">いち</div>
+        <div class="rom" id="dRom">ichi</div>
+        <div class="parts" id="dParts"></div>
+      </div>
+      <div class="digRow">
+        <div class="lab">十位（几十）</div>
+        <div class="digs" id="tensRow"></div>
+      </div>
+      <div class="digRow">
+        <div class="lab">個位（几）</div>
+        <div class="digs" id="onesRow"></div>
+      </div>
+      <div class="builderBtns">
+        <button class="btn" id="sayNum">🔊 唸這個數字</button>
+        <button class="btn coral" id="randNum">🎲 隨機出題</button>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">觀察：十位永遠是「數字＋じゅう」，10 本身就是 <span class="jp">じゅう</span>。規則一致，沒有例外——這正是日語數字好學的原因。</p>
+  </div>
+</section>
+
+<!-- ③ -->
+<section id="t3" hidden>
+  <div class="card">
+    <h2>1 到 100，點哪個唸哪個</h2>
+    <div class="numgrid" id="numgrid"></div>
+    <div class="gridOut" id="gridOut">
+      <div class="kana jp">？</div>
+      <div class="rom">點上面任一個數字</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>4・7・9 有兩種唸法</h2>
+    <p>這三個數字各有兩讀，數數（唱歌）時用左邊這組；但在日期、時間、某些量詞裡會換成右邊那組（第 3 集日期就用到了）。</p>
+    <table>
+      <tr><th>數字</th><th>數數用（本集）</th><th>另一種（日期等）</th></tr>
+      <tr><td>4</td><td class="jp">よん</td><td class="jp">し</td></tr>
+      <tr><td>7</td><td class="jp">なな</td><td class="jp">しち</td></tr>
+      <tr><td>9</td><td class="jp">きゅう</td><td class="jp">く</td></tr>
+    </table>
+    <p class="note">口訣：單純數數，走「よん・なな・きゅう」最安全。</p>
+  </div>
+</section>
+
+<!-- ④ -->
+<section id="t4" hidden>
+  <div class="card">
+    <h2>1 到 10 節拍跟唱</h2>
+    <p class="note">把十個積木練到反射。先「打拍」抓節奏，再「逐字朗讀」疊音。</p>
+    <div>
+      <label class="note">速度</label>
+      <input type="range" id="tempo" min="380" max="1100" step="20" value="620">
+      <span class="note" id="tempoLab">中速</span>
+    </div>
+    <button class="btn" id="playBeat">▶ 打拍</button>
+    <button class="btn coral" id="playSay">▶ 逐字朗讀</button>
+    <button class="btn ghost" id="stopSeq">■ 停止</button>
+    <div class="beatBar" id="seqBar"></div>
+  </div>
+  <div class="card">
+    <h2>進階：十位跳唱</h2>
+    <p class="note">熟了 1～10 之後，練「10、20、30…100」的十位節奏，幫大數字打底。</p>
+    <button class="btn ghost" id="playTens">▶ 唸 10・20…100</button>
+    <div class="beatBar" id="tensBar"></div>
+  </div>
+</section>
+
+<!-- ⑤ -->
+<section id="t5" hidden>
+  <div class="card">
+    <h2>模仿 → 錄音 → 對照</h2>
+    <div style="margin:10px 0">
+      <label class="note">要練的內容（可改寫，例如自己的年齡、電話）</label>
+      <input type="text" id="drillText" class="jp" value="いち に さん よん ご">
+      <button class="btn" id="sayDrill">聽範讀</button>
+      <button class="btn ghost" id="slowDrill">慢速範讀</button>
+      <button class="btn ghost" id="stopAll">停止</button>
+    </div>
+    <div>
+      <button class="btn coral" id="recStart">● 開始錄音</button>
+      <button class="btn ghost" id="recStop" disabled>■ 停止</button>
+      <span id="recMsg" class="note"></span>
+    </div>
+    <ul class="reclist" id="recList"></ul>
+  </div>
+  <div class="card">
+    <h2>自我檢核</h2>
+    <table>
+      <tr><th>檢核點</th><th>做到了嗎</th></tr>
+      <tr><td>1～10 能不看字連續唸出</td><td>□</td></tr>
+      <tr><td>會用「十位＋個位」拼出任意兩位數</td><td>□</td></tr>
+      <tr><td>數數時 4・7・9 用 よん・なな・きゅう</td><td>□</td></tr>
+      <tr><td>100 唸 ひゃく，不是 いちじゅうじゅう</td><td>□</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ -->
+<section id="t6" hidden>
+  <div class="card">
+    <h2>小測驗</h2>
+    <div id="quiz"></div>
+    <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
+    <p class="note" id="checkin"></p>
+  </div>
+</section>
+
+<footer>唱歌學日文 #5 数字の歌 1〜100 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var mem={};
+var LS={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+};
+
+/* 標題逐字 */
+(function(){
+  var t="数字の歌", el=document.getElementById("title");
+  for(var i=0;i<t.length;i++){
+    var s=document.createElement("span");
+    s.textContent=t[i]; s.style.animationDelay=(i*0.09)+"s";
+    el.appendChild(s);
+  }
+})();
+
+/* ── 讀音引擎（數數用 よん・なな・きゅう）── */
+var ONES_K=["","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
+var ONES_R=["","ichi","ni","san","yon","go","roku","nana","hachi","kyū"];
+var TENS_K=["","じゅう","にじゅう","さんじゅう","よんじゅう","ごじゅう","ろくじゅう","ななじゅう","はちじゅう","きゅうじゅう"];
+var TENS_R=["","jū","nijū","sanjū","yonjū","gojū","rokujū","nanajū","hachijū","kyūjū"];
+function kana(n){
+  if(n===100) return "ひゃく";
+  if(n===0) return "ゼロ";
+  var t=Math.floor(n/10), o=n%10;
+  return TENS_K[t]+ONES_K[o] || ONES_K[o];
+}
+function roma(n){
+  if(n===100) return "hyaku";
+  if(n===0) return "zero";
+  var t=Math.floor(n/10), o=n%10;
+  return (TENS_R[t]+ONES_R[o]) || ONES_R[o];
+}
+function partsStr(n){
+  if(n===100) return "百 = ひゃく（特殊）";
+  var t=Math.floor(n/10), o=n%10;
+  if(n<10) return "個位：" + ONES_K[o];
+  if(o===0) return TENS_K[t] + "（" + t + "×10）";
+  return TENS_K[t] + " ＋ " + ONES_K[o];
+}
+
+/* 分頁 */
+var nav=document.getElementById("nav");
+nav.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-target]"); if(!b) return;
+  var btns=nav.querySelectorAll("button");
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-selected", btns[i]===b?"true":"false");
+  var secs=document.querySelectorAll("section");
+  for(var j=0;j<secs.length;j++) secs[j].hidden=(secs[j].id!==b.dataset.target);
+  stopSeq();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* TTS */
+var watchdog=null;
+function stopSpeak(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(watchdog){clearInterval(watchdog);watchdog=null;}
+}
+function speak(text,rate,onend){
+  if(!("speechSynthesis" in window)||!text){ if(onend) onend(); return; }
+  stopSpeak();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=rate||0.9;
+  var vs=speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang&&vs[i].lang.indexOf("ja")===0){u.voice=vs[i];break;} }
+  u.onend=function(){ if(watchdog){clearInterval(watchdog);watchdog=null;} if(onend) onend(); };
+  u.onerror=function(){ if(onend) onend(); };
+  speechSynthesis.speak(u);
+  watchdog=setInterval(function(){
+    if(!speechSynthesis.speaking){clearInterval(watchdog);watchdog=null;return;}
+    speechSynthesis.pause(); speechSynthesis.resume();
+  },9000);
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-say]"); if(b) speak(b.getAttribute("data-say"));
+});
+
+/* 影片降級 */
+(function(){
+  var zone=document.getElementById("videoZone"), fr=document.getElementById("ytFrame");
+  if(!zone||!fr) return;
+  var ok=false;
+  fr.addEventListener("load",function(){ok=true;});
+  setTimeout(function(){
+    if(ok) return;
+    zone.innerHTML='<a class="videoCard" href="https://youtu.be/eLAEsXhR2Zw" target="_blank" rel="noopener">'+
+      '<span class="play">▶</span><span class="vtxt"><b>播放〈数字の歌 1-100〉</b>'+
+      '<i>此環境不支援內嵌，點擊在 YouTube 開啟</i></span></a>';
+  },4000);
+})();
+
+/* 筆記 */
+var nt=document.getElementById("notes");
+nt.value=LS.get("ep5_notes")||"";
+document.getElementById("saveNote").onclick=function(){
+  LS.set("ep5_notes",nt.value);
+  var m=document.getElementById("noteMsg"); m.textContent="已儲存 ✓";
+  setTimeout(function(){m.textContent="";},2000);
+};
+
+/* ── ② 數字組合器 ── */
+var tens=0, ones=1;
+var tensRow=document.getElementById("tensRow"), onesRow=document.getElementById("onesRow");
+var dNum=document.getElementById("dNum"), dKana=document.getElementById("dKana"),
+    dRom=document.getElementById("dRom"), dParts=document.getElementById("dParts");
+function buildDigits(row,cls){
+  for(var i=0;i<=9;i++){
+    var b=document.createElement("button");
+    b.className="dig "+cls; b.dataset.d=i; b.textContent=i;
+    row.appendChild(b);
+  }
+}
+buildDigits(tensRow,"tens"); buildDigits(onesRow,"ones");
+function refresh(sayIt){
+  var n=tens*10+ones;
+  if(n===0) n=0;
+  dNum.textContent=n;
+  dKana.textContent=kana(n);
+  dRom.textContent=roma(n);
+  dParts.textContent=partsStr(n);
+  tensRow.querySelectorAll(".dig").forEach(function(x){ x.classList.toggle("on", +x.dataset.d===tens); });
+  onesRow.querySelectorAll(".dig").forEach(function(x){ x.classList.toggle("on", +x.dataset.d===ones); });
+  if(sayIt) speak(kana(n),0.9);
+}
+tensRow.addEventListener("click",function(e){ var b=e.target.closest(".dig"); if(!b)return; tens=+b.dataset.d; refresh(true); });
+onesRow.addEventListener("click",function(e){ var b=e.target.closest(".dig"); if(!b)return; ones=+b.dataset.d; refresh(true); });
+document.getElementById("sayNum").onclick=function(){ refresh(true); };
+document.getElementById("randNum").onclick=function(){
+  var n=1+Math.floor(Math.random()*99);
+  tens=Math.floor(n/10); ones=n%10; refresh(true);
+};
+refresh(false);
+
+/* ── ③ 1-100 全表 ── */
+var ng=document.getElementById("numgrid"), go=document.getElementById("gridOut");
+for(var i=1;i<=99;i++){
+  var c=document.createElement("button");
+  c.className="ncell"; c.dataset.n=i; c.textContent=i;
+  ng.appendChild(c);
+}
+var c100=document.createElement("button");
+c100.className="ncell h100"; c100.dataset.n=100; c100.textContent="100　ひゃく";
+ng.appendChild(c100);
+ng.addEventListener("click",function(e){
+  var b=e.target.closest(".ncell"); if(!b) return;
+  ng.querySelectorAll(".ncell").forEach(function(x){x.classList.remove("active");});
+  b.classList.add("active");
+  var n=+b.dataset.n;
+  go.querySelector(".kana").textContent=kana(n);
+  go.querySelector(".rom").textContent=n+"　"+roma(n);
+  speak(kana(n),0.9);
+});
+
+/* ── ④ 節拍 ── */
+var seqBar=document.getElementById("seqBar");
+for(var i=1;i<=10;i++){
+  var s=document.createElement("span");
+  s.className="chip jp"; s.dataset.idx=i; s.textContent=kana(i);
+  seqBar.appendChild(s);
+}
+var tensBar=document.getElementById("tensBar");
+[10,20,30,40,50,60,70,80,90,100].forEach(function(n,i){
+  var s=document.createElement("span");
+  s.className="chip jp"; s.dataset.tn=n; s.textContent=kana(n);
+  tensBar.appendChild(s);
+});
+
+var tempo=document.getElementById("tempo"), tLab=document.getElementById("tempoLab");
+function tempoLabel(){
+  var v=+tempo.value;
+  tLab.textContent=v>900?"很慢":v>720?"慢速":v>540?"中速":"原速";
+}
+tempo.addEventListener("input",tempoLabel); tempoLabel();
+
+var seqTimer=null, ac=null;
+function tick(){
+  try{
+    if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(), g=ac.createGain();
+    o.type="sine"; o.frequency.value=900;
+    g.gain.setValueAtTime(0.001,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25,ac.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.13);
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime+0.15);
+  }catch(e){}
+}
+function clearChips(){ document.querySelectorAll(".chip").forEach(function(c){c.classList.remove("on");}); }
+function stopSeq(){
+  if(seqTimer){clearTimeout(seqTimer);seqTimer=null;}
+  stopSpeak(); clearChips();
+}
+document.getElementById("stopSeq").onclick=stopSeq;
+
+function runSeq(withVoice){
+  stopSeq();
+  var idx=1;
+  function stepFn(){
+    if(idx>10){ clearChips(); return; }
+    clearChips();
+    var chip=seqBar.querySelector(".chip[data-idx='"+idx+"']");
+    if(chip) chip.classList.add("on");
+    var n=idx; idx++;
+    if(withVoice){
+      speak(kana(n),0.95,function(){ seqTimer=setTimeout(stepFn,120); });
+    }else{
+      tick(); seqTimer=setTimeout(stepFn,+tempo.value);
+    }
+  }
+  stepFn();
+}
+document.getElementById("playBeat").onclick=function(){ runSeq(false); };
+document.getElementById("playSay").onclick=function(){ runSeq(true); };
+
+document.getElementById("playTens").onclick=function(){
+  stopSeq();
+  var arr=[10,20,30,40,50,60,70,80,90,100], i=0;
+  function stepFn(){
+    if(i>=arr.length){ clearChips(); return; }
+    clearChips();
+    var chip=tensBar.querySelector(".chip[data-tn='"+arr[i]+"']");
+    if(chip) chip.classList.add("on");
+    var n=arr[i]; i++;
+    speak(kana(n),0.95,function(){ seqTimer=setTimeout(stepFn,150); });
+  }
+  stepFn();
+};
+
+/* ⑤ 錄音 */
+document.getElementById("sayDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.85); };
+document.getElementById("slowDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.55); };
+document.getElementById("stopAll").onclick=stopSpeak;
+
+var mr=null, chunks=[], recN=0;
+var bStart=document.getElementById("recStart"), bStop=document.getElementById("recStop"),
+    rMsg=document.getElementById("recMsg"), rList=document.getElementById("recList");
+bStart.onclick=function(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){ rMsg.textContent="這個瀏覽器不支援錄音"; return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    chunks=[]; mr=new MediaRecorder(stream);
+    mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+      var url=URL.createObjectURL(blob); recN++;
+      var li=document.createElement("li");
+      li.innerHTML='第 '+recN+' 次　<audio controls src="'+url+'"></audio> '+
+                   '<a class="btn ghost" download="suuji-'+recN+'.webm" href="'+url+'">下載</a>';
+      rList.appendChild(li);
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    mr.start(); bStart.disabled=true; bStop.disabled=false; rMsg.textContent="錄音中…";
+  }).catch(function(){ rMsg.textContent="沒有取得麥克風權限"; });
+};
+bStop.onclick=function(){
+  if(mr&&mr.state!=="inactive") mr.stop();
+  bStart.disabled=false; bStop.disabled=true; rMsg.textContent="已完成，可回放比對";
+};
+
+/* ⑥ 測驗 */
+var QS=[
+ {q:"7 數數時唸作？", o:["しち","なな","ひち","しつ"], a:1},
+ {q:"「にじゅう」是多少？", o:["12","20","22","2"], a:1},
+ {q:"45 怎麼唸？", o:["よんじゅうご","しじゅうご","よんご","ごじゅうよん"], a:0},
+ {q:"100 唸作？", o:["じゅうじゅう","ひゃく","せん","じゅっく"], a:1},
+ {q:"下列哪個是 4 數數時的唸法？", o:["し","よん","よ","しち"], a:1},
+ {q:"「きゅうじゅうきゅう」是多少？", o:["19","91","99","90"], a:2},
+ {q:"日語兩位數的組合規則是？", o:["個位＋十位","十位＋個位","只唸十位","無規則要死背"], a:1},
+ {q:"10 本身唸作？", o:["いちじゅう","じゅう","とお","ひゃく"], a:1}
+];
+var quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score"), doneA=[], got=0;
+function buildQuiz(){
+  quiz.innerHTML=""; doneA=[]; got=0; scoreEl.textContent="0 / "+QS.length;
+  QS.forEach(function(item,qi){
+    var d=document.createElement("div"); d.className="q";
+    d.innerHTML='<div class="stem">'+(qi+1)+'. '+item.q+'</div>';
+    item.o.forEach(function(opt,oi){
+      var b=document.createElement("button"); b.className="opt jp"; b.textContent=opt;
+      b.onclick=function(){
+        if(doneA[qi]) return;
+        doneA[qi]=true;
+        var all=d.querySelectorAll(".opt");
+        all[item.a].classList.add("right");
+        if(oi!==item.a) b.classList.add("wrong"); else got++;
+        scoreEl.textContent=got+" / "+QS.length;
+        if(doneA.filter(Boolean).length===QS.length) checkin();
+      };
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+function checkin(){
+  var today=new Date().toISOString().slice(0,10);
+  var days=(LS.get("ep5_days")||"").split(",").filter(Boolean);
+  if(days.indexOf(today)<0){ days.push(today); LS.set("ep5_days",days.join(",")); }
+  document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
+}
+document.getElementById("resetQ").onclick=buildQuiz;
+buildQuiz();
+var d0=(LS.get("ep5_days")||"").split(",").filter(Boolean);
+if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+</body>
+</html>

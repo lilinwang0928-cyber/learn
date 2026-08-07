@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ついたち・ふつか・みっか 互動學習單</title>
+<style>
+:root{
+  --paper:#faf5ea;      /* 和紙 */
+  --paper2:#f0e7d4;
+  --shu:#d1533b;        /* 朱（vermilion）*/
+  --shu-d:#a83c28;
+  --kaki:#e08a3c;       /* 柿 */
+  --ai:#33566e;         /* 藍 */
+  --ai-d:#26424f;
+  --sumi:#3a352c;       /* 墨 */
+  --line:rgba(58,53,44,.16);
+  --irr:#f4d9c4;        /* 不規則格底 */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    repeating-linear-gradient(0deg, rgba(209,83,59,.04) 0 1px, transparent 1px 34px),
+    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
+  background-attachment:fixed;color:var(--sumi);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px 80px}
+
+header{text-align:center;padding:24px 0 6px}
+header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--shu);font-weight:700}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:clamp(1.7rem,6vw,2.9rem);margin:.2em 0 .1em;font-weight:700;letter-spacing:.05em;color:var(--shu-d)}
+header h1 span{display:inline-block;opacity:0;animation:fall .5s ease forwards}
+@keyframes fall{from{opacity:0;transform:translateY(-12px) rotate(-6deg)}to{opacity:1;transform:none}}
+header .sub{font-size:.92rem;opacity:.72}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
+nav button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
+  background:#fff;color:var(--sumi);border:1px solid var(--line);transition:.18s}
+nav button:hover{border-color:var(--shu);color:var(--shu-d)}
+nav button[aria-selected="true"]{background:var(--shu);border-color:var(--shu);color:#fff;font-weight:700}
+button:focus-visible,a:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{background:#fffdf6;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px;
+  box-shadow:0 2px 0 rgba(58,53,44,.05)}
+h2{font-size:1.12rem;margin:0 0 .5em;color:var(--shu-d)}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--ai)}
+p{margin:.5em 0}
+.note{opacity:.66;font-size:.85rem}
+
+.btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
+  background:var(--shu);color:#fff;border:none;font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:#fff;color:var(--sumi);border:1px solid var(--line);font-weight:400}
+.btn.blue{background:var(--ai)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:default}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#e8e0cd}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:#fff}
+.videoCard:hover{border-color:var(--shu)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--shu);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
+.videoCard .vtxt b{display:block}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+
+/* ── 日曆（招牌）── */
+.calWrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.calBox{flex:1 1 320px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin:0 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:14px;border-radius:4px;border:1px solid var(--line)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{text-align:center;font-size:.75rem;opacity:.55;padding:2px 0}
+.day{aspect-ratio:1/1;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:600;color:var(--sumi);
+  transition:.12s;font-family:inherit;padding:0}
+.day:hover{border-color:var(--shu);transform:translateY(-1px)}
+.day.irr{background:var(--irr);border-color:#e3a878}
+.day.trap{box-shadow:inset 0 0 0 2px #c9b04a}
+.day.active{background:var(--shu);color:#fff;border-color:var(--shu)}
+.day.blank{border:none;background:transparent;cursor:default;box-shadow:none}
+
+.readout{flex:1 1 240px;min-height:160px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+.readout .num{font-size:.9rem;color:var(--kaki);font-weight:700}
+.readout .big{font-size:2.1rem;letter-spacing:.06em;color:var(--shu-d);font-weight:700;margin:.1em 0}
+.readout .rom{font-size:.88rem;opacity:.6}
+.readout .tag{display:inline-block;margin-top:10px;font-size:.78rem;padding:3px 10px;border-radius:999px}
+.readout .tag.reg{background:rgba(51,86,110,.14);color:var(--ai-d)}
+.readout .tag.irr{background:var(--irr);color:var(--shu-d)}
+.readout .hint{margin-top:10px;font-size:.88rem;color:var(--ai-d)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.vcard{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;cursor:pointer;
+  text-align:center;font:inherit;color:inherit}
+.vcard.irr{background:var(--irr);border-color:#e3a878}
+.vcard:hover{border-color:var(--shu)}
+.vcard .n{font-size:.82rem;color:var(--kaki);font-weight:700}
+.vcard .w{font-size:1.3rem;color:var(--shu-d);font-weight:700}
+.vcard .r{font-size:.74rem;opacity:.6}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:rgba(209,83,59,.12);color:var(--shu-d);white-space:nowrap}
+td.jp{font-size:1.05rem}
+
+textarea,input[type=text]{width:100%;background:#fff;color:var(--sumi);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:120px;resize:vertical}
+input[type=range]{width:170px;vertical-align:middle}
+
+.beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:1rem;transition:.12s}
+.chip.irr{background:var(--irr);border-color:#e3a878}
+.chip.on{background:var(--shu);color:#fff;border-color:var(--shu);transform:scale(1.1)}
+
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-child{border-top:none}
+.q .stem{font-weight:700;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt:hover{border-color:var(--shu)}
+.opt.right{background:rgba(51,86,110,.18);border-color:var(--ai)}
+.opt.wrong{background:rgba(209,83,59,.2);border-color:var(--shu)}
+.score{font-size:1.05rem;color:var(--shu-d);font-weight:800}
+
+.reclist li{margin:6px 0}
+audio{max-width:100%;vertical-align:middle}
+footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">唱歌學日文 · 第三集</div>
+  <h1 class="jp" id="title"></h1>
+  <div class="sub">一日・二日・三日の歌 ─ 日期唸法互動學習單</div>
+</header>
+
+<nav id="nav">
+  <button data-target="t1" aria-selected="true">① 影片導覽</button>
+  <button data-target="t2">② 日曆點讀</button>
+  <button data-target="t3">③ 規則與陷阱</button>
+  <button data-target="t4">④ 節拍跟唱</button>
+  <button data-target="t5">⑤ 跟讀錄音</button>
+  <button data-target="t6">⑥ 小測驗</button>
+<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
+</nav>
+
+<!-- ① -->
+<section id="t1">
+  <div class="card">
+    <h2>日期是日語裡最「不講理」的一塊</h2>
+    <p>1 到 10 號幾乎每一個都是<b>特殊唸法</b>（訓讀），跟數字本身對不起來——這正是為什麼要用「唱」的把它們背下來。旋律會幫你記住 <span class="jp">ついたち・ふつか・みっか</span> 這串本來很難的音，之後 11 號以後才回到「數字＋にち」的規則。</p>
+    <div id="videoZone">
+      <div class="embed">
+        <iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/9rNfefNaUng"
+                title="一日二日三日の歌" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+      </div>
+      <p class="note" style="margin-top:6px">影片無法播放？<a href="https://youtu.be/9rNfefNaUng" target="_blank" rel="noopener" style="color:var(--shu-d)">在 YouTube 開啟</a></p>
+    </div>
+    <h3>建議流程</h3>
+    <table>
+      <tr><th>階段</th><th>做什麼</th><th>時間</th></tr>
+      <tr><td>1 唱</td><td>跟影片把 1～10 唱熟，先不管意思</td><td>4 分</td></tr>
+      <tr><td>2 點</td><td>第 ② 頁點日曆，把音對到數字</td><td>4 分</td></tr>
+      <tr><td>3 分</td><td>第 ③ 頁看清楚「哪些不規則、哪些是陷阱」</td><td>4 分</td></tr>
+      <tr><td>4 用</td><td>互問「今天幾號？你生日幾號？」</td><td>5 分</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>課堂筆記</h2>
+    <p class="note">只存在這台裝置。</p>
+    <textarea id="notes" placeholder="例：20日 はつか 學生最容易忘，下次用生日連結……"></textarea>
+    <button class="btn" id="saveNote">儲存</button>
+    <span id="noteMsg" class="note"></span>
+  </div>
+</section>
+
+<!-- ② -->
+<section id="t2" hidden>
+  <div class="card">
+    <h2>點日曆，聽唸法</h2>
+    <div class="legend">
+      <span><i class="swatch" style="background:#fff"></i>規則（數字＋にち）</span>
+      <span><i class="swatch" style="background:var(--irr)"></i>特殊唸法（要背）</span>
+      <span><i class="swatch" style="background:#fff;box-shadow:inset 0 0 0 2px #c9b04a"></i>讀音陷阱</span>
+    </div>
+    <div class="calWrap">
+      <div class="calBox">
+        <div class="cal" id="calHead"></div>
+        <div class="cal" id="cal"></div>
+      </div>
+      <div class="readout" id="readout">
+        <div class="num">選一個日期</div>
+        <div class="big jp">？</div>
+        <div class="rom"></div>
+        <div class="hint">點左邊任一天，會唸出來並告訴你是規則還是特殊。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ -->
+<section id="t3" hidden>
+  <div class="card">
+    <h2>先背這 10 個，其他都好辦</h2>
+    <p class="note">點卡片發音。橘底 = 特殊唸法。</p>
+    <div class="grid" id="vgrid"></div>
+  </div>
+  <div class="card">
+    <h2>三個必背的例外</h2>
+    <p>過了 10 號本來都是「數字＋にち」，但這三個把前面學的特殊音<b>又搬回來</b>用：</p>
+    <table>
+      <tr><th>日</th><th>唸法</th><th>為什麼特別</th></tr>
+      <tr><td>14日</td><td class="jp">じゅうよっか</td><td>不是 じゅうよにち，沿用 4 日的 よっか</td></tr>
+      <tr><td>20日</td><td class="jp">はつか</td><td>完全獨立的訓讀，和 8 日 ようか 別搞混</td></tr>
+      <tr><td>24日</td><td class="jp">にじゅうよっか</td><td>同樣沿用 よっか</td></tr>
+    </table>
+    <h3>讀音陷阱（規則但容易唸錯）</h3>
+    <table>
+      <tr><th>日</th><th>正確</th><th>常犯</th></tr>
+      <tr><td>17日</td><td class="jp">じゅうしちにち</td><td>唸成 なな（じゅうななにち）</td></tr>
+      <tr><td>19日</td><td class="jp">じゅうくにち</td><td>唸成 きゅう（じゅうきゅうにち）</td></tr>
+      <tr><td>27・29日</td><td class="jp">…しち／…く</td><td>同上，しち 不唸 なな、く 不唸 きゅう</td></tr>
+    </table>
+    <p class="note">口訣：日期裡的 4・7・9，用的是「よ・しち・く」這一組，不是「し・なな・きゅう」。</p>
+  </div>
+</section>
+
+<!-- ④ -->
+<section id="t4" hidden>
+  <div class="card">
+    <h2>1 到 10 節拍跟唱</h2>
+    <p class="note">先「打拍」抓節奏，再「逐字朗讀」把音疊上去。橘色格是特殊唸法。</p>
+    <div>
+      <label class="note">速度</label>
+      <input type="range" id="tempo" min="450" max="1200" step="20" value="800">
+      <span class="note" id="tempoLab">中速</span>
+    </div>
+    <button class="btn" id="playBeat">▶ 打拍</button>
+    <button class="btn blue" id="playSay">▶ 逐字朗讀</button>
+    <button class="btn ghost" id="stopSeq">■ 停止</button>
+    <div class="beatBar" id="seqBar"></div>
+  </div>
+  <div class="card">
+    <h2>拍數提醒</h2>
+    <p>唱的時候，每個日期唸法本身就有固定拍數，別因為押旋律而拉長或縮短：</p>
+    <table>
+      <tr><th>2 拍</th><td class="jp">ふつか・みっか・よっか・いつか・むいか・ようか・とおか</td></tr>
+      <tr><th>3 拍</th><td class="jp">なのか</td></tr>
+      <tr><th>4 拍</th><td class="jp">ついたち・ここのか</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑤ -->
+<section id="t5" hidden>
+  <div class="card">
+    <h2>模仿 → 錄音 → 對照</h2>
+    <div style="margin:10px 0">
+      <label class="note">要練的內容（可改寫，例如自己的生日）</label>
+      <input type="text" id="drillText" class="jp" value="ついたち ふつか みっか">
+      <button class="btn" id="sayDrill">聽範讀</button>
+      <button class="btn ghost" id="slowDrill">慢速範讀</button>
+      <button class="btn ghost" id="stopAll">停止</button>
+    </div>
+    <div>
+      <button class="btn blue" id="recStart">● 開始錄音</button>
+      <button class="btn ghost" id="recStop" disabled>■ 停止</button>
+      <span id="recMsg" class="note"></span>
+    </div>
+    <ul class="reclist" id="recList"></ul>
+  </div>
+  <div class="card">
+    <h2>自我檢核</h2>
+    <table>
+      <tr><th>檢核點</th><th>做到了嗎</th></tr>
+      <tr><td>1～10 號十個特殊音都能不看字唸出</td><td>□</td></tr>
+      <tr><td>14・20・24 三個例外沒有唸成規則形</td><td>□</td></tr>
+      <tr><td>17・19 用 しち・く，不是 なな・きゅう</td><td>□</td></tr>
+      <tr><td>能回答「今天幾號」「生日幾號」</td><td>□</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ -->
+<section id="t6" hidden>
+  <div class="card">
+    <h2>小測驗</h2>
+    <div id="quiz"></div>
+    <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
+    <p class="note" id="checkin"></p>
+  </div>
+</section>
+
+<footer>唱歌學日文 #3 一日二日三日の歌 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var mem={};
+var LS={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+};
+
+/* 標題逐字 */
+(function(){
+  var t="ついたち・ふつか・みっか", el=document.getElementById("title");
+  for(var i=0;i<t.length;i++){
+    var s=document.createElement("span");
+    s.textContent=t[i]; s.style.animationDelay=(i*0.06)+"s";
+    el.appendChild(s);
+  }
+})();
+
+/* ── 日期資料 ── */
+/* type: irr=特殊訓讀, trap=規則但讀音陷阱, reg=一般規則 */
+var DAY={
+ 1:{k:"ついたち",r:"tsuitachi",t:"irr",note:"月初的專用詞，不是いちにち"},
+ 2:{k:"ふつか",r:"futsuka",t:"irr"},
+ 3:{k:"みっか",r:"mikka",t:"irr"},
+ 4:{k:"よっか",r:"yokka",t:"irr",note:"14・24 也沿用這個"},
+ 5:{k:"いつか",r:"itsuka",t:"irr"},
+ 6:{k:"むいか",r:"muika",t:"irr"},
+ 7:{k:"なのか",r:"nanoka",t:"irr"},
+ 8:{k:"ようか",r:"yōka",t:"irr",note:"別和 20日 はつか 混"},
+ 9:{k:"ここのか",r:"kokonoka",t:"irr"},
+ 10:{k:"とおか",r:"tōka",t:"irr"},
+ 11:{k:"じゅういちにち",r:"jūichinichi",t:"reg"},
+ 12:{k:"じゅうににち",r:"jūninichi",t:"reg"},
+ 13:{k:"じゅうさんにち",r:"jūsannichi",t:"reg"},
+ 14:{k:"じゅうよっか",r:"jūyokka",t:"irr",note:"例外：沿用 4日 よっか"},
+ 15:{k:"じゅうごにち",r:"jūgonichi",t:"reg"},
+ 16:{k:"じゅうろくにち",r:"jūrokunichi",t:"reg"},
+ 17:{k:"じゅうしちにち",r:"jūshichinichi",t:"trap",note:"7 唸 しち，不是 なな"},
+ 18:{k:"じゅうはちにち",r:"jūhachinichi",t:"reg"},
+ 19:{k:"じゅうくにち",r:"jūkunichi",t:"trap",note:"9 唸 く，不是 きゅう"},
+ 20:{k:"はつか",r:"hatsuka",t:"irr",note:"完全獨立的訓讀，必背"},
+ 21:{k:"にじゅういちにち",r:"nijūichinichi",t:"reg"},
+ 22:{k:"にじゅうににち",r:"nijūninichi",t:"reg"},
+ 23:{k:"にじゅうさんにち",r:"nijūsannichi",t:"reg"},
+ 24:{k:"にじゅうよっか",r:"nijūyokka",t:"irr",note:"例外：沿用 4日 よっか"},
+ 25:{k:"にじゅうごにち",r:"nijūgonichi",t:"reg"},
+ 26:{k:"にじゅうろくにち",r:"nijūrokunichi",t:"reg"},
+ 27:{k:"にじゅうしちにち",r:"nijūshichinichi",t:"trap",note:"7 唸 しち"},
+ 28:{k:"にじゅうはちにち",r:"nijūhachinichi",t:"reg"},
+ 29:{k:"にじゅうくにち",r:"nijūkunichi",t:"trap",note:"9 唸 く"},
+ 30:{k:"さんじゅうにち",r:"sanjūnichi",t:"reg"},
+ 31:{k:"さんじゅういちにち",r:"sanjūichinichi",t:"reg"}
+};
+
+/* 分頁 */
+var nav=document.getElementById("nav");
+nav.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-target]"); if(!b) return;
+  var btns=nav.querySelectorAll("button");
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-selected", btns[i]===b?"true":"false");
+  var secs=document.querySelectorAll("section");
+  for(var j=0;j<secs.length;j++) secs[j].hidden=(secs[j].id!==b.dataset.target);
+  stopSeq();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* TTS */
+var watchdog=null;
+function stopSpeak(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(watchdog){clearInterval(watchdog);watchdog=null;}
+}
+function speak(text,rate,onend){
+  if(!("speechSynthesis" in window)||!text){ if(onend) onend(); return; }
+  stopSpeak();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=rate||0.9;
+  var vs=speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang&&vs[i].lang.indexOf("ja")===0){u.voice=vs[i];break;} }
+  u.onend=function(){ if(watchdog){clearInterval(watchdog);watchdog=null;} if(onend) onend(); };
+  u.onerror=function(){ if(onend) onend(); };
+  speechSynthesis.speak(u);
+  watchdog=setInterval(function(){
+    if(!speechSynthesis.speaking){clearInterval(watchdog);watchdog=null;return;}
+    speechSynthesis.pause(); speechSynthesis.resume();
+  },9000);
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-say]"); if(b) speak(b.getAttribute("data-say"));
+});
+
+/* 影片降級 */
+(function(){
+  var zone=document.getElementById("videoZone"), fr=document.getElementById("ytFrame");
+  if(!zone||!fr) return;
+  var ok=false;
+  fr.addEventListener("load",function(){ok=true;});
+  setTimeout(function(){
+    if(ok) return;
+    zone.innerHTML='<a class="videoCard" href="https://youtu.be/9rNfefNaUng" target="_blank" rel="noopener">'+
+      '<span class="play">▶</span><span class="vtxt"><b>播放〈一日二日三日の歌〉</b>'+
+      '<i>此環境不支援內嵌，點擊在 YouTube 開啟</i></span></a>';
+  },4000);
+})();
+
+/* 筆記 */
+var nt=document.getElementById("notes");
+nt.value=LS.get("ep3_notes")||"";
+document.getElementById("saveNote").onclick=function(){
+  LS.set("ep3_notes",nt.value);
+  var m=document.getElementById("noteMsg"); m.textContent="已儲存 ✓";
+  setTimeout(function(){m.textContent="";},2000);
+};
+
+/* ── ② 日曆 ── */
+var DOW=["日","月","火","水","木","金","土"];
+var ch=document.getElementById("calHead");
+DOW.forEach(function(d){ var e=document.createElement("div"); e.className="dow"; e.textContent=d; ch.appendChild(e); });
+
+var cal=document.getElementById("cal"), ro=document.getElementById("readout");
+/* 用一個「1號=週日」的示意月，純教學排版，非真實月曆 */
+for(var i=1;i<=31;i++){
+  var btn=document.createElement("button");
+  var d=DAY[i];
+  btn.className="day"+(d.t==="irr"?" irr":"")+(d.t==="trap"?" trap":"");
+  btn.textContent=i; btn.dataset.n=i;
+  cal.appendChild(btn);
+}
+cal.addEventListener("click",function(e){
+  var b=e.target.closest(".day"); if(!b||b.classList.contains("blank")) return;
+  cal.querySelectorAll(".day").forEach(function(x){x.classList.remove("active");});
+  b.classList.add("active");
+  var n=+b.dataset.n, d=DAY[n];
+  ro.querySelector(".num").textContent=n+" 日";
+  ro.querySelector(".big").textContent=d.k;
+  ro.querySelector(".rom").textContent=d.r;
+  var tag=d.t==="reg"?'<span class="tag reg">規則：數字＋にち</span>':'<span class="tag irr">特殊唸法・要背</span>';
+  var hint=d.note?('<div class="hint">'+d.note+'</div>'):(d.t==="reg"?'<div class="hint">照規則拼即可。</div>':'');
+  var old=ro.querySelector(".tag"); if(old) old.remove();
+  var oh=ro.querySelector(".hint"); if(oh) oh.remove();
+  ro.insertAdjacentHTML("beforeend",tag+hint);
+  speak(d.k,0.9);
+});
+
+/* ── ③ 卡片（1-10 + 三例外 + 20）── */
+var vg=document.getElementById("vgrid");
+[1,2,3,4,5,6,7,8,9,10,14,20,24].forEach(function(n){
+  var d=DAY[n];
+  var c=document.createElement("button");
+  c.className="vcard"+(d.t==="irr"?" irr":"");
+  c.innerHTML='<span class="n">'+n+'日</span><span class="w jp">'+d.k+'</span><span class="r">'+d.r+'</span>';
+  c.onclick=function(){ speak(d.k); };
+  vg.appendChild(c);
+});
+
+/* ── ④ 節拍 1-10 ── */
+var SEQ=[1,2,3,4,5,6,7,8,9,10];
+var seqBar=document.getElementById("seqBar");
+SEQ.forEach(function(n,i){
+  var d=DAY[n];
+  var s=document.createElement("span");
+  s.className="chip jp"+(d.t!=="reg"?" irr":"");
+  s.dataset.idx=i; s.textContent=d.k;
+  seqBar.appendChild(s);
+});
+var tempo=document.getElementById("tempo"), tLab=document.getElementById("tempoLab");
+function tempoLabel(){
+  var v=+tempo.value;
+  tLab.textContent=v>1000?"很慢":v>820?"慢速":v>620?"中速":"原速";
+}
+tempo.addEventListener("input",tempoLabel); tempoLabel();
+
+var seqTimer=null, ac=null;
+function tick(){
+  try{
+    if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(), g=ac.createGain();
+    o.type="sine"; o.frequency.value=860;
+    g.gain.setValueAtTime(0.001,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25,ac.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.13);
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime+0.15);
+  }catch(e){}
+}
+function clearChips(){ seqBar.querySelectorAll(".chip").forEach(function(c){c.classList.remove("on");}); }
+function stopSeq(){
+  if(seqTimer){clearTimeout(seqTimer);seqTimer=null;}
+  stopSpeak(); clearChips();
+}
+document.getElementById("stopSeq").onclick=stopSeq;
+
+function runSeq(withVoice){
+  stopSeq();
+  var idx=0;
+  function step(){
+    if(idx>=SEQ.length){ clearChips(); return; }
+    clearChips();
+    var chip=seqBar.querySelector(".chip[data-idx='"+idx+"']");
+    if(chip) chip.classList.add("on");
+    var d=DAY[SEQ[idx]]; idx++;
+    if(withVoice){
+      speak(d.k,0.92,function(){ seqTimer=setTimeout(step,140); });
+    }else{
+      tick(); seqTimer=setTimeout(step,+tempo.value);
+    }
+  }
+  step();
+}
+document.getElementById("playBeat").onclick=function(){ runSeq(false); };
+document.getElementById("playSay").onclick=function(){ runSeq(true); };
+
+/* ⑤ 錄音 */
+document.getElementById("sayDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.85); };
+document.getElementById("slowDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.55); };
+document.getElementById("stopAll").onclick=stopSpeak;
+
+var mr=null, chunks=[], recN=0;
+var bStart=document.getElementById("recStart"), bStop=document.getElementById("recStop"),
+    rMsg=document.getElementById("recMsg"), rList=document.getElementById("recList");
+bStart.onclick=function(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){ rMsg.textContent="這個瀏覽器不支援錄音"; return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    chunks=[]; mr=new MediaRecorder(stream);
+    mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+      var url=URL.createObjectURL(blob); recN++;
+      var li=document.createElement("li");
+      li.innerHTML='第 '+recN+' 次　<audio controls src="'+url+'"></audio> '+
+                   '<a class="btn ghost" download="hizuke-'+recN+'.webm" href="'+url+'">下載</a>';
+      rList.appendChild(li);
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    mr.start(); bStart.disabled=true; bStop.disabled=false; rMsg.textContent="錄音中…";
+  }).catch(function(){ rMsg.textContent="沒有取得麥克風權限"; });
+};
+bStop.onclick=function(){
+  if(mr&&mr.state!=="inactive") mr.stop();
+  bStart.disabled=false; bStop.disabled=true; rMsg.textContent="已完成，可回放比對";
+};
+
+/* ⑥ 測驗 */
+var QS=[
+ {q:"1日 怎麼唸？", o:["いちにち","ついたち","ひとひ","はつか"], a:1},
+ {q:"20日 的正確唸法是？", o:["にじゅうにち","はつか","ようか","ふつか"], a:1},
+ {q:"14日 唸作？", o:["じゅうよにち","じゅうよっか","じゅうしにち","とおか"], a:1},
+ {q:"下列哪一天是「特殊唸法」而非規則？", o:["15日","10日","16日","12日"], a:1},
+ {q:"17日 的 7 應該唸？", o:["なな","しち","ひち","きゅう"], a:1},
+ {q:"8日 ようか 最容易和哪一天搞混？", o:["4日","20日","10日","2日"], a:1},
+ {q:"19日 的 9 唸作？", o:["きゅう","く","ここの","じゅう"], a:1},
+ {q:"「數字＋にち」的規則從幾號才開始適用？", o:["1日","6日","11日","20日"], a:2}
+];
+var quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score"), doneA=[], got=0;
+function buildQuiz(){
+  quiz.innerHTML=""; doneA=[]; got=0; scoreEl.textContent="0 / "+QS.length;
+  QS.forEach(function(item,qi){
+    var d=document.createElement("div"); d.className="q";
+    d.innerHTML='<div class="stem">'+(qi+1)+'. '+item.q+'</div>';
+    item.o.forEach(function(opt,oi){
+      var b=document.createElement("button"); b.className="opt jp"; b.textContent=opt;
+      b.onclick=function(){
+        if(doneA[qi]) return;
+        doneA[qi]=true;
+        var all=d.querySelectorAll(".opt");
+        all[item.a].classList.add("right");
+        if(oi!==item.a) b.classList.add("wrong"); else got++;
+        scoreEl.textContent=got+" / "+QS.length;
+        if(doneA.filter(Boolean).length===QS.length) checkin();
+      };
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+function checkin(){
+  var today=new Date().toISOString().slice(0,10);
+  var days=(LS.get("ep3_days")||"").split(",").filter(Boolean);
+  if(days.indexOf(today)<0){ days.push(today); LS.set("ep3_days",days.join(",")); }
+  document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
+}
+document.getElementById("resetQ").onclick=buildQuiz;
+buildQuiz();
+var d0=(LS.get("ep3_days")||"").split(",").filter(Boolean);
+if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+</body>
+</html>

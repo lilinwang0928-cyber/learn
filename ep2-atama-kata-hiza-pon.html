@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>あたま・かた・ひざ・ぽん 互動學習單</title>
+<style>
+:root{
+  --paper:#f7f4dd;      /* 和紙奶油 */
+  --paper2:#eee9c8;
+  --matcha:#7d8f4a;     /* 抹茶 */
+  --matcha-d:#5c6a34;
+  --wakaba:#b8c96a;     /* 若草 */
+  --kuma:#b99a7a;       /* 熊茶 */
+  --kitsune:#e8a04a;    /* 狐橘 */
+  --momo:#e88b8b;       /* 桃 */
+  --ink:#3e3a2c;
+  --line:rgba(62,58,44,.18);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.35) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;}
+.wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px}
+
+header{text-align:center;padding:24px 0 6px}
+header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--matcha);font-weight:700}
+header h1{
+  font-family:"Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  font-size:clamp(1.7rem,6vw,2.8rem);margin:.2em 0 .1em;font-weight:800;letter-spacing:.05em;color:var(--matcha-d);
+}
+header h1 span{display:inline-block;opacity:0;animation:hop .45s ease forwards}
+@keyframes hop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+header .sub{font-size:.92rem;opacity:.72}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
+nav button{
+  font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
+  background:#fff;color:var(--ink);border:1px solid var(--line);transition:.18s;
+}
+nav button:hover{border-color:var(--matcha);color:var(--matcha-d)}
+nav button[aria-selected="true"]{background:var(--matcha);border-color:var(--matcha);color:#fff;font-weight:700}
+button:focus-visible,a:focus-visible{outline:2px solid var(--kitsune);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{background:#fffdf2;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px;
+  box-shadow:0 2px 0 rgba(62,58,44,.06)}
+h2{font-size:1.12rem;margin:0 0 .5em;color:var(--matcha-d)}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--kitsune)}
+p{margin:.5em 0}
+.note{opacity:.66;font-size:.85rem}
+
+.btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
+  background:var(--matcha);color:#fff;border:none;font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.orange{background:var(--kitsune)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:default}
+
+/* 影片 */
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#e6e2c6}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:#fff}
+.videoCard:hover{border-color:var(--matcha)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--matcha);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
+.videoCard .vtxt b{display:block}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+
+/* ── 身體地圖（招牌）── */
+.bodyWrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.bodySvg{flex:1 1 260px;max-width:320px;margin:0 auto}
+.hot{cursor:pointer}
+.hot circle,.hot ellipse{transition:.18s}
+.hot:hover .hit{fill:rgba(232,160,74,.35)}
+.hot.active .hit{fill:rgba(232,160,74,.85)}
+.hot .hit{fill:rgba(125,143,74,.16);stroke:var(--matcha);stroke-width:1.5;stroke-dasharray:3 3}
+.readout{flex:1 1 220px;min-height:120px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.readout .big{font-size:2rem;letter-spacing:.08em;color:var(--matcha-d);font-weight:700}
+.readout .rom{font-size:.85rem;opacity:.65}
+.readout .cn{margin-top:6px;font-size:1.05rem}
+.readout .beat{margin-top:8px;font-size:.85rem;color:var(--kitsune);font-weight:700}
+
+/* 節拍條 */
+.beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:1rem;
+  transition:.12s;white-space:nowrap}
+.chip.on{background:var(--kitsune);color:#fff;border-color:var(--kitsune);transform:scale(1.12)}
+.chip.pon{background:var(--momo);color:#fff;border-color:var(--momo)}
+.chip.pon.on{background:#d05e5e;border-color:#d05e5e}
+.lineLabel{font-size:.8rem;opacity:.6;margin-top:10px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.vcard{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;cursor:pointer;
+  min-height:112px;display:flex;flex-direction:column;justify-content:center;text-align:center;font:inherit;color:inherit}
+.vcard:hover{border-color:var(--momo)}
+.vcard .w{font-size:1.35rem;color:var(--matcha-d);font-weight:700}
+.vcard .r{font-size:.78rem;opacity:.6}
+.vcard .m{margin-top:8px;font-size:.92rem;color:var(--kitsune);display:none}
+.vcard.open .m{display:block}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:rgba(125,143,74,.14);color:var(--matcha-d);white-space:nowrap}
+
+textarea,input[type=text]{width:100%;background:#fff;color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:130px;resize:vertical}
+input[type=range]{width:180px;vertical-align:middle}
+
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-child{border-top:none}
+.q .stem{font-weight:700;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt:hover{border-color:var(--matcha)}
+.opt.right{background:rgba(125,143,74,.22);border-color:var(--matcha)}
+.opt.wrong{background:rgba(232,139,139,.22);border-color:var(--momo)}
+.score{font-size:1.05rem;color:var(--matcha-d);font-weight:800}
+
+.reclist li{margin:6px 0}
+audio{max-width:100%;vertical-align:middle}
+footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">唱歌學日文 · 第二集</div>
+  <h1 class="jp" id="title"></h1>
+  <div class="sub">頭・肩・膝ぽん ─ 身體部位互動學習單</div>
+</header>
+
+<nav id="nav">
+  <button data-target="t1" aria-selected="true">① 影片導覽</button>
+  <button data-target="t2">② 身體地圖</button>
+  <button data-target="t3">③ 節拍跟唱</button>
+  <button data-target="t4">④ 單字與拍</button>
+  <button data-target="t5">⑤ 跟讀錄音</button>
+  <button data-target="t6">⑥ 小測驗</button>
+<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
+</nav>
+
+<!-- ① -->
+<section id="t1">
+  <div class="card">
+    <h2>用身體記，比用眼睛記牢</h2>
+    <p>這首歌把八個身體部位掛在固定的節拍上：<b>手先動，嘴才動</b>。對初學者來說，動作提供了記憶的掛勾——摸到膝蓋的同時說出 <b class="jp">ひざ</b>，詞就不是被背下來的，而是被做出來的。</p>
+    <div id="videoZone">
+      <div class="embed">
+        <iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/fa1Orekgx4Y"
+                title="頭・肩・膝ぽん" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+      </div>
+      <p class="note" style="margin-top:6px">影片無法播放？<a href="https://youtu.be/fa1Orekgx4Y" target="_blank" rel="noopener" style="color:var(--matcha-d)">在 YouTube 開啟</a></p>
+    </div>
+    <h3>建議流程</h3>
+    <table>
+      <tr><th>階段</th><th>做什麼</th><th>時間</th></tr>
+      <tr><td>1 看</td><td>只看不唱，跟著熊與狐狸做動作</td><td>2 分</td></tr>
+      <tr><td>2 動</td><td>關掉聲音，老師報中文，學生指部位</td><td>3 分</td></tr>
+      <tr><td>3 說</td><td>第 ② 頁點身體地圖，逐字跟讀</td><td>5 分</td></tr>
+      <tr><td>4 唱</td><td>第 ③ 頁慢速跟唱 → 原速</td><td>5 分</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>課堂筆記</h2>
+    <p class="note">上課觀察、學生易錯處都可記在這裡，只存在這台裝置。</p>
+    <textarea id="notes" placeholder="例：三年級班，ひざ 常唸成 hi-ja，需要單獨拉出來練 ざ 行……"></textarea>
+    <button class="btn" id="saveNote">儲存</button>
+    <span id="noteMsg" class="note"></span>
+  </div>
+</section>
+
+<!-- ② -->
+<section id="t2" hidden>
+  <div class="card">
+    <h2>點一下身體，唸一次名字</h2>
+    <p class="note">點圖上的虛線圈，會唸出日文並顯示拍數。建議學生一邊點螢幕、一邊摸自己身上同一個位置。</p>
+    <div class="bodyWrap">
+      <div class="bodySvg">
+        <svg viewBox="0 0 300 400" width="100%" aria-label="身體部位圖">
+          <!-- 身體 -->
+          <ellipse cx="150" cy="72" rx="48" ry="50" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <path d="M112 122 h76 a26 26 0 0 1 26 26 v72 a20 20 0 0 1 -20 20 h-88 a20 20 0 0 1 -20 -20 v-72 a26 26 0 0 1 26 -26z" fill="#8fd0dd" stroke="#5fa8b8" stroke-width="2.5"/>
+          <rect x="118" y="240" width="28" height="120" rx="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <rect x="154" y="240" width="28" height="120" rx="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <rect x="72" y="132" width="26" height="96" rx="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <rect x="202" y="132" width="26" height="96" rx="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <!-- 耳 -->
+          <circle cx="104" cy="66" r="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <circle cx="196" cy="66" r="13" fill="#e9d9c4" stroke="#b99a7a" stroke-width="2.5"/>
+          <!-- 五官 -->
+          <circle cx="134" cy="66" r="4.5" fill="#3e3a2c"/>
+          <circle cx="166" cy="66" r="4.5" fill="#3e3a2c"/>
+          <path d="M144 84 q6 6 12 0" stroke="#3e3a2c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M150 92 q0 10 10 10 M150 92 q0 10 -10 10" stroke="#c96a6a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+          <!-- 熱區 -->
+          <g class="hot" data-key="atama"><circle class="hit" cx="150" cy="34" r="20"/></g>
+          <g class="hot" data-key="kata"><circle class="hit" cx="105" cy="134" r="19"/></g>
+          <g class="hot" data-key="kata2"><circle class="hit" cx="195" cy="134" r="19"/></g>
+          <g class="hot" data-key="hiza"><circle class="hit" cx="132" cy="300" r="20"/></g>
+          <g class="hot" data-key="hiza2"><circle class="hit" cx="168" cy="300" r="20"/></g>
+          <g class="hot" data-key="me"><circle class="hit" cx="134" cy="66" r="13"/></g>
+          <g class="hot" data-key="mimi"><circle class="hit" cx="196" cy="66" r="15"/></g>
+          <g class="hot" data-key="hana"><circle class="hit" cx="150" cy="84" r="12"/></g>
+          <g class="hot" data-key="kuchi"><circle class="hit" cx="150" cy="100" r="13"/></g>
+        </svg>
+      </div>
+      <div class="readout" id="readout">
+        <div class="big jp">？</div>
+        <div class="rom">點左邊的虛線圈</div>
+        <div class="cn"></div>
+        <div class="beat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ -->
+<section id="t3" hidden>
+  <div class="card">
+    <h2>節拍跟唱</h2>
+    <p class="note">先用「打拍」抓節奏（有節拍聲、不唸字），再用「逐字朗讀」把音疊上去。ぽん 是拍手的擬聲，不是身體部位，用桃紅色標示。</p>
+    <div>
+      <label class="note">速度</label>
+      <input type="range" id="tempo" min="380" max="1100" step="20" value="700">
+      <span class="note" id="tempoLab">中速</span>
+    </div>
+    <button class="btn" id="playBeat">▶ 打拍</button>
+    <button class="btn orange" id="playSay">▶ 逐字朗讀</button>
+    <button class="btn ghost" id="stopSeq">■ 停止</button>
+
+    <div class="lineLabel">第一段</div>
+    <div class="beatBar" id="line1"></div>
+    <div class="lineLabel">第二段</div>
+    <div class="beatBar" id="line2"></div>
+  </div>
+  <div class="card">
+    <h2>為什麼 ぽん 特別重要</h2>
+    <p><b class="jp">ぽん</b> 是擬聲語（拍一下的聲音），日文童謠常用它來<b>收句</b>。它同時示範了兩件事：小さい「っ」以外的促音感、以及撥音 <b class="jp">ん</b> 要單獨佔一整拍。學生唸成 <span class="jp">po</span>（1 拍）就會整段節奏對不上。</p>
+    <button class="btn ghost" data-say="ぽん">聽 ぽん</button>
+    <button class="btn ghost" data-say="ぽ">對照：只有 ぽ</button>
+  </div>
+</section>
+
+<!-- ④ -->
+<section id="t4" hidden>
+  <div class="card">
+    <h2>八個字彙</h2>
+    <p class="note">點卡片看中文並發音。</p>
+    <div class="grid" id="vgrid"></div>
+  </div>
+  <div class="card">
+    <h2>常見錯誤</h2>
+    <table>
+      <tr><th>單字</th><th>拍</th><th>台灣學生常犯</th><th>修正提示</th></tr>
+      <tr><td class="jp">ひざ</td><td>2</td><td>唸成 hi-ja</td><td>ざ 是 za，舌尖不上翹</td></tr>
+      <tr><td class="jp">ぽん</td><td>2</td><td>唸成 1 拍的 pon</td><td>ん 站住，像中文「嗯」拖一下</td></tr>
+      <tr><td class="jp">みみ</td><td>2</td><td>兩個 mi 長短不一</td><td>等長，不要第二個加重</td></tr>
+      <tr><td class="jp">あたま</td><td>3</td><td>重音放錯，唸成 a-TA-ma</td><td>東京腔為頭高型，あ 稍高後平</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑤ -->
+<section id="t5" hidden>
+  <div class="card">
+    <h2>模仿 → 錄音 → 對照</h2>
+    <div style="margin:10px 0">
+      <label class="note">要練的內容（可改寫）</label>
+      <input type="text" id="drillText" class="jp" value="あたま かた ひざ ぽん">
+      <button class="btn" id="sayDrill">聽範讀</button>
+      <button class="btn ghost" id="slowDrill">慢速範讀</button>
+      <button class="btn ghost" id="stopAll">停止</button>
+    </div>
+    <div>
+      <button class="btn orange" id="recStart">● 開始錄音</button>
+      <button class="btn ghost" id="recStop" disabled>■ 停止</button>
+      <span id="recMsg" class="note"></span>
+    </div>
+    <ul class="reclist" id="recList"></ul>
+  </div>
+  <div class="card">
+    <h2>自我檢核</h2>
+    <table>
+      <tr><th>檢核點</th><th>做到了嗎</th></tr>
+      <tr><td>每個假名一拍，長度相同</td><td>□</td></tr>
+      <tr><td>ぽん 的 ん 有站住一整拍</td><td>□</td></tr>
+      <tr><td>ひざ 的 ざ 沒有變成 ja</td><td>□</td></tr>
+      <tr><td>手的動作和嘴同時發生，不是先唸再動</td><td>□</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ -->
+<section id="t6" hidden>
+  <div class="card">
+    <h2>小測驗</h2>
+    <div id="quiz"></div>
+    <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
+    <p class="note" id="checkin"></p>
+  </div>
+</section>
+
+<footer>唱歌學日文 #2 頭・肩・膝ぽん 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var mem={};
+var LS={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return mem[k]||null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+};
+
+/* 標題逐字 */
+(function(){
+  var t="あたま・かた・ひざ・ぽん", el=document.getElementById("title");
+  for(var i=0;i<t.length;i++){
+    var s=document.createElement("span");
+    s.textContent=t[i]; s.style.animationDelay=(i*0.07)+"s";
+    el.appendChild(s);
+  }
+})();
+
+/* 分頁 */
+var nav=document.getElementById("nav");
+nav.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-target]"); if(!b) return;
+  var btns=nav.querySelectorAll("button");
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-selected", btns[i]===b?"true":"false");
+  var secs=document.querySelectorAll("section");
+  for(var j=0;j<secs.length;j++) secs[j].hidden=(secs[j].id!==b.dataset.target);
+  stopSeq();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* TTS */
+var watchdog=null;
+function stopSpeak(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(watchdog){clearInterval(watchdog);watchdog=null;}
+}
+function speak(text,rate,onend){
+  if(!("speechSynthesis" in window)||!text){ if(onend) onend(); return; }
+  stopSpeak();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=rate||0.9;
+  var vs=speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang&&vs[i].lang.indexOf("ja")===0){u.voice=vs[i];break;} }
+  u.onend=function(){ if(watchdog){clearInterval(watchdog);watchdog=null;} if(onend) onend(); };
+  u.onerror=function(){ if(onend) onend(); };
+  speechSynthesis.speak(u);
+  watchdog=setInterval(function(){
+    if(!speechSynthesis.speaking){clearInterval(watchdog);watchdog=null;return;}
+    speechSynthesis.pause(); speechSynthesis.resume();
+  },9000);
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-say]"); if(b) speak(b.getAttribute("data-say"));
+});
+
+/* 影片降級 */
+(function(){
+  var zone=document.getElementById("videoZone"), fr=document.getElementById("ytFrame");
+  if(!zone||!fr) return;
+  var ok=false;
+  fr.addEventListener("load",function(){ok=true;});
+  setTimeout(function(){
+    if(ok) return;
+    zone.innerHTML='<a class="videoCard" href="https://youtu.be/fa1Orekgx4Y" target="_blank" rel="noopener">'+
+      '<span class="play">▶</span><span class="vtxt"><b>播放〈頭・肩・膝ぽん〉</b>'+
+      '<i>此環境不支援內嵌，點擊在 YouTube 開啟</i></span></a>';
+  },4000);
+})();
+
+/* 筆記 */
+var nt=document.getElementById("notes");
+nt.value=LS.get("ep2_notes")||"";
+document.getElementById("saveNote").onclick=function(){
+  LS.set("ep2_notes",nt.value);
+  var m=document.getElementById("noteMsg"); m.textContent="已儲存 ✓";
+  setTimeout(function(){m.textContent="";},2000);
+};
+
+/* 字彙 */
+var V={
+  atama:{w:"あたま",r:"atama",m:3,cn:"頭"},
+  kata:{w:"かた",r:"kata",m:2,cn:"肩膀"},
+  hiza:{w:"ひざ",r:"hiza",m:2,cn:"膝蓋"},
+  pon:{w:"ぽん",r:"pon",m:2,cn:"（拍一下的聲音）"},
+  me:{w:"め",r:"me",m:1,cn:"眼睛"},
+  mimi:{w:"みみ",r:"mimi",m:2,cn:"耳朵"},
+  hana:{w:"はな",r:"hana",m:2,cn:"鼻子"},
+  kuchi:{w:"くち",r:"kuchi",m:2,cn:"嘴巴"}
+};
+var ORDER=["atama","kata","hiza","pon","me","mimi","hana","kuchi"];
+
+/* ② 身體地圖 */
+var ro=document.getElementById("readout");
+document.querySelectorAll(".hot").forEach(function(g){
+  g.addEventListener("click",function(){
+    document.querySelectorAll(".hot").forEach(function(x){x.classList.remove("active");});
+    g.classList.add("active");
+    var key=g.dataset.key.replace(/2$/,"");
+    var o=V[key]; if(!o) return;
+    ro.querySelector(".big").textContent=o.w;
+    ro.querySelector(".rom").textContent=o.r;
+    ro.querySelector(".cn").textContent=o.cn;
+    ro.querySelector(".beat").textContent=o.m+" 拍";
+    speak(o.w,0.85);
+  });
+});
+
+/* ③ 節拍 */
+var L1=["atama","kata","hiza","pon","hiza","pon","hiza","pon"];
+var L2=["atama","kata","hiza","pon","me","mimi","hana","kuchi"];
+function buildLine(elId,arr){
+  var el=document.getElementById(elId);
+  el.innerHTML="";
+  arr.forEach(function(k,i){
+    var s=document.createElement("span");
+    s.className="chip jp"+(k==="pon"?" pon":"");
+    s.dataset.idx=i; s.textContent=V[k].w;
+    el.appendChild(s);
+  });
+}
+buildLine("line1",L1); buildLine("line2",L2);
+
+var tempo=document.getElementById("tempo"), tLab=document.getElementById("tempoLab");
+function tempoLabel(){
+  var v=+tempo.value;
+  tLab.textContent = v>900?"很慢" : v>760?"慢速" : v>560?"中速" : "原速";
+}
+tempo.addEventListener("input",tempoLabel); tempoLabel();
+
+var seqTimer=null, ac=null;
+function tick(){
+  try{
+    if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(), g=ac.createGain();
+    o.type="sine"; o.frequency.value=880;
+    g.gain.setValueAtTime(0.001,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25,ac.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.13);
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime+0.15);
+  }catch(e){}
+}
+function clearChips(){
+  document.querySelectorAll(".chip").forEach(function(c){c.classList.remove("on");});
+}
+function stopSeq(){
+  if(seqTimer){clearTimeout(seqTimer);clearInterval(seqTimer);seqTimer=null;}
+  stopSpeak(); clearChips();
+}
+document.getElementById("stopSeq").onclick=stopSeq;
+
+function runSeq(withVoice){
+  stopSeq();
+  var all=[].concat(
+    L1.map(function(k,i){return {k:k,line:"line1",i:i};}),
+    L2.map(function(k,i){return {k:k,line:"line2",i:i};})
+  );
+  var idx=0;
+  function step(){
+    if(idx>=all.length){ clearChips(); return; }
+    clearChips();
+    var it=all[idx];
+    var chip=document.querySelector("#"+it.line+" .chip[data-idx='"+it.i+"']");
+    if(chip) chip.classList.add("on");
+    idx++;
+    if(withVoice){
+      speak(V[it.k].w,0.9,function(){ seqTimer=setTimeout(step,120); });
+    }else{
+      tick();
+      seqTimer=setTimeout(step,+tempo.value);
+    }
+  }
+  step();
+}
+document.getElementById("playBeat").onclick=function(){ runSeq(false); };
+document.getElementById("playSay").onclick=function(){ runSeq(true); };
+
+/* ④ 單字卡 */
+var vg=document.getElementById("vgrid");
+ORDER.forEach(function(k){
+  var o=V[k];
+  var c=document.createElement("button");
+  c.className="vcard";
+  c.innerHTML='<span class="w jp">'+o.w+'</span><span class="r">'+o.r+'　'+o.m+' 拍</span><span class="m">'+o.cn+'</span>';
+  c.onclick=function(){ c.classList.toggle("open"); speak(o.w); };
+  vg.appendChild(c);
+});
+
+/* ⑤ 錄音 */
+document.getElementById("sayDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.85); };
+document.getElementById("slowDrill").onclick=function(){ speak(document.getElementById("drillText").value,0.55); };
+document.getElementById("stopAll").onclick=stopSpeak;
+
+var mr=null, chunks=[], n=0;
+var bStart=document.getElementById("recStart"), bStop=document.getElementById("recStop"),
+    rMsg=document.getElementById("recMsg"), rList=document.getElementById("recList");
+bStart.onclick=function(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){ rMsg.textContent="這個瀏覽器不支援錄音"; return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    chunks=[]; mr=new MediaRecorder(stream);
+    mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+      var url=URL.createObjectURL(blob); n++;
+      var li=document.createElement("li");
+      li.innerHTML='第 '+n+' 次　<audio controls src="'+url+'"></audio> '+
+                   '<a class="btn ghost" download="atama-'+n+'.webm" href="'+url+'">下載</a>';
+      rList.appendChild(li);
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    mr.start(); bStart.disabled=true; bStop.disabled=false; rMsg.textContent="錄音中…";
+  }).catch(function(){ rMsg.textContent="沒有取得麥克風權限"; });
+};
+bStop.onclick=function(){
+  if(mr&&mr.state!=="inactive") mr.stop();
+  bStart.disabled=false; bStop.disabled=true; rMsg.textContent="已完成，可回放比對";
+};
+
+/* ⑥ 測驗 */
+var QS=[
+ {q:"「ひざ」是身體的哪個部位？", o:["肩膀","膝蓋","鼻子","耳朵"], a:1},
+ {q:"「ぽん」在歌裡代表什麼？", o:["腳趾","拍一下的聲音","頭","手"], a:1},
+ {q:"「ぽん」共有幾拍？", o:["1","2","3","4"], a:1},
+ {q:"「あたま」的意思是？", o:["嘴巴","頭","眼睛","肩膀"], a:1},
+ {q:"下列哪一個只有 1 拍？", o:["みみ","め","はな","くち"], a:1},
+ {q:"「くち」是？", o:["嘴巴","耳朵","膝蓋","鼻子"], a:0},
+ {q:"「みみ」正確的唸法是？", o:["第二個 mi 要加重","兩拍等長","唸成 min","唸成 me-me"], a:1},
+ {q:"用動作配合單字學習，主要好處是？", o:["比較好看","建立身體記憶的掛勾","減少上課時間","不用發音"], a:1}
+];
+var quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score"), done=[], got=0;
+function buildQuiz(){
+  quiz.innerHTML=""; done=[]; got=0; scoreEl.textContent="0 / "+QS.length;
+  QS.forEach(function(item,qi){
+    var d=document.createElement("div"); d.className="q";
+    d.innerHTML='<div class="stem">'+(qi+1)+'. '+item.q+'</div>';
+    item.o.forEach(function(opt,oi){
+      var b=document.createElement("button"); b.className="opt"; b.textContent=opt;
+      b.onclick=function(){
+        if(done[qi]) return;
+        done[qi]=true;
+        var all=d.querySelectorAll(".opt");
+        all[item.a].classList.add("right");
+        if(oi!==item.a) b.classList.add("wrong"); else got++;
+        scoreEl.textContent=got+" / "+QS.length;
+        if(done.filter(Boolean).length===QS.length) checkin();
+      };
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+function checkin(){
+  var today=new Date().toISOString().slice(0,10);
+  var days=(LS.get("ep2_days")||"").split(",").filter(Boolean);
+  if(days.indexOf(today)<0){ days.push(today); LS.set("ep2_days",days.join(",")); }
+  document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
+}
+document.getElementById("resetQ").onclick=buildQuiz;
+buildQuiz();
+var d0=(LS.get("ep2_days")||"").split(",").filter(Boolean);
+if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+</body>
+</html>

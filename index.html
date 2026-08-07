@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>唱歌學日文 · 系列總覽</title>
+<style>
+:root{
+  --paper:#f5f1e6;
+  --paper2:#ece5d2;
+  --ink:#2c2a24;
+  --shu:#c0392b;        /* 印泥朱 */
+  --line:rgba(44,42,36,.16);
+  /* 五集主色 */
+  --ep1:#1a2350;  --ep1b:#e8c46a;
+  --ep2:#7d8f4a;  --ep2b:#e8a04a;
+  --ep3:#d1533b;  --ep3b:#33566e;
+  --ep4:#3b3560;  --ep4b:#e6c15a;
+  --ep5:#1f9d8f;  --ep5b:#e76f51;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    repeating-linear-gradient(0deg, rgba(44,42,36,.025) 0 1px, transparent 1px 30px),
+    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
+  background-attachment:fixed;color:var(--ink);
+  font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.8;-webkit-text-size-adjust:100%;
+}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 80px}
+
+/* ── 標頭：印譜風 ── */
+header{text-align:center;padding:30px 0 8px;position:relative}
+.seal{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:74px;height:74px;border-radius:12px;background:var(--shu);color:#f7f1e0;
+  font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:1.5rem;font-weight:700;
+  line-height:1.15;letter-spacing:.1em;writing-mode:vertical-rl;
+  box-shadow:2px 3px 0 rgba(44,42,36,.18);margin-bottom:12px;
+}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:clamp(1.8rem,6vw,2.7rem);margin:.1em 0;font-weight:700;letter-spacing:.14em}
+header .sub{font-size:.95rem;opacity:.7}
+header .motto{margin-top:10px;font-size:.92rem;color:var(--shu);letter-spacing:.2em}
+
+h2{font-size:1.15rem;margin:0 0 .6em;color:var(--ink);letter-spacing:.06em;
+  display:flex;align-items:center;gap:10px}
+h2::before{content:"";display:inline-block;width:10px;height:22px;background:var(--shu);border-radius:3px}
+.card{background:#fffdf6;border:1px solid var(--line);border-radius:16px;padding:20px;margin:0 0 20px;
+  box-shadow:0 2px 0 rgba(44,42,36,.05)}
+p{margin:.5em 0}
+.note{opacity:.65;font-size:.85rem}
+
+/* ── 課程地圖 ── */
+.map{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center;margin:14px 0 4px}
+.mapStep{flex:1 1 120px;max-width:160px;text-align:center;padding:0 4px;position:relative}
+.mapStep .dot{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;
+  align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem}
+.mapStep .t{font-size:.92rem;font-weight:700}
+.mapStep .d{font-size:.78rem;opacity:.65;line-height:1.5}
+.mapStep:not(:last-child)::after{
+  content:"→";position:absolute;right:-9px;top:12px;font-size:1.1rem;opacity:.4}
+
+/* ── 集數卡 ── */
+.eps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.ep{display:block;text-decoration:none;color:inherit;border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);background:#fff;transition:.18s;position:relative}
+.ep:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(44,42,36,.14)}
+.ep .band{padding:16px 16px 12px;color:#fff}
+.ep .band .no{font-size:.72rem;letter-spacing:.3em;opacity:.85;font-weight:700}
+.ep .band .ti{font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:1.35rem;
+  font-weight:700;letter-spacing:.05em;margin-top:2px}
+.ep .band .en{font-size:.75rem;opacity:.8}
+.ep .body{padding:12px 16px 14px}
+.ep .goal{font-size:.88rem;margin:0 0 8px}
+.ep .feat{font-size:.8rem;opacity:.7}
+.ep .feat b{color:var(--shu)}
+.ep .stat{margin-top:10px;font-size:.78rem;padding:5px 10px;border-radius:999px;display:inline-block;
+  background:rgba(44,42,36,.06)}
+.ep .stat.done{background:rgba(31,157,143,.15);color:#14655c;font-weight:700}
+.ep .go{position:absolute;right:14px;bottom:12px;font-size:.85rem;color:var(--shu);font-weight:700}
+
+/* ── 三條主線 ── */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:rgba(192,57,43,.08);color:var(--shu);white-space:nowrap;font-weight:700}
+td .pill{display:inline-block;font-size:.75rem;color:#fff;border-radius:999px;padding:1px 9px;margin:1px 3px 1px 0;white-space:nowrap}
+
+/* ── 15 分鐘課堂 ── */
+.recipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.rstep{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rstep .min{font-size:.75rem;color:var(--shu);font-weight:800;letter-spacing:.08em}
+.rstep .rt{font-weight:700;font-size:.95rem;margin:2px 0}
+.rstep .rd{font-size:.8rem;opacity:.7;line-height:1.55}
+
+footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:26px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){.mapStep:not(:last-child)::after{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="seal jp">歌習</div>
+  <h1 class="jp">唱歌學日文</h1>
+  <div class="sub">基礎五十音 ＋ 五集歌曲學習單 · 由「拍」入門的日語啟蒙系列</div>
+  <div class="motto jp">耳先於目，身先於腦</div>
+</header>
+
+<div class="card">
+  <h2>課程地圖：一條從聲音到系統的路</h2>
+  <p>六個工具不是六個孤島。<b>基礎篇「五十音」</b>先把字形、筆順、音全部鋪好；第 1 集在此之上建立「<b>一個假名＝一拍</b>」的地基，第 2 集把拍接上<b>身體</b>，第 3、4 集用拍去馴服日語最不規則的<b>日期</b>與最有文化縱深的<b>星期</b>，第 5 集收在<b>可組合的數字系統</b>——從此學生手上有規則，不再只有背誦。</p>
+  <div class="map">
+    <div class="mapStep"><div class="dot" style="background:#2C4770">◎</div><div class="t">五十音</div><div class="d">字形・筆順・音</div></div>
+    <div class="mapStep"><div class="dot" style="background:var(--ep1)">1</div><div class="t">拍</div><div class="d">聲音的最小單位</div></div>
+    <div class="mapStep"><div class="dot" style="background:var(--ep2)">2</div><div class="t">身體</div><div class="d">動作掛住單字</div></div>
+    <div class="mapStep"><div class="dot" style="background:var(--ep3)">3</div><div class="t">日期</div><div class="d">不規則靠唱</div></div>
+    <div class="mapStep"><div class="dot" style="background:var(--ep4)">4</div><div class="t">星期</div><div class="d">漢字轉音讀</div></div>
+    <div class="mapStep"><div class="dot" style="background:var(--ep5)">5</div><div class="t">數字</div><div class="d">規則可組合</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>六個入口</h2>
+  <div class="eps">
+
+    <a class="ep" href="kana-gojuon.html">
+      <div class="band" style="background:linear-gradient(135deg,#2C4770,#4a6a99)">
+        <div class="no">基礎篇 ─ 隨時可回</div>
+        <div class="ti jp">五十音・寫聽讀</div>
+        <div class="en">Gojūon · 音圖／描寫／聽寫／單字／漢字</div>
+      </div>
+      <div class="body">
+        <p class="goal">清音・濁音・拗音全音圖點讀，手寫描紅、三模式聽寫測驗、易混字辨析，加 NHK 式入門漢字 48 字。</p>
+        <p class="feat">招牌：<b>描寫板＋聽寫測驗</b>──眼耳手三路並進</p>
+        <span class="stat" data-ls="kana_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+    <a class="ep" href="ep1-kirakira.html">
+      <div class="band" style="background:linear-gradient(135deg,var(--ep1),#2c3a78)">
+        <div class="no">EP 1 ─ 歌唱入門</div>
+        <div class="ti jp">きらきら星</div>
+        <div class="en">Twinkle Twinkle · 拍的初體驗</div>
+      </div>
+      <div class="body">
+        <p class="goal">聽出「一個假名＝一拍」，認識長音・撥音・疊語三個陷阱。</p>
+        <p class="feat">招牌：<b>拍星點讀</b>──點詞，星星逐拍亮起</p>
+        <span class="stat" data-ls="kk_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+    <a class="ep" href="ep2-atama-kata-hiza-pon.html">
+      <div class="band" style="background:linear-gradient(135deg,var(--ep2),#9aab5e)">
+        <div class="no">EP 2 ─ 身體部位</div>
+        <div class="ti jp">頭・肩・膝ぽん</div>
+        <div class="en">Head Shoulders Knees · 動作記憶</div>
+      </div>
+      <div class="body">
+        <p class="goal">八個身體部位＋擬聲語 ぽん；手先動、嘴才動。</p>
+        <p class="feat">招牌：<b>身體地圖</b>──點人形熱區即發音</p>
+        <span class="stat" data-ls="ep2_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+    <a class="ep" href="ep3-days-of-month.html">
+      <div class="band" style="background:linear-gradient(135deg,var(--ep3),#e07b52)">
+        <div class="no">EP 3 ─ 日期</div>
+        <div class="ti jp">一日二日三日の歌</div>
+        <div class="en">Days of the Month · 不規則攻略</div>
+      </div>
+      <div class="body">
+        <p class="goal">1〜10 特殊訓讀＋はつか・じゅうよっか等例外，一眼分清規則與要背。</p>
+        <p class="feat">招牌：<b>日曆點讀</b>──31 格三色標記</p>
+        <span class="stat" data-ls="ep3_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+    <a class="ep" href="ep4-days-of-week.html">
+      <div class="band" style="background:linear-gradient(135deg,var(--ep4),#5a5390)">
+        <div class="no">EP 4 ─ 星期</div>
+        <div class="ti jp">曜日の歌</div>
+        <div class="en">Days of the Week · 七曜與五行</div>
+      </div>
+      <div class="body">
+        <p class="goal">用已會的漢字（日月火水木金土）接上日文音讀；げつ／がつ 分流。</p>
+        <p class="feat">招牌：<b>七曜輪</b>──五行七色轉盤點讀</p>
+        <span class="stat" data-ls="ep4_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+    <a class="ep" href="ep5-numbers-1-100.html">
+      <div class="band" style="background:linear-gradient(135deg,var(--ep5),#3cb8a8)">
+        <div class="no">EP 5 ─ 數字</div>
+        <div class="ti jp">数字の歌 1〜100</div>
+        <div class="en">Numbers · 十個積木一條規則</div>
+      </div>
+      <div class="body">
+        <p class="goal">背 1〜10，其餘用「十位＋個位」拼；4・7・9 兩讀分工。</p>
+        <p class="feat">招牌：<b>數字組合器</b>──即點即拼即唸</p>
+        <span class="stat" data-ls="ep5_days">尚未開始</span>
+        <span class="go">進入 ▸</span>
+      </div>
+    </a>
+
+  </div>
+  <p class="note" style="margin-top:12px">卡片下方的「練習天數」來自各集完成小測驗（基礎篇為聽寫作答）的打卡紀錄，只存在這台裝置。</p>
+</div>
+
+<div class="card">
+  <h2>貫穿全系列的四條主線</h2>
+  <table>
+    <tr><th>主線</th><th>內容</th><th>出現在</th></tr>
+    <tr>
+      <td><b>拍（モーラ）</b></td>
+      <td>一個假名一拍；ん・長音・促音各自站住一拍。這是日語語感的地基，五集全部的節拍器與逐字朗讀都在練它。</td>
+      <td>
+        <span class="pill" style="background:var(--ep1)">EP1</span>
+        <span class="pill" style="background:var(--ep2)">EP2</span>
+        <span class="pill" style="background:var(--ep3)">EP3</span>
+        <span class="pill" style="background:var(--ep4)">EP4</span>
+        <span class="pill" style="background:var(--ep5)">EP5</span>
+      </td>
+    </tr>
+    <tr>
+      <td><b>4・7・9 的兩讀</b></td>
+      <td>數數用 よん・なな・きゅう；日期系統用 よ(っか)・しち・く。兩集互相對照，學生第一次看見「同一數字、不同場合、不同音」的日語常態。</td>
+      <td>
+        <span class="pill" style="background:var(--ep3)">EP3</span>
+        <span class="pill" style="background:var(--ep5)">EP5</span>
+      </td>
+    </tr>
+    <tr>
+      <td><b>漢字的音讀轉換</b></td>
+      <td>台灣學生自帶漢字資產：月＝げつ（星期）／がつ（月份）、日＝にち。把「認得字」升級成「唸得出」，是差異化的省力槓桿。</td>
+      <td>
+        <span class="pill" style="background:var(--ep3)">EP3</span>
+        <span class="pill" style="background:var(--ep4)">EP4</span>
+      </td>
+    </tr>
+    <tr>
+      <td><b>假名字形與筆順</b></td>
+      <td>基礎篇的描寫板與易混字辨析（あ／お、シ／ツ、ソ／ン…）解決「看得懂卻寫不出、認不穩」的斷層；五集歌曲裡任何唸不出的字，隨時回基礎篇描一次、聽一次。</td>
+      <td>
+        <span class="pill" style="background:#2C4770">基礎</span>
+        <span class="pill" style="background:var(--ep1)">EP1</span>
+        <span class="pill" style="background:var(--ep3)">EP3</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>15 分鐘課堂配方（每集通用）</h2>
+  <div class="recipe">
+    <div class="rstep"><div class="min">0–3 分</div><div class="rt">唱</div><div class="rd">整首影片跟唱，不看字，只抓旋律與節奏。</div></div>
+    <div class="rstep"><div class="min">3–7 分</div><div class="rt">點</div><div class="rd">開該集招牌互動（拍星／身體圖／日曆／七曜輪／組合器），逐一點讀。</div></div>
+    <div class="rstep"><div class="min">7–10 分</div><div class="rt">拍</div><div class="rd">節拍器打拍 → 逐字朗讀，速度從很慢推到原速。</div></div>
+    <div class="rstep"><div class="min">10–13 分</div><div class="rt">錄</div><div class="rd">錄音、回放、對照範讀，勾自我檢核表。</div></div>
+    <div class="rstep"><div class="min">13–15 分</div><div class="rt">測</div><div class="rd">小測驗八題收尾，完成即打卡累積天數。</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>使用說明</h2>
+  <p>五個學習單皆為<b>單檔 HTML、零外部相依</b>：發音用瀏覽器內建日語語音（建議 Chrome／Edge，iOS Safari 需先在設定下載日語語音）；錄音需允許麥克風；筆記、打卡等紀錄只存於各裝置的瀏覽器，換裝置不同步。影片若在 App 內嵌失敗，會自動改成跳轉 YouTube 的按鈕。整包資料夾直接拖進 Netlify 的 Deploys 即可上線。</p>
+</div>
+
+<footer class="jp">唱歌學日文 系列（基礎＋五集） · 溯源，塑局 · build 2026-07-22e · 單檔 HTML，無外部相依</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* 讀各集打卡天數（同網域 localStorage） */
+document.querySelectorAll(".stat[data-ls]").forEach(function(el){
+  var v="";
+  try{ v=localStorage.getItem(el.dataset.ls)||""; }catch(e){}
+  var days=v.split(",").filter(Boolean);
+  if(days.length){
+    el.textContent="已練習 "+days.length+" 天 ✓";
+    el.classList.add("done");
+  }
+});
+})();
+</script>
+</body>
+</html>
