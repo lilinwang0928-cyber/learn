@@ -6,137 +6,194 @@
 <title>いち・に・さん 数字の歌 互動學習單</title>
 <style>
 :root{
-  --paper:#f2f8f6;
-  --paper2:#e3f0ec;
-  --teal:#1f9d8f;       /* 主色 青緑 */
-  --teal-d:#167a6f;
-  --coral:#e76f51;      /* 強調 珊瑚 */
-  --coral-d:#c9553a;
-  --amber:#e9b949;
-  --ink:#26332f;
-  --line:rgba(38,51,47,.15);
+  --bg:#F6F1E6; --paper:#FFFDF8; --sumi:#2A2723; --muted:#6E675C;
+  --rule:#E4DBCB; --pale:#EFE9DC; --shu:#C2412D;
+  --ok:#4F8A5B; --ok-soft:#E8F1E8; --ng:#C2412D; --ng-soft:#F8ECE8;
+  --c:#1E8C80;--c-d:#156D63;--c-soft:#E3F2EF;--c2:#D2603F;--teal-d:#156D63;--band:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px 24px),repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 24px),linear-gradient(135deg,#15766B,#2FAA9A);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{
-  background:
-    repeating-linear-gradient(90deg, rgba(31,157,143,.05) 0 1px, transparent 1px 40px),
-    repeating-linear-gradient(0deg, rgba(31,157,143,.05) 0 1px, transparent 1px 40px),
-    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
-  background-attachment:fixed;color:var(--ink);
+body{background:var(--bg);color:var(--sumi);
   font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
-  line-height:1.75;-webkit-text-size-adjust:100%;
-}
-.jp{font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;}
-.wrap{max-width:900px;margin:0 auto;padding:24px 18px 80px}
+  font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
 
-header{text-align:center;padding:24px 0 6px}
-header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--teal-d);font-weight:700}
-header h1{font-family:"Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
-  font-size:clamp(1.8rem,6.5vw,3rem);margin:.2em 0 .1em;font-weight:800;letter-spacing:.04em;color:var(--teal-d)}
-header h1 span{display:inline-block;opacity:0;animation:count .4s ease forwards}
-@keyframes count{from{opacity:0;transform:translateY(12px) scale(.7)}to{opacity:1;transform:none}}
-header .sub{font-size:.92rem;opacity:.72}
+/* 頁首色帶 */
+header.epband{position:relative;overflow:hidden;margin:0 -16px;padding:18px 20px 22px;
+  background:var(--band);color:#fff}
+@media(min-width:932px){header.epband{margin:16px 0 0;border-radius:16px}}
+.crumb{display:inline-block;font-size:.78rem;color:rgba(255,255,255,.86);text-decoration:none;letter-spacing:.06em;margin-bottom:12px}
+.crumb:hover{text-decoration:underline;text-underline-offset:3px}
+.hd-main{display:flex;gap:16px;align-items:center;position:relative}
+.seal{flex:0 0 auto;width:60px;height:60px;border-radius:9px;background:var(--shu);color:#FBF3E4;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;
+  font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:1.05rem;font-weight:700;transform:rotate(-3deg);
+  box-shadow:inset 0 0 0 3px var(--shu),inset 0 0 0 5px rgba(251,243,228,.55),0 2px 6px rgba(0,0,0,.18)}
+.seal b{display:block;font-size:1.5rem}
+.eyebrow{font-size:.7rem;letter-spacing:.3em;font-weight:700;margin:0;opacity:.85}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;font-weight:700;
+  font-size:clamp(1.2rem,5vw,2.4rem);letter-spacing:.02em;margin:.05em 0;line-height:1.3}
+header h1 span{display:inline-block;opacity:0;animation:rise .45s ease forwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+header .sub{margin:0;font-size:.88rem;opacity:.85}
 
-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
-nav button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
-  background:#fff;color:var(--ink);border:1px solid var(--line);transition:.18s}
-nav button:hover{border-color:var(--teal);color:var(--teal-d)}
-nav button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
-button:focus-visible,a:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+/* 分頁 */
+nav{position:sticky;top:0;z-index:20;background:var(--bg);display:grid;grid-template-columns:repeat(6,1fr);
+  gap:6px;padding:12px 0;margin:0 0 14px;border-bottom:1px solid var(--rule)}
+nav button{font:inherit;font-size:.86rem;padding:8px 4px;border-radius:999px;cursor:pointer;
+  background:var(--paper);color:var(--sumi);border:1px solid var(--rule);transition:.15s;white-space:nowrap}
+nav button:hover{border-color:var(--c)}
+nav button[aria-selected="true"]{background:var(--c);border-color:var(--c);color:#fff;font-weight:700}
+@media(max-width:640px){nav{grid-template-columns:repeat(3,1fr)}nav button{font-size:.82rem;padding:7px 2px}}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
 
 section[hidden]{display:none}
-.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px;
-  box-shadow:0 2px 0 rgba(38,51,47,.05)}
-h2{font-size:1.12rem;margin:0 0 .5em;color:var(--teal-d)}
-h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--coral-d)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:18px;margin:0 0 16px}
+h2{font-size:1.1rem;margin:0 0 .5em;color:var(--c-d);display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:6px;height:20px;border-radius:3px;background:var(--c);flex:0 0 auto}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--c2)}
 p{margin:.5em 0}
-.note{opacity:.66;font-size:.85rem}
-
+.note{color:var(--muted);font-size:.85rem}
 .btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
-  background:var(--teal);color:#fff;border:none;font-weight:700;margin:4px 6px 4px 0}
-.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:400}
-.btn.coral{background:var(--coral)}
+  background:var(--c);color:#fff;border:1px solid var(--c);font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:var(--paper);color:var(--sumi);border-color:var(--rule);font-weight:400}
+.btn.ghost:hover{border-color:var(--c)}
+.btn.orange,.btn.blue,.btn.coral{background:var(--c2);border-color:var(--c2)}
 .btn:active{transform:translateY(1px)}
 .btn[disabled]{opacity:.45;cursor:default}
 
-.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#dcebe7}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:var(--paper)}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--c-soft);color:var(--c-d);white-space:nowrap}
+td.jp{font-size:1.05rem}
+textarea,input[type=text]{width:100%;background:#fff;color:var(--sumi);border:1px solid var(--rule);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:130px;resize:vertical}
+input[type=range]{width:180px;vertical-align:middle;accent-color:var(--c)}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:#E9E2D2}
 .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
-  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:#fff}
-.videoCard:hover{border-color:var(--teal)}
-.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--teal);color:#fff;
+  border:1px solid var(--rule);border-radius:12px;padding:16px;margin:10px 0;background:var(--paper)}
+.videoCard:hover{border-color:var(--c)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--c);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
 .videoCard .vtxt b{display:block}
-.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;color:var(--muted)}
 
-/* ── 數字組合器（招牌）── */
-.builder{background:linear-gradient(160deg,#effaf8,#e0f1ed);border:1px solid var(--line);border-radius:14px;padding:16px}
-.display{text-align:center;padding:14px 10px 16px}
-.display .num{font-size:2.6rem;font-weight:800;color:var(--coral-d);line-height:1}
-.display .kana{font-size:2rem;color:var(--teal-d);font-weight:800;letter-spacing:.06em;margin-top:.15em;min-height:1.2em}
-.display .rom{font-size:.9rem;opacity:.6}
-.display .parts{font-size:.85rem;opacity:.72;margin-top:6px;min-height:1.2em}
-.digRow{margin:10px 0}
-.digRow .lab{font-size:.8rem;opacity:.6;margin-bottom:4px}
-.digs{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
-.dig{font:inherit;font-weight:700;font-size:1rem;padding:9px 0;border-radius:8px;border:1px solid var(--line);
-  background:#fff;color:var(--ink);cursor:pointer;transition:.12s}
-.dig:hover{border-color:var(--teal)}
-.dig.on{background:var(--teal);color:#fff;border-color:var(--teal);transform:scale(1.06)}
-.dig.on.tens{background:var(--coral);border-color:var(--coral)}
-.builderBtns{text-align:center;margin-top:8px}
+/* 卡片格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.vcard{border:1px solid var(--rule);border-radius:12px;padding:14px 10px;background:var(--paper);cursor:pointer;
+  min-height:104px;display:flex;flex-direction:column;justify-content:center;text-align:center;font:inherit;color:inherit;transition:.15s}
+.vcard:hover{border-color:var(--c);transform:translateY(-1px)}
+.vcard .w{font-size:1.3rem;color:var(--c-d);font-weight:700}
+.vcard .r{font-size:.76rem;color:var(--muted)}
+.vcard .m{margin-top:6px;font-size:.9rem;color:var(--c2);display:none}
+.vcard.open .m{display:block}
 
-/* 1-100 grid */
-.numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
-.ncell{aspect-ratio:1/1;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:var(--ink);
-  font-family:inherit;padding:0;transition:.1s}
-.ncell:hover{border-color:var(--teal);transform:translateY(-1px)}
-.ncell.active{background:var(--teal);color:#fff;border-color:var(--teal)}
-.ncell.h100{grid-column:span 10;aspect-ratio:auto;padding:10px;background:var(--amber);color:#4a3a10;font-weight:800}
-.gridOut{margin-top:12px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;min-height:70px}
-.gridOut .kana{font-size:1.6rem;font-weight:800;color:var(--teal-d)}
-.gridOut .rom{font-size:.85rem;opacity:.6}
-
-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
-th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-th{background:rgba(31,157,143,.12);color:var(--teal-d);white-space:nowrap}
-td.jp{font-size:1.05rem}
-
-textarea,input[type=text]{width:100%;background:#fff;color:var(--ink);border:1px solid var(--line);
-  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
-textarea{min-height:120px;resize:vertical}
-input[type=range]{width:170px;vertical-align:middle}
-
+/* 節拍條 */
 .beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:1rem;
-  font-weight:700;transition:.12s}
-.chip.on{background:var(--coral);color:#fff;border-color:var(--coral);transform:scale(1.12)}
+.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--paper);font-size:1rem;transition:.12s;white-space:nowrap}
+.chip.on{background:var(--c);color:#fff;border-color:var(--c);transform:scale(1.1)}
+.lineLabel{font-size:.8rem;color:var(--muted);margin-top:10px}
 
-.q{border-top:1px solid var(--line);padding:14px 0}
+/* 測驗 */
+.q{border-top:1px solid var(--rule);padding:14px 0}
 .q:first-child{border-top:none}
 .q .stem{font-weight:700;margin-bottom:6px}
 .opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
-  border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
-.opt:hover{border-color:var(--teal)}
-.opt.right{background:rgba(31,157,143,.2);border-color:var(--teal)}
-.opt.wrong{background:rgba(231,111,81,.22);border-color:var(--coral)}
-.score{font-size:1.05rem;color:var(--teal-d);font-weight:800}
+  border-radius:8px;border:1px solid var(--rule);background:#fff;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--c)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--ng-soft);border-color:var(--ng)}
+.score{font-size:1.05rem;color:var(--c-d);font-weight:800}
+.review{margin-top:12px}
+.review h3{margin:.4em 0;color:var(--ng)}
+.review ul{margin:0;padding:0;list-style:none;font-size:.9rem}
+.review li{border-left:3px solid var(--ng-soft);padding-left:10px}
+.review li{margin:6px 0}
+.review li span{color:var(--ok);font-weight:700}
+.review .allok{color:var(--ok);font-weight:700}
 
+/* 錄音 */
+.rec{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reclist{padding-left:1.2em}
 .reclist li{margin:6px 0}
 audio{max-width:100%;vertical-align:middle}
-footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* 本集目標 */
+.goals{border-left:5px solid var(--c)}
+.goallist{list-style:none;margin:6px 0 0;padding:0}
+.goallist li{margin:4px 0}
+.goallist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 8px;border-radius:8px}
+.goallist label:hover{background:var(--c-soft)}
+.goallist input{width:20px;height:20px;margin-top:3px;accent-color:var(--ok);flex:0 0 auto}
+.goallist input:checked+span{color:var(--ok);text-decoration:line-through;text-decoration-color:rgba(79,138,91,.5)}
+.goalcount{font-size:.8rem;color:var(--muted)}
+
+/* 今天 */
+.today{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--c-soft);
+  border-radius:12px;padding:10px 12px;margin:0 0 14px}
+.todayOut{font-size:.95rem}
+.todayOut b{color:var(--c-d);font-size:1.1rem}
+.todayOut .jp{font-size:1.15rem;color:var(--c2);font-weight:700;margin-left:4px}
+.todayOut small{display:block;color:var(--muted);font-size:.8rem}
+
+/* 上下集 */
+.epnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.epnav a{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--rule);
+  border-radius:12px;padding:12px 14px;transition:.15s}
+.epnav a:hover{border-color:var(--c)}
+.epnav small{display:block;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+.epnav b{font-size:.95rem}
+.epnav .next{text-align:right}
+footer{text-align:center;font-size:.76rem;color:var(--muted);padding:22px 0 6px;margin-top:22px;border-top:1px solid var(--rule)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.builder{background:var(--c-soft);border:1px solid var(--rule);border-radius:14px;padding:16px}
+.display{text-align:center;padding:12px 10px 14px;background:#fff;border-radius:12px;margin-bottom:6px}
+.display .num{font-size:2.6rem;font-weight:800;color:var(--c2);line-height:1}
+.display .kana{font-size:1.9rem;color:var(--c-d);font-weight:800;letter-spacing:.04em;margin-top:.15em;min-height:1.2em}
+.display .rom{font-size:.9rem;color:var(--muted)}
+.display .parts{font-size:.85rem;color:var(--muted);margin-top:6px;min-height:1.2em}
+.digRow{margin:10px 0}
+.digRow .lab{font-size:.8rem;color:var(--muted);margin-bottom:4px}
+.digs{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.dig{font:inherit;font-weight:700;font-size:1rem;padding:9px 0;border-radius:8px;border:1px solid var(--rule);
+  background:#fff;color:var(--sumi);cursor:pointer;transition:.12s}
+.dig:hover{border-color:var(--c)}
+.dig.on{background:var(--c);color:#fff;border-color:var(--c);transform:scale(1.06)}
+.dig.on.tens{background:var(--c2);border-color:var(--c2)}
+.builderBtns{text-align:center;margin-top:8px}
+.numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.ncell{aspect-ratio:1/1;border:1px solid var(--rule);border-radius:7px;background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:var(--sumi);
+  font-family:inherit;padding:0;transition:.1s}
+.ncell:hover{border-color:var(--c)}
+.ncell:nth-child(10n){background:var(--c-soft)}
+.ncell.active{background:var(--c);color:#fff;border-color:var(--c)}
+.ncell.h100{grid-column:span 10;aspect-ratio:auto;padding:10px;background:#FBF2DF;color:#6B4A0E;font-weight:800}
+.gridOut{margin-top:12px;text-align:center;background:#fff;border:1px solid var(--rule);border-radius:10px;padding:12px;min-height:70px}
+.gridOut .kana{font-size:1.6rem;font-weight:800;color:var(--c-d)}
+.gridOut .rom{font-size:.85rem;color:var(--muted)}
+.chip{font-weight:700}
+.chip.on{background:var(--c2);border-color:var(--c2)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <div class="eyebrow">唱歌學日文 · 第五集</div>
-  <h1 class="jp" id="title"></h1>
-  <div class="sub">数字の歌 1〜100 ─ 數數互動學習單</div>
+<header class="epband">
+  <a class="crumb" href="index.html">← 唱歌學日文・系列總覽</a>
+  <div class="hd-main">
+    <div class="seal" aria-hidden="true">EP<b>5</b></div>
+    <div>
+      <p class="eyebrow">唱歌學日文 · 第五集</p>
+      <h1 class="jp" id="title"></h1>
+      <p class="sub">数字の歌 1〜100 ─ 數數互動學習單</p>
+    </div>
+  </div>
 </header>
 
 <nav id="nav">
@@ -146,11 +203,19 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
   <button data-target="t4">④ 節拍跟唱</button>
   <button data-target="t5">⑤ 跟讀錄音</button>
   <button data-target="t6">⑥ 小測驗</button>
-<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
 </nav>
 
 <!-- ① -->
 <section id="t1">
+  <div class="card goals">
+    <h2>本集目標</h2>
+    <p class="note">學完這一集回來勾一勾 <span class="goalcount" id="goalcount"></span></p>
+    <ul class="goallist" data-key="ep5_goals">
+      <li><label><input type="checkbox"><span>不看字從 1 唸到 10</span></label></li>
+      <li><label><input type="checkbox"><span>用「十位＋個位」拼出任何兩位數</span></label></li>
+      <li><label><input type="checkbox"><span>分清數數時 4・7・9 的唸法</span></label></li>
+    </ul>
+  </div>
   <div class="card">
     <h2>不是背 100 個，是背 10 個＋一條規則</h2>
     <p>日語數字最省力的地方在於它是<b>拼出來的</b>：學會 1～10 這十個積木，再加「幾十＋幾」的規則，20 就是 <span class="jp">にじゅう</span>、21 就是 <span class="jp">にじゅういち</span>、99 就是 <span class="jp">きゅうじゅうきゅう</span>。歌先幫你把 1～10 唱到滾瓜爛熟，剩下的用組的。</p>
@@ -193,11 +258,11 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
         <div class="parts" id="dParts"></div>
       </div>
       <div class="digRow">
-        <div class="lab">十位（几十）</div>
+        <div class="lab">十位（幾十）</div>
         <div class="digs" id="tensRow"></div>
       </div>
       <div class="digRow">
-        <div class="lab">個位（几）</div>
+        <div class="lab">個位（幾）</div>
         <div class="digs" id="onesRow"></div>
       </div>
       <div class="builderBtns">
@@ -290,12 +355,17 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
   <div class="card">
     <h2>小測驗</h2>
     <div id="quiz"></div>
+    <div class="review" id="review"></div>
     <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
     <p class="note" id="checkin"></p>
   </div>
 </section>
 
-<footer>唱歌學日文 #5 数字の歌 1〜100 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+<div class="epnav">
+  <a class="prev" href="ep4-days-of-week.html"><small>← 上一站</small><b>EP4 曜日の歌</b></a>
+  <a class="next" href="index.html#h-ext"><small>下一站 →</small><b>延伸學習</b></a>
+</div>
+<footer class="jp">唱歌學日文 第 5 集 互動學習單 · build 2026-10-01</footer>
 </div>
 
 <script>
@@ -595,15 +665,57 @@ function buildQuiz(){
   });
 }
 function checkin(){
+  if(window.__showReview)window.__showReview();
   var today=new Date().toISOString().slice(0,10);
   var days=(LS.get("ep5_days")||"").split(",").filter(Boolean);
   if(days.indexOf(today)<0){ days.push(today); LS.set("ep5_days",days.join(",")); }
   document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
 }
-document.getElementById("resetQ").onclick=buildQuiz;
+document.getElementById("resetQ").onclick=function(){buildQuiz();document.getElementById("review").innerHTML="";};
 buildQuiz();
 var d0=(LS.get("ep5_days")||"").split(",").filter(Boolean);
 if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+/* 本集目標勾選 */
+document.querySelectorAll(".goallist").forEach(function(ul){
+  var key=ul.dataset.key, st={};
+  try{st=JSON.parse(localStorage.getItem(key)||"{}")}catch(e){}
+  var boxes=ul.querySelectorAll("input");
+  function count(){
+    var n=0;boxes.forEach(function(b){if(b.checked)n++});
+    var c=document.getElementById("goalcount");if(c)c.textContent="已做到 "+n+" / "+boxes.length+" 項";
+  }
+  boxes.forEach(function(b,i){
+    b.checked=!!st[i];
+    b.addEventListener("change",function(){st[i]=b.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){};count()});
+  });
+  count();
+});
+/* 測驗：答錯回顧 */
+window.__showReview=function(){
+  var el=document.getElementById("review");if(!el)return;
+  var out=[];
+  document.querySelectorAll("#quiz .q").forEach(function(d){
+    if(d.querySelector(".opt.wrong")){
+      out.push('<li>'+d.querySelector(".stem").textContent+'<br>正解：<span class="jp">'+d.querySelector(".opt.right").textContent+'</span></li>');
+    }
+  });
+  el.innerHTML=out.length?('<h3>答錯的題目（'+out.length+'）</h3><ul>'+out.join("")+'</ul><p class="note">看完正解，按「重做」再挑戰一次。</p>')
+                         :'<p class="allok">全部答對，這一集過關了！</p>';
+};
+/* 日語發音（給「今天」按鈕用） */
+window.__sayJa=function(t){
+  if(!("speechSynthesis" in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.rate=.85;
+    var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(/^ja/i.test(vs[i].lang)){u.voice=vs[i];break}}
+    speechSynthesis.speak(u);}catch(e){}
+};
 
 })();
 </script>

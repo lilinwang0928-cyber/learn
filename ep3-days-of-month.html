@@ -6,143 +6,193 @@
 <title>ついたち・ふつか・みっか 互動學習單</title>
 <style>
 :root{
-  --paper:#faf5ea;      /* 和紙 */
-  --paper2:#f0e7d4;
-  --shu:#d1533b;        /* 朱（vermilion）*/
-  --shu-d:#a83c28;
-  --kaki:#e08a3c;       /* 柿 */
-  --ai:#33566e;         /* 藍 */
-  --ai-d:#26424f;
-  --sumi:#3a352c;       /* 墨 */
-  --line:rgba(58,53,44,.16);
-  --irr:#f4d9c4;        /* 不規則格底 */
+  --bg:#F6F1E6; --paper:#FFFDF8; --sumi:#2A2723; --muted:#6E675C;
+  --rule:#E4DBCB; --pale:#EFE9DC; --shu:#C2412D;
+  --ok:#4F8A5B; --ok-soft:#E8F1E8; --ng:#C2412D; --ng-soft:#F8ECE8;
+  --c:#C9502F;--c-d:#A23C22;--c-soft:#F8ECE6;--c2:#2E4A6B;--irr:#F6DFCF;--shu-d:#A23C22;--band:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 22px),linear-gradient(135deg,#B8452A,#DE7148);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{
-  background:
-    repeating-linear-gradient(0deg, rgba(209,83,59,.04) 0 1px, transparent 1px 34px),
-    linear-gradient(180deg,var(--paper) 0%, var(--paper2) 100%);
-  background-attachment:fixed;color:var(--sumi);
+body{background:var(--bg);color:var(--sumi);
   font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
-  line-height:1.75;-webkit-text-size-adjust:100%;
-}
-.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
-.wrap{max-width:900px;margin:0 auto;padding:24px 18px 80px}
+  font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
 
-header{text-align:center;padding:24px 0 6px}
-header .eyebrow{font-size:.75rem;letter-spacing:.4em;color:var(--shu);font-weight:700}
-header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
-  font-size:clamp(1.7rem,6vw,2.9rem);margin:.2em 0 .1em;font-weight:700;letter-spacing:.05em;color:var(--shu-d)}
-header h1 span{display:inline-block;opacity:0;animation:fall .5s ease forwards}
-@keyframes fall{from{opacity:0;transform:translateY(-12px) rotate(-6deg)}to{opacity:1;transform:none}}
-header .sub{font-size:.92rem;opacity:.72}
+/* 頁首色帶 */
+header.epband{position:relative;overflow:hidden;margin:0 -16px;padding:18px 20px 22px;
+  background:var(--band);color:#fff}
+@media(min-width:932px){header.epband{margin:16px 0 0;border-radius:16px}}
+.crumb{display:inline-block;font-size:.78rem;color:rgba(255,255,255,.86);text-decoration:none;letter-spacing:.06em;margin-bottom:12px}
+.crumb:hover{text-decoration:underline;text-underline-offset:3px}
+.hd-main{display:flex;gap:16px;align-items:center;position:relative}
+.seal{flex:0 0 auto;width:60px;height:60px;border-radius:9px;background:var(--shu);color:#FBF3E4;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;
+  font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:1.05rem;font-weight:700;transform:rotate(-3deg);
+  box-shadow:inset 0 0 0 3px var(--shu),inset 0 0 0 5px rgba(251,243,228,.55),0 2px 6px rgba(0,0,0,.18)}
+.seal b{display:block;font-size:1.5rem}
+.eyebrow{font-size:.7rem;letter-spacing:.3em;font-weight:700;margin:0;opacity:.85}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;font-weight:700;
+  font-size:clamp(1.2rem,5vw,2.4rem);letter-spacing:.02em;margin:.05em 0;line-height:1.3}
+header h1 span{display:inline-block;opacity:0;animation:rise .45s ease forwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+header .sub{margin:0;font-size:.88rem;opacity:.85}
 
-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 24px}
-nav button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
-  background:#fff;color:var(--sumi);border:1px solid var(--line);transition:.18s}
-nav button:hover{border-color:var(--shu);color:var(--shu-d)}
-nav button[aria-selected="true"]{background:var(--shu);border-color:var(--shu);color:#fff;font-weight:700}
-button:focus-visible,a:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+/* 分頁 */
+nav{position:sticky;top:0;z-index:20;background:var(--bg);display:grid;grid-template-columns:repeat(6,1fr);
+  gap:6px;padding:12px 0;margin:0 0 14px;border-bottom:1px solid var(--rule)}
+nav button{font:inherit;font-size:.86rem;padding:8px 4px;border-radius:999px;cursor:pointer;
+  background:var(--paper);color:var(--sumi);border:1px solid var(--rule);transition:.15s;white-space:nowrap}
+nav button:hover{border-color:var(--c)}
+nav button[aria-selected="true"]{background:var(--c);border-color:var(--c);color:#fff;font-weight:700}
+@media(max-width:640px){nav{grid-template-columns:repeat(3,1fr)}nav button{font-size:.82rem;padding:7px 2px}}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
 
 section[hidden]{display:none}
-.card{background:#fffdf6;border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 18px;
-  box-shadow:0 2px 0 rgba(58,53,44,.05)}
-h2{font-size:1.12rem;margin:0 0 .5em;color:var(--shu-d)}
-h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--ai)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:18px;margin:0 0 16px}
+h2{font-size:1.1rem;margin:0 0 .5em;color:var(--c-d);display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:6px;height:20px;border-radius:3px;background:var(--c);flex:0 0 auto}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--c2)}
 p{margin:.5em 0}
-.note{opacity:.66;font-size:.85rem}
-
+.note{color:var(--muted);font-size:.85rem}
 .btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
-  background:var(--shu);color:#fff;border:none;font-weight:700;margin:4px 6px 4px 0}
-.btn.ghost{background:#fff;color:var(--sumi);border:1px solid var(--line);font-weight:400}
-.btn.blue{background:var(--ai)}
+  background:var(--c);color:#fff;border:1px solid var(--c);font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:var(--paper);color:var(--sumi);border-color:var(--rule);font-weight:400}
+.btn.ghost:hover{border-color:var(--c)}
+.btn.orange,.btn.blue,.btn.coral{background:var(--c2);border-color:var(--c2)}
 .btn:active{transform:translateY(1px)}
 .btn[disabled]{opacity:.45;cursor:default}
 
-.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#e8e0cd}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:var(--paper)}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--c-soft);color:var(--c-d);white-space:nowrap}
+td.jp{font-size:1.05rem}
+textarea,input[type=text]{width:100%;background:#fff;color:var(--sumi);border:1px solid var(--rule);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:130px;resize:vertical}
+input[type=range]{width:180px;vertical-align:middle;accent-color:var(--c)}
+
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:#E9E2D2}
 .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
-  border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0;background:#fff}
-.videoCard:hover{border-color:var(--shu)}
-.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--shu);color:#fff;
+  border:1px solid var(--rule);border-radius:12px;padding:16px;margin:10px 0;background:var(--paper)}
+.videoCard:hover{border-color:var(--c)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--c);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
 .videoCard .vtxt b{display:block}
-.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;color:var(--muted)}
 
-/* ── 日曆（招牌）── */
-.calWrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
-.calBox{flex:1 1 320px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin:0 0 10px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.swatch{width:14px;height:14px;border-radius:4px;border:1px solid var(--line)}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.dow{text-align:center;font-size:.75rem;opacity:.55;padding:2px 0}
-.day{aspect-ratio:1/1;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:600;color:var(--sumi);
-  transition:.12s;font-family:inherit;padding:0}
-.day:hover{border-color:var(--shu);transform:translateY(-1px)}
-.day.irr{background:var(--irr);border-color:#e3a878}
-.day.trap{box-shadow:inset 0 0 0 2px #c9b04a}
-.day.active{background:var(--shu);color:#fff;border-color:var(--shu)}
-.day.blank{border:none;background:transparent;cursor:default;box-shadow:none}
+/* 卡片格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.vcard{border:1px solid var(--rule);border-radius:12px;padding:14px 10px;background:var(--paper);cursor:pointer;
+  min-height:104px;display:flex;flex-direction:column;justify-content:center;text-align:center;font:inherit;color:inherit;transition:.15s}
+.vcard:hover{border-color:var(--c);transform:translateY(-1px)}
+.vcard .w{font-size:1.3rem;color:var(--c-d);font-weight:700}
+.vcard .r{font-size:.76rem;color:var(--muted)}
+.vcard .m{margin-top:6px;font-size:.9rem;color:var(--c2);display:none}
+.vcard.open .m{display:block}
 
-.readout{flex:1 1 240px;min-height:160px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
-.readout .num{font-size:.9rem;color:var(--kaki);font-weight:700}
-.readout .big{font-size:2.1rem;letter-spacing:.06em;color:var(--shu-d);font-weight:700;margin:.1em 0}
-.readout .rom{font-size:.88rem;opacity:.6}
-.readout .tag{display:inline-block;margin-top:10px;font-size:.78rem;padding:3px 10px;border-radius:999px}
-.readout .tag.reg{background:rgba(51,86,110,.14);color:var(--ai-d)}
-.readout .tag.irr{background:var(--irr);color:var(--shu-d)}
-.readout .hint{margin-top:10px;font-size:.88rem;color:var(--ai-d)}
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.vcard{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;cursor:pointer;
-  text-align:center;font:inherit;color:inherit}
-.vcard.irr{background:var(--irr);border-color:#e3a878}
-.vcard:hover{border-color:var(--shu)}
-.vcard .n{font-size:.82rem;color:var(--kaki);font-weight:700}
-.vcard .w{font-size:1.3rem;color:var(--shu-d);font-weight:700}
-.vcard .r{font-size:.74rem;opacity:.6}
-
-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:#fff}
-th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-th{background:rgba(209,83,59,.12);color:var(--shu-d);white-space:nowrap}
-td.jp{font-size:1.05rem}
-
-textarea,input[type=text]{width:100%;background:#fff;color:var(--sumi);border:1px solid var(--line);
-  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
-textarea{min-height:120px;resize:vertical}
-input[type=range]{width:170px;vertical-align:middle}
-
+/* 節拍條 */
 .beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.chip{padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:1rem;transition:.12s}
-.chip.irr{background:var(--irr);border-color:#e3a878}
-.chip.on{background:var(--shu);color:#fff;border-color:var(--shu);transform:scale(1.1)}
+.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--paper);font-size:1rem;transition:.12s;white-space:nowrap}
+.chip.on{background:var(--c);color:#fff;border-color:var(--c);transform:scale(1.1)}
+.lineLabel{font-size:.8rem;color:var(--muted);margin-top:10px}
 
-.q{border-top:1px solid var(--line);padding:14px 0}
+/* 測驗 */
+.q{border-top:1px solid var(--rule);padding:14px 0}
 .q:first-child{border-top:none}
 .q .stem{font-weight:700;margin-bottom:6px}
 .opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
-  border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
-.opt:hover{border-color:var(--shu)}
-.opt.right{background:rgba(51,86,110,.18);border-color:var(--ai)}
-.opt.wrong{background:rgba(209,83,59,.2);border-color:var(--shu)}
-.score{font-size:1.05rem;color:var(--shu-d);font-weight:800}
+  border-radius:8px;border:1px solid var(--rule);background:#fff;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--c)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--ng-soft);border-color:var(--ng)}
+.score{font-size:1.05rem;color:var(--c-d);font-weight:800}
+.review{margin-top:12px}
+.review h3{margin:.4em 0;color:var(--ng)}
+.review ul{margin:0;padding:0;list-style:none;font-size:.9rem}
+.review li{border-left:3px solid var(--ng-soft);padding-left:10px}
+.review li{margin:6px 0}
+.review li span{color:var(--ok);font-weight:700}
+.review .allok{color:var(--ok);font-weight:700}
 
+/* 錄音 */
+.rec{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reclist{padding-left:1.2em}
 .reclist li{margin:6px 0}
 audio{max-width:100%;vertical-align:middle}
-footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border-top:1px solid var(--line);margin-top:28px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* 本集目標 */
+.goals{border-left:5px solid var(--c)}
+.goallist{list-style:none;margin:6px 0 0;padding:0}
+.goallist li{margin:4px 0}
+.goallist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 8px;border-radius:8px}
+.goallist label:hover{background:var(--c-soft)}
+.goallist input{width:20px;height:20px;margin-top:3px;accent-color:var(--ok);flex:0 0 auto}
+.goallist input:checked+span{color:var(--ok);text-decoration:line-through;text-decoration-color:rgba(79,138,91,.5)}
+.goalcount{font-size:.8rem;color:var(--muted)}
+
+/* 今天 */
+.today{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--c-soft);
+  border-radius:12px;padding:10px 12px;margin:0 0 14px}
+.todayOut{font-size:.95rem}
+.todayOut b{color:var(--c-d);font-size:1.1rem}
+.todayOut .jp{font-size:1.15rem;color:var(--c2);font-weight:700;margin-left:4px}
+.todayOut small{display:block;color:var(--muted);font-size:.8rem}
+
+/* 上下集 */
+.epnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.epnav a{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--rule);
+  border-radius:12px;padding:12px 14px;transition:.15s}
+.epnav a:hover{border-color:var(--c)}
+.epnav small{display:block;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+.epnav b{font-size:.95rem}
+.epnav .next{text-align:right}
+footer{text-align:center;font-size:.76rem;color:var(--muted);padding:22px 0 6px;margin-top:22px;border-top:1px solid var(--rule)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin:0 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:14px;border-radius:4px;border:1px solid var(--rule)}
+.calWrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.calBox{flex:1 1 300px;min-width:0}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.dow{text-align:center;font-size:.75rem;color:var(--muted);padding:2px 0}
+.day{aspect-ratio:1/1;border:1px solid var(--rule);border-radius:9px;background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:var(--sumi);
+  transition:.12s;font-family:inherit;padding:0;min-width:0}
+.day:hover{border-color:var(--c);transform:translateY(-1px)}
+.day.irr{background:var(--irr);border-color:#E3A878}
+.day.trap{box-shadow:inset 0 0 0 2px #C9A43A}
+.day.active{background:var(--c);color:#fff;border-color:var(--c)}
+.day.today{outline:2px dashed var(--c2);outline-offset:2px}
+.readout{flex:1 1 240px;min-height:160px;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--c);border-radius:12px;padding:16px}
+.readout .num{font-size:.9rem;color:var(--c2);font-weight:700}
+.readout .big{font-size:2rem;letter-spacing:.04em;color:var(--c-d);font-weight:700;margin:.1em 0;word-break:keep-all}
+.readout .rom{font-size:.88rem;color:var(--muted)}
+.readout .tag{display:inline-block;margin-top:10px;font-size:.78rem;padding:3px 10px;border-radius:999px}
+.readout .tag.reg{background:#E9EEF4;color:#26405E}
+.readout .tag.irr{background:var(--irr);color:var(--c-d)}
+.readout .hint{margin-top:10px;font-size:.88rem;color:var(--c2)}
+.grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+.vcard.irr{background:var(--irr);border-color:#E3A878}
+.vcard .n{font-size:.82rem;color:var(--c2);font-weight:700}
+.chip.irr{background:var(--irr);border-color:#E3A878}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <div class="eyebrow">唱歌學日文 · 第三集</div>
-  <h1 class="jp" id="title"></h1>
-  <div class="sub">一日・二日・三日の歌 ─ 日期唸法互動學習單</div>
+<header class="epband">
+  <a class="crumb" href="index.html">← 唱歌學日文・系列總覽</a>
+  <div class="hd-main">
+    <div class="seal" aria-hidden="true">EP<b>3</b></div>
+    <div>
+      <p class="eyebrow">唱歌學日文 · 第三集</p>
+      <h1 class="jp" id="title"></h1>
+      <p class="sub">一日・二日・三日の歌 ─ 日期唸法互動學習單</p>
+    </div>
+  </div>
 </header>
 
 <nav id="nav">
@@ -152,11 +202,19 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
   <button data-target="t4">④ 節拍跟唱</button>
   <button data-target="t5">⑤ 跟讀錄音</button>
   <button data-target="t6">⑥ 小測驗</button>
-<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
 </nav>
 
 <!-- ① -->
 <section id="t1">
+  <div class="card goals">
+    <h2>本集目標</h2>
+    <p class="note">學完這一集回來勾一勾 <span class="goalcount" id="goalcount"></span></p>
+    <ul class="goallist" data-key="ep3_goals">
+      <li><label><input type="checkbox"><span>唸出 1～10 日的特殊唸法</span></label></li>
+      <li><label><input type="checkbox"><span>記住 14・20・24 三個例外與 17・19 的讀音陷阱</span></label></li>
+      <li><label><input type="checkbox"><span>用日文說出今天幾月幾號</span></label></li>
+    </ul>
+  </div>
   <div class="card">
     <h2>日期是日語裡最「不講理」的一塊</h2>
     <p>1 到 10 號幾乎每一個都是<b>特殊唸法</b>（訓讀），跟數字本身對不起來——這正是為什麼要用「唱」的把它們背下來。旋律會幫你記住 <span class="jp">ついたち・ふつか・みっか</span> 這串本來很難的音，之後 11 號以後才回到「數字＋にち」的規則。</p>
@@ -196,6 +254,7 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
       <span><i class="swatch" style="background:var(--irr)"></i>特殊唸法（要背）</span>
       <span><i class="swatch" style="background:#fff;box-shadow:inset 0 0 0 2px #c9b04a"></i>讀音陷阱</span>
     </div>
+    <div class="today"><button class="btn" id="todayBtn" type="button">📅 今天是幾月幾號？</button><div class="todayOut" id="todayOut"></div></div>
     <div class="calWrap">
       <div class="calBox">
         <div class="cal" id="calHead"></div>
@@ -299,12 +358,17 @@ footer{text-align:center;font-size:.78rem;opacity:.55;padding:26px 0 10px;border
   <div class="card">
     <h2>小測驗</h2>
     <div id="quiz"></div>
+    <div class="review" id="review"></div>
     <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
     <p class="note" id="checkin"></p>
   </div>
 </section>
 
-<footer>唱歌學日文 #3 一日二日三日の歌 互動學習單 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+<div class="epnav">
+  <a class="prev" href="ep2-atama-kata-hiza-pon.html"><small>← 上一站</small><b>EP2 頭・肩・膝ぽん</b></a>
+  <a class="next" href="ep4-days-of-week.html"><small>下一站 →</small><b>EP4 曜日の歌</b></a>
+</div>
+<footer class="jp">唱歌學日文 第 3 集 互動學習單 · build 2026-10-01</footer>
 </div>
 
 <script>
@@ -585,15 +649,71 @@ function buildQuiz(){
   });
 }
 function checkin(){
+  if(window.__showReview)window.__showReview();
   var today=new Date().toISOString().slice(0,10);
   var days=(LS.get("ep3_days")||"").split(",").filter(Boolean);
   if(days.indexOf(today)<0){ days.push(today); LS.set("ep3_days",days.join(",")); }
   document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
 }
-document.getElementById("resetQ").onclick=buildQuiz;
+document.getElementById("resetQ").onclick=function(){buildQuiz();document.getElementById("review").innerHTML="";};
 buildQuiz();
 var d0=(LS.get("ep3_days")||"").split(",").filter(Boolean);
 if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+/* 本集目標勾選 */
+document.querySelectorAll(".goallist").forEach(function(ul){
+  var key=ul.dataset.key, st={};
+  try{st=JSON.parse(localStorage.getItem(key)||"{}")}catch(e){}
+  var boxes=ul.querySelectorAll("input");
+  function count(){
+    var n=0;boxes.forEach(function(b){if(b.checked)n++});
+    var c=document.getElementById("goalcount");if(c)c.textContent="已做到 "+n+" / "+boxes.length+" 項";
+  }
+  boxes.forEach(function(b,i){
+    b.checked=!!st[i];
+    b.addEventListener("change",function(){st[i]=b.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){};count()});
+  });
+  count();
+});
+/* 測驗：答錯回顧 */
+window.__showReview=function(){
+  var el=document.getElementById("review");if(!el)return;
+  var out=[];
+  document.querySelectorAll("#quiz .q").forEach(function(d){
+    if(d.querySelector(".opt.wrong")){
+      out.push('<li>'+d.querySelector(".stem").textContent+'<br>正解：<span class="jp">'+d.querySelector(".opt.right").textContent+'</span></li>');
+    }
+  });
+  el.innerHTML=out.length?('<h3>答錯的題目（'+out.length+'）</h3><ul>'+out.join("")+'</ul><p class="note">看完正解，按「重做」再挑戰一次。</p>')
+                         :'<p class="allok">全部答對，這一集過關了！</p>';
+};
+/* 日語發音（給「今天」按鈕用） */
+window.__sayJa=function(t){
+  if(!("speechSynthesis" in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.rate=.85;
+    var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(/^ja/i.test(vs[i].lang)){u.voice=vs[i];break}}
+    speechSynthesis.speak(u);}catch(e){}
+};
+
+var M=["","いちがつ","にがつ","さんがつ","しがつ","ごがつ","ろくがつ","しちがつ","はちがつ","くがつ","じゅうがつ","じゅういちがつ","じゅうにがつ"];
+var tb=document.getElementById("todayBtn");
+if(tb)tb.addEventListener("click",function(){
+  var d=new Date(),m=d.getMonth()+1,n=d.getDate();
+  var cell=document.querySelector('#cal .day[data-n="'+n+'"]');
+  if(cell){cell.click();cell.classList.add("today");}
+  setTimeout(function(){
+    var dk=document.querySelector("#readout .big").textContent;
+    var warn=(m===4||m===7||m===9)?'<small>月份的 4・7・9 唸 し・しち・く：しがつ、しちがつ、くがつ。</small>':'<small>月份＝數字＋がつ；日期照日曆唸。</small>';
+    document.getElementById("todayOut").innerHTML='今天是 <b>'+m+'月'+n+'日</b><span class="jp">'+M[m]+' '+dk+'</span>'+warn;
+    window.__sayJa("きょうは "+M[m]+" "+dk+" です");
+  },60);
+});
 
 })();
 </script>

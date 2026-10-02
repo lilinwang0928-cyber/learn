@@ -6,154 +6,178 @@
 <title>きらきら星 互動學習單</title>
 <style>
 :root{
-  --ink:#0d1330;        /* 夜空 */
-  --ink2:#161f47;       /* 夜空淺 */
-  --gold:#e8c46a;       /* 星光 */
-  --gold-d:#b8933f;
-  --cream:#f3efe4;      /* 紙 */
-  --sakura:#d98aa0;     /* 櫻 */
-  --teal:#7cc0b4;       /* 青竹 */
-  --line:rgba(243,239,228,.18);
+  --bg:#F6F1E6; --paper:#FFFDF8; --sumi:#2A2723; --muted:#6E675C;
+  --rule:#E4DBCB; --pale:#EFE9DC; --shu:#C2412D;
+  --ok:#4F8A5B; --ok-soft:#E8F1E8; --ng:#C2412D; --ng-soft:#F8ECE8;
+  --c:#1F2A5C;--c-d:#1F2A5C;--c-soft:#E8EAF3;--c2:#9A6A00;--gold:#9A6A00;--band:radial-gradient(1.4px 1.4px at 12% 30%,#fff,transparent),radial-gradient(1px 1px at 30% 75%,#fff,transparent),radial-gradient(1.6px 1.6px at 58% 20%,#fff,transparent),radial-gradient(1px 1px at 78% 62%,#fff,transparent),radial-gradient(1.2px 1.2px at 92% 28%,#fff,transparent),linear-gradient(135deg,#141C40,#2C3A78);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{
-  background:
-    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.7), transparent),
-    radial-gradient(1px 1px at 76% 9%, rgba(255,255,255,.55), transparent),
-    radial-gradient(1.5px 1.5px at 41% 62%, rgba(255,255,255,.4), transparent),
-    radial-gradient(1px 1px at 88% 74%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 25% 88%, rgba(255,255,255,.45), transparent),
-    linear-gradient(180deg,var(--ink) 0%, var(--ink2) 60%, #0b1029 100%);
-  background-attachment:fixed;
-  color:var(--cream);
+body{background:var(--bg);color:var(--sumi);
   font-family:"Hiragino Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
-  line-height:1.75;
-  -webkit-text-size-adjust:100%;
-}
-.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif;}
-.wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px}
+  font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+.jp{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
 
-/* ── 標頭 ── */
-header{text-align:center;padding:28px 0 10px}
-header .eyebrow{font-size:.78rem;letter-spacing:.42em;color:var(--gold);opacity:.85}
-header h1{
-  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
-  font-size:clamp(2rem,7vw,3.2rem);margin:.25em 0 .1em;font-weight:600;letter-spacing:.06em;
-}
-header h1 span{display:inline-block;opacity:0;animation:pop .5s ease forwards}
-@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
-header .sub{font-size:.95rem;opacity:.75}
+/* 頁首色帶 */
+header.epband{position:relative;overflow:hidden;margin:0 -16px;padding:18px 20px 22px;
+  background:var(--band);color:#fff}
+@media(min-width:932px){header.epband{margin:16px 0 0;border-radius:16px}}
+.crumb{display:inline-block;font-size:.78rem;color:rgba(255,255,255,.86);text-decoration:none;letter-spacing:.06em;margin-bottom:12px}
+.crumb:hover{text-decoration:underline;text-underline-offset:3px}
+.hd-main{display:flex;gap:16px;align-items:center;position:relative}
+.seal{flex:0 0 auto;width:60px;height:60px;border-radius:9px;background:var(--shu);color:#FBF3E4;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;
+  font-family:"Hiragino Mincho ProN","Songti TC",serif;font-size:1.05rem;font-weight:700;transform:rotate(-3deg);
+  box-shadow:inset 0 0 0 3px var(--shu),inset 0 0 0 5px rgba(251,243,228,.55),0 2px 6px rgba(0,0,0,.18)}
+.seal b{display:block;font-size:1.5rem}
+.eyebrow{font-size:.7rem;letter-spacing:.3em;font-weight:700;margin:0;opacity:.85}
+header h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;font-weight:700;
+  font-size:clamp(1.2rem,5vw,2.4rem);letter-spacing:.02em;margin:.05em 0;line-height:1.3}
+header h1 span{display:inline-block;opacity:0;animation:rise .45s ease forwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+header .sub{margin:0;font-size:.88rem;opacity:.85}
 
-/* ── 導覽 ── */
-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 26px}
-nav button{
-  font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;cursor:pointer;
-  background:transparent;color:var(--cream);border:1px solid var(--line);transition:.18s;
-}
-nav button:hover{border-color:var(--gold);color:var(--gold)}
-nav button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
-nav button:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+/* 分頁 */
+nav{position:sticky;top:0;z-index:20;background:var(--bg);display:grid;grid-template-columns:repeat(6,1fr);
+  gap:6px;padding:12px 0;margin:0 0 14px;border-bottom:1px solid var(--rule)}
+nav button{font:inherit;font-size:.86rem;padding:8px 4px;border-radius:999px;cursor:pointer;
+  background:var(--paper);color:var(--sumi);border:1px solid var(--rule);transition:.15s;white-space:nowrap}
+nav button:hover{border-color:var(--c)}
+nav button[aria-selected="true"]{background:var(--c);border-color:var(--c);color:#fff;font-weight:700}
+@media(max-width:640px){nav{grid-template-columns:repeat(3,1fr)}nav button{font-size:.82rem;padding:7px 2px}}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
 
 section[hidden]{display:none}
-.card{
-  background:rgba(255,255,255,.045);border:1px solid var(--line);
-  border-radius:14px;padding:18px 18px 20px;margin:0 0 18px;
-}
-h2{font-size:1.15rem;margin:0 0 .5em;color:var(--gold);letter-spacing:.05em}
-h3{font-size:1rem;margin:1.2em 0 .4em;color:var(--teal)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:18px;margin:0 0 16px}
+h2{font-size:1.1rem;margin:0 0 .5em;color:var(--c-d);display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:6px;height:20px;border-radius:3px;background:var(--c);flex:0 0 auto}
+h3{font-size:1rem;margin:1.1em 0 .35em;color:var(--c2)}
 p{margin:.5em 0}
-small,.note{opacity:.7;font-size:.85rem}
-
-.btn{
-  font:inherit;font-size:.88rem;padding:7px 14px;border-radius:8px;cursor:pointer;
-  background:var(--gold);color:var(--ink);border:none;font-weight:700;margin:4px 6px 4px 0;
-}
-.btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line);font-weight:400}
+.note{color:var(--muted);font-size:.85rem}
+.btn{font:inherit;font-size:.88rem;padding:8px 15px;border-radius:10px;cursor:pointer;
+  background:var(--c);color:#fff;border:1px solid var(--c);font-weight:700;margin:4px 6px 4px 0}
+.btn.ghost{background:var(--paper);color:var(--sumi);border-color:var(--rule);font-weight:400}
+.btn.ghost:hover{border-color:var(--c)}
+.btn.orange,.btn.blue,.btn.coral{background:var(--c2);border-color:var(--c2)}
 .btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:default}
 
-/* ── 拍星（招牌元素）── */
-.moraRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
-.moraWord{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:12px 14px;border:1px solid var(--line);border-radius:12px;width:100%;
-  background:rgba(13,19,48,.5);cursor:pointer;text-align:left;color:inherit;font:inherit;
-}
-.moraWord:hover{border-color:var(--gold)}
-.moraWord .lab{min-width:160px}
-.moraWord .lab b{font-size:1.4rem;letter-spacing:.08em}
-.moraWord .lab i{display:block;font-style:normal;font-size:.8rem;opacity:.7}
-.stars{display:flex;gap:8px}
-.star{width:22px;height:22px;opacity:.28;transition:.15s}
-.star.on{opacity:1;filter:drop-shadow(0 0 6px var(--gold));transform:scale(1.25)}
-.beatnum{font-size:.8rem;opacity:.6;margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0;background:var(--paper)}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--c-soft);color:var(--c-d);white-space:nowrap}
+td.jp{font-size:1.05rem}
+textarea,input[type=text]{width:100%;background:#fff;color:var(--sumi);border:1px solid var(--rule);
+  border-radius:8px;padding:10px;font:inherit;font-size:.95rem}
+textarea{min-height:130px;resize:vertical}
+input[type=range]{width:180px;vertical-align:middle;accent-color:var(--c)}
 
-/* ── 單字卡 ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.vcard{
-  border:1px solid var(--line);border-radius:12px;padding:14px;background:rgba(255,255,255,.04);
-  cursor:pointer;min-height:120px;display:flex;flex-direction:column;justify-content:center;
-  text-align:center;color:inherit;font:inherit;transition:.2s;
-}
-.vcard:hover{border-color:var(--sakura)}
-.vcard .w{font-size:1.35rem;letter-spacing:.06em}
-.vcard .r{font-size:.78rem;opacity:.65;margin-top:2px}
-.vcard .m{margin-top:8px;font-size:.9rem;color:var(--teal);display:none}
+.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:#E9E2D2}
+.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.videoCard{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+  border:1px solid var(--rule);border-radius:12px;padding:16px;margin:10px 0;background:var(--paper)}
+.videoCard:hover{border-color:var(--c)}
+.videoCard .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--c);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:4px}
+.videoCard .vtxt b{display:block}
+.videoCard .vtxt i{font-style:normal;font-size:.82rem;color:var(--muted)}
+
+/* 卡片格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.vcard{border:1px solid var(--rule);border-radius:12px;padding:14px 10px;background:var(--paper);cursor:pointer;
+  min-height:104px;display:flex;flex-direction:column;justify-content:center;text-align:center;font:inherit;color:inherit;transition:.15s}
+.vcard:hover{border-color:var(--c);transform:translateY(-1px)}
+.vcard .w{font-size:1.3rem;color:var(--c-d);font-weight:700}
+.vcard .r{font-size:.76rem;color:var(--muted)}
+.vcard .m{margin-top:6px;font-size:.9rem;color:var(--c2);display:none}
 .vcard.open .m{display:block}
 
-/* ── 表 ── */
-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6em 0}
-th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-th{background:rgba(232,196,106,.12);color:var(--gold);font-weight:600;white-space:nowrap}
+/* 節拍條 */
+.beatBar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--paper);font-size:1rem;transition:.12s;white-space:nowrap}
+.chip.on{background:var(--c);color:#fff;border-color:var(--c);transform:scale(1.1)}
+.lineLabel{font-size:.8rem;color:var(--muted);margin-top:10px}
 
-textarea,input[type=text]{
-  width:100%;background:rgba(0,0,0,.25);color:var(--cream);border:1px solid var(--line);
-  border-radius:8px;padding:10px;font:inherit;font-size:.95rem;
-}
-textarea{min-height:150px;resize:vertical}
-
-.embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.3)}
-.embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.videoCard{
-  display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
-  border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0;
-  background:linear-gradient(120deg,rgba(232,196,106,.12),rgba(255,255,255,.03));
-  transition:.18s;
-}
-.videoCard:hover{border-color:var(--gold);transform:translateY(-2px)}
-.videoCard .play{
-  flex:none;width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--ink);
-  display:flex;align-items:center;justify-content:center;font-size:1.3rem;padding-left:4px;
-}
-.videoCard .vtxt b{display:block;font-size:1.05rem}
-.videoCard .vtxt i{font-style:normal;font-size:.82rem;opacity:.7}
-
-/* ── 測驗 ── */
-.q{border-top:1px solid var(--line);padding:14px 0}
+/* 測驗 */
+.q{border-top:1px solid var(--rule);padding:14px 0}
 .q:first-child{border-top:none}
-.q .stem{font-weight:600;margin-bottom:8px}
-.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;padding:9px 12px;margin:6px 0;
-  border-radius:8px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
-.opt:hover{border-color:var(--gold)}
-.opt.right{background:rgba(124,192,180,.22);border-color:var(--teal)}
-.opt.wrong{background:rgba(217,138,160,.2);border-color:var(--sakura)}
-.score{font-size:1.05rem;color:var(--gold);font-weight:700}
+.q .stem{font-weight:700;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:.95rem;padding:9px 12px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--rule);background:#fff;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--c)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--ng-soft);border-color:var(--ng)}
+.score{font-size:1.05rem;color:var(--c-d);font-weight:800}
+.review{margin-top:12px}
+.review h3{margin:.4em 0;color:var(--ng)}
+.review ul{margin:0;padding:0;list-style:none;font-size:.9rem}
+.review li{border-left:3px solid var(--ng-soft);padding-left:10px}
+.review li{margin:6px 0}
+.review li span{color:var(--ok);font-weight:700}
+.review .allok{color:var(--ok);font-weight:700}
 
+/* 錄音 */
 .rec{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reclist{padding-left:1.2em}
 .reclist li{margin:6px 0}
 audio{max-width:100%;vertical-align:middle}
 
-footer{text-align:center;font-size:.78rem;opacity:.5;padding:30px 0 10px;border-top:1px solid var(--line);margin-top:30px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* 本集目標 */
+.goals{border-left:5px solid var(--c)}
+.goallist{list-style:none;margin:6px 0 0;padding:0}
+.goallist li{margin:4px 0}
+.goallist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 8px;border-radius:8px}
+.goallist label:hover{background:var(--c-soft)}
+.goallist input{width:20px;height:20px;margin-top:3px;accent-color:var(--ok);flex:0 0 auto}
+.goallist input:checked+span{color:var(--ok);text-decoration:line-through;text-decoration-color:rgba(79,138,91,.5)}
+.goalcount{font-size:.8rem;color:var(--muted)}
+
+/* 今天 */
+.today{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--c-soft);
+  border-radius:12px;padding:10px 12px;margin:0 0 14px}
+.todayOut{font-size:.95rem}
+.todayOut b{color:var(--c-d);font-size:1.1rem}
+.todayOut .jp{font-size:1.15rem;color:var(--c2);font-weight:700;margin-left:4px}
+.todayOut small{display:block;color:var(--muted);font-size:.8rem}
+
+/* 上下集 */
+.epnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.epnav a{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--rule);
+  border-radius:12px;padding:12px 14px;transition:.15s}
+.epnav a:hover{border-color:var(--c)}
+.epnav small{display:block;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+.epnav b{font-size:.95rem}
+.epnav .next{text-align:right}
+footer{text-align:center;font-size:.76rem;color:var(--muted);padding:22px 0 6px;margin-top:22px;border-top:1px solid var(--rule)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.moraWord{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;padding:12px 14px;border:1px solid var(--rule);
+  border-radius:12px;width:100%;background:#fff;cursor:pointer;text-align:left;color:inherit;font:inherit;margin:0 0 8px}
+.moraWord:hover{border-color:var(--c)}
+.moraWord .lab{flex:1;min-width:0}
+.moraWord .lab b{font-size:1.4rem;letter-spacing:.08em;color:var(--c-d)}
+.moraWord .lab i{display:block;font-style:normal;font-size:.8rem;color:var(--muted)}
+.stars{display:flex;gap:6px;flex:0 0 auto}
+.star{width:22px;height:22px;opacity:.3;transition:.15s}
+.star path{stroke:#B07A12;stroke-width:1}
+.star.on{opacity:1;filter:drop-shadow(0 0 5px rgba(232,180,60,.9));transform:scale(1.25)}
+.beatnum{font-size:.8rem;color:var(--muted);flex:0 0 auto;white-space:nowrap}
+.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <div class="eyebrow">日本語 × 語感 × 拍</div>
-  <h1 class="jp" id="title"></h1>
-  <div class="sub">Kira Kira Boshi ─ 日文版〈小星星〉互動學習單</div>
+<header class="epband">
+  <a class="crumb" href="index.html">← 唱歌學日文・系列總覽</a>
+  <div class="hd-main">
+    <div class="seal" aria-hidden="true">EP<b>1</b></div>
+    <div>
+      <p class="eyebrow">日本語 × 語感 × 拍</p>
+      <h1 class="jp" id="title"></h1>
+      <p class="sub">Kira Kira Boshi ─ 日文版〈小星星〉互動學習單</p>
+    </div>
+  </div>
 </header>
 
 <nav id="nav">
@@ -163,11 +187,19 @@ footer{text-align:center;font-size:.78rem;opacity:.5;padding:30px 0 10px;border-
   <button data-target="t4">④ 文法四顆星</button>
   <button data-target="t5">⑤ 跟讀錄音</button>
   <button data-target="t6">⑥ 小測驗</button>
-<a href="index.html" style="font-size:.9rem;padding:8px 14px;border-radius:999px;text-decoration:none;border:1px dashed currentColor;opacity:.75;color:inherit;display:inline-flex;align-items:center">⌂ 總覽</a>
 </nav>
 
 <!-- ① -->
 <section id="t1">
+  <div class="card goals">
+    <h2>本集目標</h2>
+    <p class="note">學完這一集回來勾一勾 <span class="goalcount" id="goalcount"></span></p>
+    <ul class="goallist" data-key="ep1_goals">
+      <li><label><input type="checkbox"><span>聽出日語「一個假名＝一拍」的節奏</span></label></li>
+      <li><label><input type="checkbox"><span>分辨長音、撥音、疊語各佔幾拍</span></label></li>
+      <li><label><input type="checkbox"><span>認得 の・よ・〜ては・〜てる 四個句型</span></label></li>
+    </ul>
+  </div>
   <div class="card">
     <h2>先聽，再看，最後才讀</h2>
     <p>〈きらきら星〉的旋律來自法國童謠，全世界共用同一條曲子；日文版把英文的 <b>Twinkle</b> 換成擬態語 <b class="jp">きらきら</b>。同一段旋律、不同語言的節奏切法，正是聽出「日語是拍的語言」最好的入口。</p>
@@ -281,12 +313,17 @@ footer{text-align:center;font-size:.78rem;opacity:.5;padding:30px 0 10px;border-
   <div class="card">
     <h2>小測驗</h2>
     <div id="quiz"></div>
+    <div class="review" id="review"></div>
     <p><span class="score" id="score">0 / 8</span> <button class="btn ghost" id="resetQ">重做</button></p>
     <p class="note" id="checkin"></p>
   </div>
 </section>
 
-<footer>きらきら星 互動學習單 · build 2026-07-22dc · 單檔 HTML，無外部相依</footer>
+<div class="epnav">
+  <a class="prev" href="kana-gojuon.html"><small>← 上一站</small><b>基礎篇 五十音</b></a>
+  <a class="next" href="ep2-atama-kata-hiza-pon.html"><small>下一站 →</small><b>EP2 頭・肩・膝ぽん</b></a>
+</div>
+<footer class="jp">唱歌學日文 第 1 集 互動學習單 · build 2026-10-01</footer>
 </div>
 
 <script>
@@ -479,15 +516,57 @@ function buildQuiz(){
   });
 }
 function checkin(){
+  if(window.__showReview)window.__showReview();
   var today=new Date().toISOString().slice(0,10);
   var days=(LS.get("kk_days")||"").split(",").filter(Boolean);
   if(days.indexOf(today)<0){ days.push(today); LS.set("kk_days",days.join(",")); }
   document.getElementById("checkin").textContent="累積練習天數："+days.length+" 天（最近一次 "+today+"）";
 }
-document.getElementById("resetQ").onclick=buildQuiz;
+document.getElementById("resetQ").onclick=function(){buildQuiz();document.getElementById("review").innerHTML="";};
 buildQuiz();
 var d0=(LS.get("kk_days")||"").split(",").filter(Boolean);
 if(d0.length) document.getElementById("checkin").textContent="累積練習天數："+d0.length+" 天";
+
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+/* 本集目標勾選 */
+document.querySelectorAll(".goallist").forEach(function(ul){
+  var key=ul.dataset.key, st={};
+  try{st=JSON.parse(localStorage.getItem(key)||"{}")}catch(e){}
+  var boxes=ul.querySelectorAll("input");
+  function count(){
+    var n=0;boxes.forEach(function(b){if(b.checked)n++});
+    var c=document.getElementById("goalcount");if(c)c.textContent="已做到 "+n+" / "+boxes.length+" 項";
+  }
+  boxes.forEach(function(b,i){
+    b.checked=!!st[i];
+    b.addEventListener("change",function(){st[i]=b.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){};count()});
+  });
+  count();
+});
+/* 測驗：答錯回顧 */
+window.__showReview=function(){
+  var el=document.getElementById("review");if(!el)return;
+  var out=[];
+  document.querySelectorAll("#quiz .q").forEach(function(d){
+    if(d.querySelector(".opt.wrong")){
+      out.push('<li>'+d.querySelector(".stem").textContent+'<br>正解：<span class="jp">'+d.querySelector(".opt.right").textContent+'</span></li>');
+    }
+  });
+  el.innerHTML=out.length?('<h3>答錯的題目（'+out.length+'）</h3><ul>'+out.join("")+'</ul><p class="note">看完正解，按「重做」再挑戰一次。</p>')
+                         :'<p class="allok">全部答對，這一集過關了！</p>';
+};
+/* 日語發音（給「今天」按鈕用） */
+window.__sayJa=function(t){
+  if(!("speechSynthesis" in window))return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.rate=.85;
+    var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(/^ja/i.test(vs[i].lang)){u.voice=vs[i];break}}
+    speechSynthesis.speak(u);}catch(e){}
+};
 
 })();
 </script>

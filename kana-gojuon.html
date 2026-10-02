@@ -6,19 +6,20 @@
 <title>五十音・寫聽讀</title>
 <style>
 :root{
-  --washi:#FBF9F3;
-  --paper:#FFFFFF;
-  --sumi:#221F1B;
-  --ai:#2C4770;         /* 藍 藍染 */
-  --ai-soft:#EAEFF6;
-  --shu:#BE3A2B;        /* 朱 */
-  --shu-soft:#FAF0EE;
-  --rose:#A97C8B;
-  --moegi:#5E8B54;      /* 萌黃 正解 */
-  --moegi-soft:#EBF2E7;
-  --rule:#DAD4C4;
-  --pale:#F2EEE2;
-  --muted:#77715F;
+  --washi:#F6F1E6;      /* 生成り 底色（同總覽） */
+  --paper:#FFFDF8;
+  --sumi:#2A2723;
+  --ai:#2E4A6B;         /* 藍 主色 */
+  --ai-soft:#E9EEF4;
+  --shu:#C2412D;        /* 朱 */
+  --shu-soft:#F8ECE8;
+  --rose:#7D8DA6;       /* 灰藍 筆畫數 */
+  --moegi:#4F8A5B;      /* 正解 */
+  --moegi-soft:#E8F1E8;
+  --rule:#E4DBCB;
+  --pale:#EFE9DC;
+  --muted:#6E675C;
+  --yamabuki:#D2921C;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -32,17 +33,21 @@ body{
 .kana{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Meiryo",sans-serif}
 
 /* ---------- header ---------- */
-header{
-  padding:30px 20px 20px;
-  background:
-    radial-gradient(circle at 88% -30%, var(--shu-soft) 0%, transparent 55%),
-    linear-gradient(180deg,#FFFFFF 0%,var(--washi) 100%);
-  border-bottom:1px solid var(--rule);
-}
-.hd-eyebrow{font-size:.68rem;letter-spacing:.34em;color:var(--shu);margin:0 0 6px;font-weight:600}
-h1{margin:0;font-size:1.65rem;font-weight:600;letter-spacing:.3em}
-h1 .dot{color:var(--shu);font-size:.62em;vertical-align:.2em;margin:0 .08em}
-header p.sub{margin:9px 0 0;font-size:.8rem;color:var(--muted);letter-spacing:.1em}
+header{background:var(--washi);border-bottom:1px solid var(--rule)}
+.hd{max-width:760px;margin:0 auto;padding:18px 16px 18px}
+.crumb{display:inline-block;font-size:.78rem;color:var(--ai);text-decoration:none;letter-spacing:.06em;margin-bottom:12px}
+.crumb:hover{text-decoration:underline;text-underline-offset:3px}
+.hd-main{display:flex;gap:16px;align-items:center}
+.seal{flex:0 0 auto;width:62px;height:62px;border-radius:9px;background:var(--shu);color:#FBF3E4;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.08;
+  font-size:1.2rem;font-weight:700;transform:rotate(-3deg);
+  box-shadow:inset 0 0 0 3px var(--shu),inset 0 0 0 5px rgba(251,243,228,.55)}
+.hd-eyebrow{font-size:.68rem;letter-spacing:.3em;color:var(--shu);margin:0 0 2px;font-weight:700}
+h1{margin:0;font-size:1.7rem;font-weight:700;letter-spacing:.14em;line-height:1.3}
+header p.sub{margin:4px 0 0;font-size:.86rem;color:var(--muted);line-height:1.7}
+.hd-stats{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:.78rem;color:var(--muted)}
+.hd-stats b{color:var(--sumi);font-size:.98rem;margin-right:3px}
+.hd-stats .prog{color:var(--moegi);font-weight:700}
 
 /* ---------- tabs ---------- */
 nav{
@@ -59,6 +64,16 @@ nav button{
 nav button small{display:block;font-size:.58rem;letter-spacing:.14em;color:var(--rose);margin-top:1px}
 nav button[aria-selected="true"]{color:var(--ai);border-bottom-color:var(--shu);font-weight:600}
 nav button:focus-visible{outline:2px solid var(--ai);outline-offset:-3px}
+nav .home{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:12px 15px 11px;font-size:.88rem;color:var(--ai);text-decoration:none;letter-spacing:.12em;
+  border-bottom:2.5px solid transparent;border-left:1px dashed var(--rule)}
+nav .home small{display:block;font-size:.58rem;letter-spacing:.14em;color:var(--rose);margin-top:1px}
+@media (max-width:600px){
+  nav{display:grid;grid-template-columns:repeat(4,1fr);overflow:visible}
+  nav button,nav .home{padding:9px 2px 8px;font-size:.86rem;letter-spacing:.06em}
+  nav button small,nav .home small{display:none}
+  nav .home{border-left:none}
+}
 
 main{padding:20px 16px 56px;max-width:760px;margin:0 auto}
 section[hidden]{display:none}
@@ -97,6 +112,8 @@ h2:first-child{margin-top:2px}
 .cell .rom{position:absolute;right:3px;bottom:2px;font-size:.58rem;color:var(--shu);line-height:1;font-weight:600}
 .cell .sc{position:absolute;left:3px;top:3px;font-size:.54rem;color:var(--rose);line-height:1}
 .rowlab{display:flex;align-items:center;justify-content:center;font-size:.66rem;color:var(--ai);letter-spacing:.06em}
+.collab{display:flex;align-items:flex-end;justify-content:center;font-size:.64rem;color:var(--ai);padding-bottom:1px;letter-spacing:.04em}
+.cell .tipdot{position:absolute;right:4px;top:4px;width:6px;height:6px;border-radius:50%;background:var(--shu)}
 .small .cell .ch{font-size:1.22rem}
 
 /* ---------- pills ---------- */
@@ -186,6 +203,18 @@ h2:first-child{margin-top:2px}
 .opt.right{background:var(--moegi-soft);border-color:var(--moegi);color:#33502C}
 .opt.wrong{background:var(--shu-soft);border-color:var(--shu);color:var(--shu)}
 .score{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--muted);margin:12px 2px 0}
+.pill.miss{border-color:var(--shu);color:var(--shu)}
+.pill.miss[aria-pressed="true"]{background:var(--shu);border-color:var(--shu);color:#fff}
+.qempty{grid-column:1/-1;font-size:.88rem;color:var(--muted);padding:10px 4px;line-height:1.8}
+.missbox{margin-top:16px;border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:12px 14px}
+.missbox h3{margin:0 0 8px;font-size:.88rem;color:var(--shu);letter-spacing:.08em}
+.missbox h3 small{display:block;font-size:.7rem;color:var(--muted);font-weight:400;letter-spacing:0;margin-top:2px}
+.misslist{display:flex;flex-wrap:wrap;gap:6px}
+.misslist button{appearance:none;border:1px solid var(--rule);background:var(--washi);border-radius:6px;
+  min-width:52px;padding:4px 8px 3px;font-family:inherit;cursor:pointer;text-align:center;color:var(--sumi)}
+.misslist button b{display:block;font-size:1.3rem;font-weight:400;line-height:1.2}
+.misslist button i{font-style:normal;font-size:.62rem;color:var(--shu)}
+.misslist .none{font-size:.82rem;color:var(--moegi)}
 .bar{height:5px;background:var(--pale);border-radius:99px;overflow:hidden;margin:10px 0 0}
 .bar i{display:block;height:100%;background:var(--moegi);width:0;transition:width .3s}
 
@@ -275,12 +304,13 @@ h2:first-child{margin-top:2px}
 .ktile .kj{display:block;font-size:1.7rem;line-height:1.2;color:var(--sumi)}
 .ktile .ky{display:block;font-size:.62rem;color:rgba(0,0,0,.5);margin-top:3px;letter-spacing:.02em}
 .ktile.on{outline:2px solid var(--ai);outline-offset:1px}
-.k1{background:#BFE8DC}.k2{background:#B9E7B4}.k3{background:#D9EE9E}.k4{background:#F1EC8E}.k5{background:#F5D391}
+.k1{background:#E9EEF4}.k2{background:#EAF1E3}.k3{background:#F8ECE6}.k4{background:#FBF2DF}.k5{background:#EEEAF4}
+.ktile:hover{border-color:var(--ai)}
 /* ---------- modal ---------- */
 .modal{position:fixed;inset:0;z-index:90;background:rgba(30,28,24,.62);display:flex;align-items:center;justify-content:center;padding:22px}
 .modal[hidden]{display:none!important}
 .mcard{
-  position:relative;background:#fff;border:2px solid #9CCFB8;border-radius:12px;
+  position:relative;background:var(--paper);border:2px solid var(--ai);border-radius:12px;
   width:min(430px,100%);padding:34px 46px 18px;
   display:flex;flex-direction:column;
 }
@@ -300,14 +330,58 @@ h2:first-child{margin-top:2px}
 }
 .mnav.prev{left:4px}.mnav.next{right:4px}
 .mfoot{display:flex;align-items:center;gap:10px;margin-top:6px;min-height:52px}
-.mrom{font-size:1.5rem;color:var(--moegi);font-weight:700;letter-spacing:.08em}
+.mrom{font-size:1.5rem;color:var(--shu);font-weight:700;letter-spacing:.08em}
 .mtip{flex:1;font-size:.72rem;color:var(--shu);line-height:1.5}
 .msay{
-  appearance:none;border:0;background:#E8896B;color:#fff;width:52px;height:52px;border-radius:50%;
+  appearance:none;border:0;background:var(--ai);color:#fff;width:52px;height:52px;border-radius:50%;
   font-size:1.3rem;cursor:pointer;flex:0 0 auto;
 }
 .foot{margin-top:38px;font-size:.7rem;color:var(--muted);text-align:center;letter-spacing:.12em;line-height:2.1}
 .foot a{color:var(--ai);text-decoration:underline;text-underline-offset:3px}
+/* ---------- 共用工具列 ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.toolbar .btn{padding:8px 14px;font-size:.82rem}
+.btn.ok{background:var(--moegi);border-color:var(--moegi);color:#fff}
+.hintbox{border-left:3px solid var(--yamabuki);background:#FBF2DF;color:#6B4A0E;font-size:.84rem;
+  padding:9px 12px;border-radius:0 6px 6px 0;margin:0 0 12px;line-height:1.75}
+.hintbox b{color:#8A5A00}
+/* 描寫 */
+.jump button.done::before{content:"";position:absolute;left:3px;top:3px;width:6px;height:6px;border-radius:50%;background:var(--moegi)}
+.jump button[aria-current="true"].done::before{background:#BFE3C4}
+.trprog{font-size:.76rem;color:var(--muted);text-align:center;margin:-4px 0 10px}
+.trprog b{color:var(--moegi)}
+.trbar{height:4px;background:var(--pale);border-radius:99px;overflow:hidden;max-width:320px;margin:0 auto 12px}
+.trbar i{display:block;height:100%;background:var(--moegi);width:0;transition:width .3s}
+.pad.recall{border-color:var(--shu);box-shadow:4px 4px 0 var(--shu-soft)}
+/* 單字 */
+.vrow .no{font-size:.66rem;color:var(--rose);min-width:1.6em;text-align:right}
+.vrow.hot{background:var(--ai-soft)}
+.vlist.hidezh .zh{color:transparent;background:var(--pale);border-radius:4px}
+.vlist.hidezh .vrow.show .zh{color:var(--muted);background:none}
+/* 漢字 */
+.ktiles.hideyomi .ky{visibility:hidden}
+.ktiles.hideyomi .ktile.seen .ky{visibility:visible}
+.klegend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:.72rem;color:var(--muted);margin:0 0 10px}
+.klegend i{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--rule);vertical-align:-2px;margin-right:4px}
+/* 唱歌 */
+.srow .rl{flex:0 0 2.4em;font-size:.68rem;color:var(--ai);text-align:center;letter-spacing:.02em}
+/* 規則 */
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.toc a{font-size:.78rem;text-decoration:none;color:var(--ai);border:1px solid var(--rule);background:var(--paper);
+  padding:4px 11px;border-radius:999px}
+.toc a:hover{border-color:var(--ai)}
+#t-rule h2{scroll-margin-top:120px}
+.mora{display:grid;gap:10px}
+.mword{appearance:none;display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;text-align:left;
+  border:1px solid var(--rule);background:var(--washi);border-radius:8px;padding:10px 12px;cursor:pointer;font-family:inherit;color:inherit}
+.mword:hover{border-color:var(--ai)}
+.mword .beats{display:flex;gap:4px}
+.mword .bt{min-width:34px;padding:0 5px;white-space:nowrap;height:38px;border:1px solid var(--rule);background:var(--paper);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:background .12s,color .12s}
+.mword .bt.sp{border-color:var(--shu);color:var(--shu)}
+.mword .bt.on{background:var(--ai);border-color:var(--ai);color:#fff}
+.mword .mc{font-size:.76rem;color:var(--muted);margin-left:auto}
+.mword .mc b{color:var(--shu);font-size:1rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:400px){
   .cell .ch{font-size:1.38rem}
@@ -320,9 +394,21 @@ h2:first-child{margin-top:2px}
 <body>
 
 <header>
-  <p class="hd-eyebrow">GOJŪON — 寫・聽・讀</p>
-  <h1 class="mincho">五<span class="dot">・</span>十<span class="dot">・</span>音</h1>
-  <p class="sub">清音 46 ・ 濁音 20 ・ 半濁音 5 ・ 拗音 33 ・ 外來語 31　｜　成人自學</p>
+ <div class="hd">
+  <a class="crumb" href="index.html">← 唱歌學日文・系列總覽</a>
+  <div class="hd-main">
+    <div class="seal mincho" aria-hidden="true">基<br>礎</div>
+    <div>
+      <p class="hd-eyebrow">基礎篇 · GOJŪON</p>
+      <h1 class="mincho">五十音・寫聽讀</h1>
+      <p class="sub">認字形、描筆順、聽發音、用單字。唱歌之前的地基，也是唱歌途中隨時回來的維修站。</p>
+    </div>
+  </div>
+  <div class="hd-stats">
+    <span><b>46</b>清音</span><span><b>25</b>濁・半濁</span><span><b>33</b>拗音</span><span><b>31</b>外來語</span>
+    <span class="prog" id="hd-prog"></span>
+  </div>
+ </div>
 </header>
 
 <nav role="tablist" aria-label="模組">
@@ -333,7 +419,7 @@ h2:first-child{margin-top:2px}
   <button role="tab" data-go="t-kanji" aria-selected="false">漢字<small>KANJI</small></button>
   <button role="tab" data-go="t-song" aria-selected="false">唱歌<small>SONG</small></button>
   <button role="tab" data-go="t-rule" aria-selected="false">規則<small>RULES</small></button>
- <a href="index.html" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 15px 11px;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:2.5px solid transparent;letter-spacing:.12em">⌂ 總覽<small style="font-size:.58rem;letter-spacing:.14em;color:var(--rose);margin-top:1px">SERIES</small></a>
+ <a class="home" href="index.html">⌂ 總覽<small>SERIES</small></a>
 </nav>
 
 <main>
@@ -357,7 +443,7 @@ h2:first-child{margin-top:2px}
     <button class="pill" data-set="hira" aria-pressed="true">平假名 ひらがな</button>
     <button class="pill" data-set="kata" aria-pressed="false">片假名 カタカナ</button>
   </div>
-  <p class="note">格內<b style="color:var(--shu)">紅字</b>＝羅馬拼音，<b style="color:var(--rose)">粉字</b>＝筆畫數。點格子發音，同步顯示平片對照；し・ち・つ・ふ・ら行・ん・を 等特殊音會附<b>發音提示</b>。</p>
+  <p class="note">格內右下<b style="color:var(--shu)">紅字</b>＝羅馬拼音，左上<b style="color:var(--rose)">灰藍小字</b>＝筆畫數，右上<b style="color:var(--shu)">紅點</b>＝特殊發音（し・ち・つ・ふ・ら行・ん・を…），點開會看到<b>發音提示</b>。點格子放大、發音，可左右切換。</p>
 
   <h2>清音 <em>SEION</em><span class="count">46</span></h2>
   <div class="grid g6" id="c-sei"></div>
@@ -378,7 +464,11 @@ h2:first-child{margin-top:2px}
 
 <!-- ============ 描寫 ============ -->
 <section id="t-trace" role="tabpanel" hidden>
-  <p class="note">灰字是範本，用手指或觸控筆描寫。十字格幫你抓<b>重心</b>——先照著描，熟了就按「淡出範本」脫稿寫。</p>
+  <p class="note"><b>描紅</b>：灰字是範本，用手指或觸控筆描寫，十字格幫你抓重心，熟了按「淡出範本」脫稿寫。<b>默寫</b>：只播發音、不給字，自己寫出來再按「看答案」對照。寫好一個按「完成」，字會打上綠點、自動跳下一個。</p>
+  <div class="pills" id="tr-mode">
+    <button class="pill" data-tm="trace" aria-pressed="true">描紅</button>
+    <button class="pill" data-tm="recall" aria-pressed="false">聽音默寫</button>
+  </div>
 
   <div class="pills" id="tr-pills">
     <button class="pill" data-tset="hira" aria-pressed="true">平假名</button>
@@ -389,6 +479,8 @@ h2:first-child{margin-top:2px}
 
   <div class="jump" id="tr-jump" aria-label="快速跳字"></div>
 
+  <div class="trbar" aria-hidden="true"><i id="tr-bar"></i></div>
+  <p class="trprog" id="tr-prog"></p>
   <div class="tr-head">
     <span class="tr-kana kana" id="tr-ch">あ</span>
     <span class="tr-rom" id="tr-rom">a</span>
@@ -411,6 +503,7 @@ h2:first-child{margin-top:2px}
     <button class="btn warn" id="tr-clear">清除筆跡</button>
     <button class="btn ghost" id="tr-say">聽發音</button>
     <button class="btn ghost" id="tr-fade">淡出範本</button>
+    <button class="btn ok" id="tr-done">完成 ✓</button>
   </div>
 </section>
 
@@ -421,11 +514,17 @@ h2:first-child{margin-top:2px}
     <button class="pill" data-qm="read" aria-pressed="false">看字選音</button>
     <button class="pill" data-qm="rev" aria-pressed="false">看音選字</button>
   </div>
+  <div class="pills" id="q-script">
+    <button class="pill" data-qk="hira" aria-pressed="true">平假名</button>
+    <button class="pill" data-qk="kata" aria-pressed="false">片假名</button>
+    <button class="pill" data-qk="mix" aria-pressed="false">平片混合</button>
+  </div>
   <div class="pills" id="q-scope">
     <button class="pill" data-qs="sei" aria-pressed="true">清音</button>
     <button class="pill" data-qs="daku" aria-pressed="false">濁・半濁</button>
     <button class="pill" data-qs="yo" aria-pressed="false">拗音</button>
     <button class="pill" data-qs="all" aria-pressed="false">全部</button>
+    <button class="pill miss" data-qs="miss" aria-pressed="false" id="q-misspill">錯題本</button>
   </div>
 
   <div class="qcard">
@@ -438,19 +537,30 @@ h2:first-child{margin-top:2px}
     <span id="q-tally">答對 0 ／ 作答 0</span>
     <button class="pill" id="q-reset">歸零</button>
   </div>
-  <p class="note" style="margin-top:14px">答錯會標出正解並重播發音。「聽音選字」需瀏覽器支援日文語音；若無聲音，改用另兩種模式。成績自動保存。</p>
+  <div class="missbox">
+    <h3>常錯的字 <small>點字聽發音；在「錯題本」範圍答對一次，次數減一</small></h3>
+    <div class="misslist" id="q-misslist"></div>
+  </div>
+  <p class="note" style="margin-top:14px">建議順序：先「看字選音」認字，再「聽音選字」練耳朵，最後「看音選字」練回想。答錯的字會自動收進<b>錯題本</b>，隔天先複習它。「聽音選字」需瀏覽器支援日文語音；若無聲音，改用另兩種模式。成績自動保存。</p>
 </section>
 
 <!-- ============ 單字 ============ -->
 <section id="t-word" role="tabpanel" hidden>
   <p class="note">點任一列播放整個單字的發音。漢字上方<b style="color:var(--shu)">紅色小字</b>＝假名讀音；片假名單字中的<b style="color:var(--shu)">紅字</b>＝該課重點音。</p>
   <div class="pills" id="w-pills"></div>
+  <p class="hintbox" id="w-hint"></p>
+  <div class="toolbar">
+    <button class="btn" id="w-all">▶ 全部播放</button>
+    <button class="btn warn" id="w-stop">停止</button>
+    <button class="btn ghost" id="w-hide">遮住中文</button>
+  </div>
   <div class="vlist" id="w-list"></div>
+  <p class="note" style="margin-top:12px">自我檢測：按「遮住中文」，聽發音猜意思，點那一列就會顯示中文。</p>
 </section>
 
 <!-- ============ 漢字 ============ -->
 <section id="t-kanji" role="tabpanel" hidden>
-  <p class="note">日語有三種文字：平假名、片假名、<b>漢字</b>。假名是表音文字，一字一音節；漢字是表意文字。這 48 個是 NHK 入門課精選的高頻漢字——多數妳一看就懂，重點是<b>學它的日語讀音</b>。點磚播放發音。</p>
+  <p class="note">日語有三種文字：平假名、片假名、<b>漢字</b>。假名是表音文字，一字一音節；漢字是表意文字。這 48 個是 NHK 入門課精選的高頻漢字——多數你一看就懂，重點是<b>學它的日語讀音</b>。點磚播放發音。</p>
   <div class="readout" id="k-read">
     <div class="big mincho" id="k-ch">心</div>
     <div class="meta">
@@ -458,6 +568,15 @@ h2:first-child{margin-top:2px}
       <span id="k-mean">心</span>
     </div>
     <button class="saybtn" id="k-say" aria-label="播放發音">🔊</button>
+  </div>
+  <div class="toolbar">
+    <button class="btn" id="k-rand">🎲 隨機抽一個</button>
+    <button class="btn ghost" id="k-hide">遮住讀音</button>
+  </div>
+  <div class="klegend">
+    <span><i style="background:#E9EEF4"></i>1–10</span><span><i style="background:#EAF1E3"></i>11–20</span>
+    <span><i style="background:#F8ECE6"></i>21–30</span><span><i style="background:#FBF2DF"></i>31–40</span>
+    <span><i style="background:#EEEAF4"></i>41–48</span><span>建議一天一色、十個字</span>
   </div>
   <div class="ktiles" id="k-tiles"></div>
 </section>
@@ -479,6 +598,11 @@ h2:first-child{margin-top:2px}
     <button class="pill" data-sset="hira" aria-pressed="true">平假名</button>
     <button class="pill" data-sset="kata" aria-pressed="false">片假名</button>
   </div>
+  <div class="pills" id="song-speed">
+    <button class="pill" data-rate=".6" aria-pressed="false">慢速</button>
+    <button class="pill" data-rate=".82" aria-pressed="true">中速</button>
+    <button class="pill" data-rate="1" aria-pressed="false">原速</button>
+  </div>
   <div id="song-rows"></div>
 
   <div class="btnrow" style="justify-content:center">
@@ -490,9 +614,13 @@ h2:first-child{margin-top:2px}
 
 <!-- ============ 規則 ============ -->
 <section id="t-rule" role="tabpanel" hidden>
-  <p class="note">五個發音規則，全部整理自習字帖的「說明」欄。例字都可以點擊發音。</p>
+  <p class="note">發音規則整理自習字帖的「說明」欄，例字都可以點擊發音。點下方標籤直接跳到該段。</p>
+  <div class="toc" role="navigation" aria-label="規則目錄">
+    <a href="#r-daku">濁・半濁</a><a href="#r-yo">拗音</a><a href="#r-cho">長音</a><a href="#r-soku">促音</a>
+    <a href="#r-mora">特殊拍</a><a href="#r-pron">發音要點</a><a href="#r-pair">易混字</a>
+  </div>
 
-  <h2>濁音・半濁音 <em>DAKUON</em></h2>
+  <h2 id="r-daku">濁音・半濁音 <em>DAKUON</em></h2>
   <div class="card">
     <h3>濁音「゛」</h3>
     <p><span class="lbl">發音</span>氣音 → 無氣音。か行 K→G、さ行 S→Z、た行 T→D、は行 H→B。</p>
@@ -506,7 +634,7 @@ h2:first-child{margin-top:2px}
     <button class="eg kana" data-say="ぱ">は <span class="arw">＋゜→</span> ぱ <span class="r">pa</span></button>
   </div>
 
-  <h2>拗音 <em>YŌON</em></h2>
+  <h2 id="r-yo">拗音 <em>YŌON</em></h2>
   <div class="card">
     <h3>清音拗音</h3>
     <p>由 <b>い段音</b> 和 <b>や行音</b> 合起來的音；や・ゆ・よ 書寫時<b>縮小</b>。</p>
@@ -523,7 +651,7 @@ h2:first-child{margin-top:2px}
     <button class="eg kana" data-say="ファ">フ ＋ ァ <span class="arw">→</span> ファ <span class="r">fa</span></button>
   </div>
 
-  <h2>長音 <em>CHŌON</em></h2>
+  <h2 id="r-cho">長音 <em>CHŌON</em></h2>
   <div class="card">
     <h3>平假名的長音</h3>
     <p><span class="lbl">表記</span>相同母音連續兩個寫在一起。</p>
@@ -541,7 +669,7 @@ h2:first-child{margin-top:2px}
     <button class="eg kana" data-say="コーヒー">コーヒー <span class="r">kōhī</span></button>
   </div>
 
-  <h2>促音 <em>SOKUON</em></h2>
+  <h2 id="r-soku">促音 <em>SOKUON</em></h2>
   <div class="card">
     <h3>っ／ッ</h3>
     <p><span class="lbl">表記</span>把「つ」或「ツ」縮小一半，寫在前一個音的<b>右下角</b>。</p>
@@ -551,7 +679,11 @@ h2:first-child{margin-top:2px}
   </div>
 
 
-  <h2>發音要點 <em>PRONUNCIATION</em></h2>
+  <h2 id="r-mora">特殊拍 <em>MORA</em></h2>
+  <p class="note">日語以「拍」計長短：<b>長音、促音、撥音 ん</b> 都各佔一拍；拗音（きょ）雖然兩個字，只算一拍。點一個單字，聽發音並看每一拍依序亮起。這也是〈きらきら星〉那一集的主角。</p>
+  <div class="mora" id="mora"></div>
+
+  <h2 id="r-pron">發音要點 <em>PRONUNCIATION</em></h2>
   <div class="card aka">
     <h3>四個不規則音</h3>
     <p>さ行、た行、は行各有幾個音不照子音規律走，是初學最常唸錯的：</p>
@@ -577,7 +709,7 @@ h2:first-child{margin-top:2px}
     <p><span class="lbl">を→o</span><button class="eg kana" data-say="みずをのむ" style="margin-top:2px">水<b style="color:var(--shu)">を</b>飲む <span class="r">mizu o</span></button></p>
   </div>
 
-  <h2>易混字辨析 <em>LOOK-ALIKES</em></h2>
+  <h2 id="r-pair">易混字辨析 <em>LOOK-ALIKES</em></h2>
   <p class="note">形近字並排點著比。辨認關鍵在<b>末筆方向</b>與<b>兩點位置</b>。</p>
   <div class="pairs" id="pairs"></div>
 
@@ -602,7 +734,7 @@ h2:first-child{margin-top:2px}
     </div>
   </div>
 </div>
-<footer style="text-align:center;font-size:.72rem;color:var(--muted);padding:20px 16px 30px;border-top:1px solid var(--rule)">五十音・寫聽讀 · 唱歌學日文系列 基礎篇 · build 2026-07-22d · 單檔 HTML，無外部相依</footer>
+<footer style="text-align:center;font-size:.72rem;color:var(--muted);padding:20px 16px 30px;border-top:1px solid var(--rule)">五十音・寫聽讀 · 唱歌學日文系列 基礎篇 · build 2026-10-01 · 單檔 HTML，無外部相依</footer>
 </main>
 
 <script>
@@ -743,7 +875,7 @@ var store={
 };
 
 /* ---- 語音（含 Chrome GC 防護） ---- */
-var _utt=null,_watch=null,_voice=null;
+var _utt=null,_watch=null,_voice=null,SAYRATE=.82;
 function pickVoice(){
   if(!("speechSynthesis" in window))return null;
   var vs=speechSynthesis.getVoices()||[];
@@ -760,7 +892,7 @@ function say(text){
     speechSynthesis.cancel();
     if(_watch){clearInterval(_watch);_watch=null}
     _utt=new SpeechSynthesisUtterance(text);
-    _utt.lang="ja-JP";_utt.rate=.82;
+    _utt.lang="ja-JP";_utt.rate=SAYRATE;
     if(!_voice)_voice=pickVoice();
     if(_voice)_utt.voice=_voice;
     _utt.onend=function(){if(_watch){clearInterval(_watch);_watch=null}};
@@ -783,6 +915,8 @@ $$("nav button").forEach(function(b){
     if(t)t.hidden=false;
     window.scrollTo(0,0);
     if(typeof stopSong==="function"&&b.dataset.go!=="t-song")stopSong();
+    if(typeof stopWords==="function")stopWords();
+    if(typeof stopMora==="function")stopMora();
     if(b.dataset.go==="t-trace")sizePad();
   });
 });
@@ -796,7 +930,9 @@ function makeCell(h,k,rom,sc,info){
   var ch=chartSet==="hira"?h:k;
   var other=chartSet==="hira"?k:h;
   b.innerHTML='<span class="ch kana">'+ch+'</span><span class="rom">'+rom+'</span>'+
-              (sc?'<span class="sc">'+sc+'</span>':'');
+              (sc?'<span class="sc">'+sc+'</span>':'')+
+              ((TIPS[ch]||TIPS[h])?'<span class="tipdot" aria-hidden="true"></span>':'');
+  if(TIPS[ch]||TIPS[h])b.setAttribute("aria-label",ch+" "+rom+"，特殊發音");
   var navIdx=MODNAV.length;
   MODNAV.push([ch,rom]);
   b.addEventListener("click",function(){
@@ -816,10 +952,14 @@ function makeCell(h,k,rom,sc,info){
 }
 function emptyCell(){var d=document.createElement("div");d.className="cell empty";return d}
 function labCell(t){var d=document.createElement("div");d.className="rowlab";d.textContent=t;return d}
+function danRow(g){
+  g.appendChild(labCell(""));
+  DAN.forEach(function(t){var d=document.createElement("div");d.className="collab";d.textContent=t;g.appendChild(d)});
+}
 
 function buildChart(){
   MODNAV=[];
-  var g=$("#c-sei");g.innerHTML="";
+  var g=$("#c-sei");g.innerHTML="";danRow(g);
   for(var r=0;r<11;r++){
     g.appendChild(labCell(SEI_ROWLAB[r]+(r<10?"行":"")));
     for(var c=0;c<5;c++){
@@ -829,7 +969,7 @@ function buildChart(){
       g.appendChild(makeCell(it[0],it[1],it[2],st,SEI_ROWLAB[r]+(r<10?"行":"")+"・"+DAN[c]+"　筆畫 "+st));
     }
   }
-  g=$("#c-daku");g.innerHTML="";
+  g=$("#c-daku");g.innerHTML="";danRow(g);
   for(var r2=0;r2<4;r2++){
     g.appendChild(labCell(DAKU_ROWLAB[r2]+"行"));
     for(var c2=0;c2<5;c2++){
@@ -863,7 +1003,8 @@ $$(".pills [data-set]").forEach(function(p){
 buildChart();
 
 /* ========== 描寫 ========== */
-var traceSet="hira",traceList=[],traceIdx=0,faded=false;
+var traceSet="hira",traceList=[],traceIdx=0,faded=false,traceMode="trace",revealed=false;
+var traced=store.get("kana_trace",{});
 
 function buildTraceList(){
   traceList=[];
@@ -885,26 +1026,35 @@ function buildJump(){
     var b=document.createElement("button");
     b.type="button";
     b.innerHTML='<span class="kana">'+it[0]+'</span><span class="jr">'+it[1]+'</span>';
-    b.addEventListener("click",function(){traceIdx=i;renderTrace()});
+    b.addEventListener("click",function(){traceIdx=i;revealed=false;renderTrace()});
     j.appendChild(b);
   });
 }
 function renderTrace(){
   var it=traceList[traceIdx];if(!it)return;
-  $("#pad-guide").textContent=it[0];
-  $("#pad-guide").style.opacity=faded?".22":"1";
-  $("#pad-guide").style.fontSize=(it[0].length>1?"9rem":"15rem");
+  var rec=traceMode==="recall"&&!revealed;
+  var g=$("#pad-guide");
+  g.textContent=it[0];
+  g.style.opacity=rec?"0":(traceMode==="recall"?".5":(faded?".22":"1"));
+  g.style.fontSize=(it[0].length>1?"9rem":"15rem");
+  $("#pad").classList.toggle("recall",traceMode==="recall");
   $("#tr-idx").textContent=(traceIdx+1)+" / "+traceList.length;
-  $("#tr-ch").textContent=it[0];
-  $("#tr-rom").textContent=it[1];
-  $("#tr-st").textContent=it[2]?("筆畫 "+it[2]):"";
+  $("#tr-ch").textContent=rec?"？":it[0];
+  $("#tr-rom").textContent=rec?"":it[1];
+  $("#tr-st").textContent=(!rec&&it[2])?("筆畫 "+it[2]):"";
+  $("#tr-fade").textContent=traceMode==="recall"?(revealed?"隱藏答案":"看答案"):(faded?"顯示範本":"淡出範本");
   var j=$("#tr-jump");
   Array.prototype.forEach.call(j.children,function(c,i){
     c.setAttribute("aria-current",i===traceIdx?"true":"false");
+    c.classList.toggle("done",!!traced[traceList[i][0]]);
   });
   var cur=j.children[traceIdx];
   if(cur)cur.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});
+  var dn=traceList.filter(function(x){return traced[x[0]]}).length;
+  $("#tr-prog").innerHTML="本組已完成 <b>"+dn+"</b> / "+traceList.length;
+  $("#tr-bar").style.width=Math.round(100*dn/traceList.length)+"%";
   clearPad();
+  if(traceMode==="recall"&&!revealed)setTimeout(function(){say(it[0])},250);
 }
 $$("#tr-pills .pill").forEach(function(p){
   p.addEventListener("click",function(){
@@ -913,10 +1063,23 @@ $$("#tr-pills .pill").forEach(function(p){
     traceSet=p.dataset.tset;buildTraceList();
   });
 });
-$("#tr-prev").addEventListener("click",function(){traceIdx=(traceIdx-1+traceList.length)%traceList.length;renderTrace()});
-$("#tr-next").addEventListener("click",function(){traceIdx=(traceIdx+1)%traceList.length;renderTrace()});
+$("#tr-prev").addEventListener("click",function(){traceIdx=(traceIdx-1+traceList.length)%traceList.length;revealed=false;renderTrace()});
+$("#tr-next").addEventListener("click",function(){traceIdx=(traceIdx+1)%traceList.length;revealed=false;renderTrace()});
+$("#tr-done").addEventListener("click",function(){
+  traced[traceList[traceIdx][0]]=1;store.set("kana_trace",traced);
+  traceIdx=(traceIdx+1)%traceList.length;revealed=false;renderTrace();
+});
+$$("#tr-mode .pill").forEach(function(p){p.addEventListener("click",function(){
+  $$("#tr-mode .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+  p.setAttribute("aria-pressed","true");traceMode=p.dataset.tm;revealed=false;faded=false;renderTrace();
+})});
 $("#tr-say").addEventListener("click",function(){say(traceList[traceIdx][0])});
 $("#tr-fade").addEventListener("click",function(){
+  if(traceMode==="recall"){revealed=!revealed;
+    var keep=document.createElement("canvas");keep.width=cv.width;keep.height=cv.height;keep.getContext("2d").drawImage(cv,0,0);
+    renderTrace();
+    ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(keep,0,0);ctx.restore();
+    return;}
   faded=!faded;
   $("#pad-guide").style.opacity=faded?".22":"1";
   this.textContent=faded?"顯示範本":"淡出範本";
@@ -953,22 +1116,31 @@ buildTraceList();
 setTimeout(sizePad,60);
 
 /* ========== 聽寫 ========== */
-var qMode="listen",qScope="sei",qPool=[],qCur=null,qLock=false;
+var qMode="listen",qScope="sei",qScript="hira",qPool=[],qDist=[],qCur=null,qLock=false,qStreak=0;
 var qStat=store.get("kana_q",{ok:0,n:0});
+var qMiss=store.get("kana_miss",{});
 
+function poolOf(scope){
+  var out=[];
+  function add(h,k,r){ if(qScript!=="kata")out.push([h,r]); if(qScript!=="hira")out.push([k,r]); }
+  if(scope==="sei"||scope==="all")SEI.forEach(function(it){if(it)add(it[0],it[1],it[2])});
+  if(scope==="daku"||scope==="all")DAKU.concat(HAN).forEach(function(x){add(x[0],x[1],x[2])});
+  if(scope==="yo"||scope==="all")YO.forEach(function(x){add(x[0],x[1],x[2])});
+  return out;
+}
 function buildPool(){
-  qPool=[];
-  var addPair=function(a){a.forEach(function(x){qPool.push([x[0],x[2]]);qPool.push([x[1],x[2]])})};
-  if(qScope==="sei"||qScope==="all"){SEI.forEach(function(it){if(it){qPool.push([it[0],it[2]]);qPool.push([it[1],it[2]])}})}
-  if(qScope==="daku"||qScope==="all"){addPair(DAKU);addPair(HAN)}
-  if(qScope==="yo"||qScope==="all"){addPair(YO)}
+  qDist=poolOf("all");
+  if(qScope==="miss"){
+    qPool=Object.keys(qMiss).filter(function(c){return qMiss[c].n>0}).map(function(c){return [c,qMiss[c].r]});
+  }else qPool=poolOf(qScope);
   nextQ();
 }
 function sample(n,not){
+  var src=qPool.length>=8?qPool:qDist;
   var out=[],guard=0;
   while(out.length<n&&guard<400){
     guard++;
-    var c=qPool[Math.floor(Math.random()*qPool.length)];
+    var c=src[Math.floor(Math.random()*src.length)];
     if(c[1]===not)continue;
     if(out.some(function(o){return o[1]===c[1]}))continue;
     out.push(c);
@@ -978,7 +1150,12 @@ function sample(n,not){
 function nextQ(){
   qLock=false;
   qCur=qPool[Math.floor(Math.random()*qPool.length)];
-  if(!qCur)return;
+  if(!qCur){
+    $("#q-prompt").textContent="—";$("#q-prompt").className="qprompt";
+    $("#q-replay").style.display="none";
+    $("#q-opts").innerHTML='<p class="qempty">錯題本目前是空的。先用其他範圍練習，答錯的字會自動收進這裡。</p>';
+    return;
+  }
   var wrong=sample(3,qCur[1]);
   var opts=wrong.concat([qCur]).sort(function(){return Math.random()-.5});
   var box=$("#q-opts");box.innerHTML="";
@@ -1002,26 +1179,34 @@ function answer(btn,o){
   if(qLock)return;qLock=true;
   var right = qMode==="read" ? (o[1]===qCur[1]) : (o[0]===qCur[0]);
   qStat.n++;
-  if(right){qStat.ok++;btn.classList.add("right")}
+  var mk=qCur[0];
+  if(right){
+    qStat.ok++;qStreak++;btn.classList.add("right");
+    if(qScope==="miss"&&qMiss[mk]){qMiss[mk].n--;if(qMiss[mk].n<=0)delete qMiss[mk];}
+  }
   else{
+    qStreak=0;
+    qMiss[mk]={n:((qMiss[mk]&&qMiss[mk].n)||0)+1,r:qCur[1]};
     btn.classList.add("wrong");
     Array.prototype.forEach.call($("#q-opts").children,function(c){
       if((qMode==="read"&&c.textContent===qCur[1])||(qMode!=="read"&&c.textContent===qCur[0]))c.classList.add("right");
     });
   }
   say(qCur[0]);
-  store.set("kana_q",qStat);tally();
+  store.set("kana_q",qStat);store.set("kana_miss",qMiss);tally();renderMiss();
   /* 打卡：與系列總覽相容的逗號字串格式 */
   try{
     var _t=new Date().toISOString().slice(0,10);
     var _d=(localStorage.getItem("kana_days")||"").split(",").filter(Boolean);
     if(_d.indexOf(_t)<0){_d.push(_t);localStorage.setItem("kana_days",_d.join(","));}
   }catch(e){}
-  setTimeout(nextQ,right?700:1500);
+  setTimeout(qScope==="miss"?buildPool:nextQ,right?700:1500);
 }
 function tally(){
   $("#q-tally").textContent="答對 "+qStat.ok+" ／ 作答 "+qStat.n+
-    (qStat.n?("　正確率 "+Math.round(100*qStat.ok/qStat.n)+"%"):"");
+    (qStat.n?("　正確率 "+Math.round(100*qStat.ok/qStat.n)+"%"):"")+
+    (qStreak>=3?("　連對 "+qStreak):"");
+  headerProgress();
   $("#q-bar").style.width=(qStat.n?Math.round(100*qStat.ok/qStat.n):0)+"%";
 }
 $$("#q-mode .pill").forEach(function(p){p.addEventListener("click",function(){
@@ -1033,11 +1218,49 @@ $$("#q-scope .pill").forEach(function(p){p.addEventListener("click",function(){
   p.setAttribute("aria-pressed","true");qScope=p.dataset.qs;buildPool();
 })});
 $("#q-replay").addEventListener("click",function(){if(qCur)say(qCur[0])});
-$("#q-reset").addEventListener("click",function(){qStat={ok:0,n:0};store.set("kana_q",qStat);tally()});
-buildPool();tally();
+$("#q-reset").addEventListener("click",function(){qStat={ok:0,n:0};qStreak=0;store.set("kana_q",qStat);tally()});
+$$("#q-script .pill").forEach(function(p){p.addEventListener("click",function(){
+  $$("#q-script .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+  p.setAttribute("aria-pressed","true");qScript=p.dataset.qk;buildPool();
+})});
+function renderMiss(){
+  var keys=Object.keys(qMiss).filter(function(c){return qMiss[c].n>0})
+    .sort(function(a,b){return qMiss[b].n-qMiss[a].n});
+  $("#q-misspill").textContent="錯題本"+(keys.length?("（"+keys.length+"）"):"");
+  var box=$("#q-misslist");box.innerHTML="";
+  if(!keys.length){box.innerHTML='<span class="none">目前沒有錯題，繼續保持。</span>';return}
+  keys.slice(0,16).forEach(function(c){
+    var b=document.createElement("button");b.type="button";
+    b.innerHTML='<b class="kana">'+c+'</b><i>'+qMiss[c].r+'・錯 '+qMiss[c].n+'</i>';
+    b.addEventListener("click",function(){say(c)});
+    box.appendChild(b);
+  });
+}
+function headerProgress(){
+  var d=0;try{d=(localStorage.getItem("kana_days")||"").split(",").filter(Boolean).length}catch(e){}
+  var el=$("#hd-prog");if(!el)return;
+  el.textContent=d?("已練習 "+d+" 天"+(qStat.n?("・正確率 "+Math.round(100*qStat.ok/qStat.n)+"%"):"")):"";
+}
+buildPool();tally();renderMiss();
 
 /* ========== 單字 ========== */
-var wCat=Object.keys(WORDS)[0];
+var wCat=Object.keys(WORDS)[0],wTimer=null,wQueue=[],wHide=false;
+var WHINT={
+ "濁音・半濁音":"<b>重點：</b>清音右上加「゛」變濁音（か→が、さ→ざ、た→だ、は→ば），加「゜」變半濁音（は→ぱ）。",
+ "外來語拗音":"<b>重點：</b>片假名後面接小字 ァィゥェォ，拼出日語原本沒有的音，例如 フォ（fo）、ティ（ti）。",
+ "長音":"<b>重點：</b>平假名多寫一個母音、片假名寫「ー」。長音<b>多佔一拍</b>，唸短了意思會變（おばさん 阿姨／おばあさん 奶奶）。",
+ "促音":"<b>重點：</b>小「っ／ッ」是停頓的一拍：嘴型先擺好下一個子音、停一拍再發音。"
+};
+function stopWords(){wQueue=[];if(wTimer){clearTimeout(wTimer);wTimer=null}
+  $$("#w-list .vrow.hot").forEach(function(r){r.classList.remove("hot")});}
+function playWords(){
+  if(!wQueue.length){stopWords();return}
+  var it=wQueue.shift();
+  $$("#w-list .vrow.hot").forEach(function(r){r.classList.remove("hot")});
+  it[0].classList.add("hot");it[0].scrollIntoView({block:"nearest",behavior:"smooth"});
+  say(it[1]);
+  wTimer=setTimeout(playWords,(900+it[1].length*230)*(.82/SAYRATE));
+}
 function buildWords(){
   var pw=$("#w-pills");pw.innerHTML="";
   Object.keys(WORDS).forEach(function(k){
@@ -1048,16 +1271,29 @@ function buildWords(){
     b.addEventListener("click",function(){wCat=k;buildWords()});
     pw.appendChild(b);
   });
-  var l=$("#w-list");l.innerHTML="";
-  WORDS[wCat].forEach(function(w){
+  stopWords();
+  $("#w-hint").innerHTML=WHINT[wCat]||"";
+  var l=$("#w-list");l.innerHTML="";l.classList.toggle("hidezh",wHide);
+  WORDS[wCat].forEach(function(w,i){
     var b=document.createElement("button");
     b.className="vrow";b.type="button";
-    b.innerHTML='<span class="zh">'+w[0]+'</span><span class="jp kana">'+w[1]+'</span><span class="spk">▶ 播放</span>';
-    b.addEventListener("click",function(){say(w[2])});
+    b.innerHTML='<span class="no">'+(i+1)+'</span><span class="zh">'+w[0]+'</span><span class="jp kana">'+w[1]+'</span><span class="spk">▶</span>';
+    b.addEventListener("click",function(){stopWords();b.classList.add("show");say(w[2])});
     l.appendChild(b);
   });
 }
 buildWords();
+$("#w-all").addEventListener("click",function(){
+  stopWords();
+  $$("#w-list .vrow").forEach(function(r,i){wQueue.push([r,WORDS[wCat][i][2]])});
+  playWords();
+});
+$("#w-stop").addEventListener("click",stopWords);
+$("#w-hide").addEventListener("click",function(){
+  wHide=!wHide;this.textContent=wHide?"顯示中文":"遮住中文";
+  $("#w-list").classList.toggle("hidezh",wHide);
+  $$("#w-list .vrow.show").forEach(function(r){r.classList.remove("show")});
+});
 
 
 /* ========== 唱歌 ========== */
@@ -1084,7 +1320,7 @@ function playQueue(){
   $$("#song-rows .kk button.hot").forEach(function(b){b.classList.remove("hot")});
   if(item[0])item[0].classList.add("hot");
   say(item[1]);
-  songTimer=setTimeout(playQueue, item[1].length>1?1150:900);
+  songTimer=setTimeout(playQueue, (item[1].length>1?1150:900)*(.82/SAYRATE));
 }
 function buildSong(){
   var host=$("#song-rows");host.innerHTML="";
@@ -1109,7 +1345,8 @@ function buildSong(){
       songQueue=btns.slice();
       playQueue();
     });
-    d.appendChild(p);d.appendChild(kk);host.appendChild(d);
+    var rl=document.createElement("span");rl.className="rl";rl.textContent=SEI_ROWLAB[ri]+(ri<10?"行":"");
+    d.appendChild(p);d.appendChild(rl);d.appendChild(kk);host.appendChild(d);
   });
 }
 $$(".pills [data-sset]").forEach(function(p){
@@ -1130,6 +1367,10 @@ $("#song-all").addEventListener("click",function(){
   playQueue();
 });
 $("#song-stop").addEventListener("click",stopSong);
+$$("#song-speed .pill").forEach(function(p){p.addEventListener("click",function(){
+  $$("#song-speed .pill").forEach(function(x){x.setAttribute("aria-pressed","false")});
+  p.setAttribute("aria-pressed","true");SAYRATE=parseFloat(p.dataset.rate);
+})});
 buildSong();
 
 
@@ -1163,15 +1404,31 @@ var KANJI=[
       $$(".ktile.on").forEach(function(x){x.classList.remove("on")});
       b.classList.add("on");
       $("#k-ch").textContent=k[0];
-      $("#k-yomi").textContent=k[1];
-      $("#k-rom").textContent=k[2];
       $("#k-mean").textContent=k[3];
-      $("#k-say").onclick=function(){say(k[1])};
-      say(k[1]);
+      function reveal(){$("#k-yomi").textContent=k[1];$("#k-rom").textContent=k[2];b.classList.add("seen");say(k[1])}
+      if($("#k-tiles").classList.contains("hideyomi")){
+        $("#k-yomi").textContent="？";$("#k-rom").textContent="先想讀音，再按 🔊 對答案";
+        $("#k-say").onclick=reveal;
+      }else{
+        $("#k-yomi").textContent=k[1];$("#k-rom").textContent=k[2];
+        $("#k-say").onclick=function(){say(k[1])};
+        say(k[1]);
+      }
     });
     host.appendChild(b);
   });
 })();
+
+$("#k-rand").addEventListener("click",function(){
+  var ts=$$("#k-tiles .ktile");var t=ts[Math.floor(Math.random()*ts.length)];
+  t.click();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+$("#k-hide").addEventListener("click",function(){
+  var on=$("#k-tiles").classList.toggle("hideyomi");
+  $$("#k-tiles .ktile.seen").forEach(function(t){t.classList.remove("seen")});
+  this.textContent=on?"顯示讀音":"遮住讀音";
+});
 
 /* ========== 假名放大卡（NHK 式 modal） ========== */
 function openModal(i){
@@ -1234,6 +1491,37 @@ var PAIRS=[
     });
     var h=document.createElement("div");h.className="hint";h.textContent=p[2];
     d.appendChild(pp);d.appendChild(h);host.appendChild(d);
+  });
+})();
+
+/* ========== 特殊拍 ========== */
+var MORA=[
+ ["おかあさん",["お","か","あ","さ","ん"],[2,4],"媽媽"],
+ ["がっこう",["が","っ","こ","う"],[1,3],"學校"],
+ ["コーヒー",["コ","ー","ヒ","ー"],[1,3],"咖啡"],
+ ["きって",["き","っ","て"],[1],"郵票"],
+ ["しんぶん",["し","ん","ぶ","ん"],[1,3],"報紙"],
+ ["きょう",["きょ","う"],[1],"今天"]
+];
+var moraTimers=[];
+function stopMora(){moraTimers.forEach(clearTimeout);moraTimers=[];$$("#mora .bt.on").forEach(function(b){b.classList.remove("on")})}
+(function(){
+  var host=$("#mora");if(!host)return;
+  MORA.forEach(function(m){
+    var b=document.createElement("button");b.type="button";b.className="mword";
+    var beats=m[1].map(function(x,i){return '<span class="bt kana'+(m[2].indexOf(i)>=0?' sp':'')+'">'+x+'</span>'}).join("");
+    b.innerHTML='<span class="beats">'+beats+'</span><span class="mc">'+m[3]+'　<b>'+m[1].length+'</b> 拍</span>';
+    b.addEventListener("click",function(){
+      stopMora();say(m[0]);
+      var bts=b.querySelectorAll(".bt");
+      Array.prototype.forEach.call(bts,function(bt,i){
+        moraTimers.push(setTimeout(function(){
+          Array.prototype.forEach.call(bts,function(x){x.classList.remove("on")});bt.classList.add("on");
+        },120+i*360));
+      });
+      moraTimers.push(setTimeout(stopMora,120+bts.length*360+500));
+    });
+    host.appendChild(b);
   });
 })();
 
